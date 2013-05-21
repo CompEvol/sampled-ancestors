@@ -374,7 +374,6 @@ public class SampledAncestorTreeParser extends SampledAncestorTree implements St
                         if (!m_bSurpressMetadata) {
                             processMetadata(tree);
                         }
-                        System.out.println(tree.toShortNewick(false));
                         return stack.lastElement();
                     default:
                         throw new Exception("parseNewick: unknown token");
