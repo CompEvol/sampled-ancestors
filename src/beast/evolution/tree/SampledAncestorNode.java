@@ -26,7 +26,7 @@ package beast.evolution.tree;
 
 import beast.core.Description;
 
-import java.util.*;
+import java.util.List;
 
 @Description("Nodes in building beast.tree data structure.")
 public class SampledAncestorNode extends Node {
@@ -42,22 +42,18 @@ public class SampledAncestorNode extends Node {
         node.m_sMetaData = m_sMetaData;
         node.m_Parent = null;
         node.setID(m_sID);
-        if (getLeft() != null) {
-            node.setLeft(getLeft().copy());
-            node.getLeft().m_Parent = node;
-            if (getRight() != null) {
-                node.setRight(getRight().copy());
-                node.getRight().m_Parent = node;
-            }
+
+        for (Node child : getChildren()) {
+            node.addChild(child.copy());
         }
         return node;
     } // copy
 
     public static Node connect(Node left, Node right, double h) {
-        Node n =  new SampledAncestorNode();
+        Node n = new SampledAncestorNode();
         n.setHeight(h);
-        n.setLeft(left);
-        n.setRight(right);
+        n.addChild(left);
+        n.addChild(right);
         return n;
     }
 
