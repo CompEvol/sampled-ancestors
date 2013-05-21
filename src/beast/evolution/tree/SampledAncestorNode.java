@@ -49,14 +49,6 @@ public class SampledAncestorNode extends Node {
         return node;
     } // copy
 
-    public static Node connect(Node left, Node right, double h) {
-        Node n = new SampledAncestorNode();
-        n.setHeight(h);
-        n.addChild(left);
-        n.addChild(right);
-        return n;
-    }
-
     /**
      * @return beast.tree in Newick format, with length and meta data
      *         information. Unlike toNewick(), here Nodes are numbered, instead of
@@ -161,18 +153,4 @@ public class SampledAncestorNode extends Node {
         buf.append(":").append(getLength());
         return buf.toString();
     }
-
-    public void reattachFromParent() {
-        m_Parent = null;
-    }
-
-    public void removeAllChildren() {
-        if (children.size() != 0)
-            children.clear();
-    }
-
-    public void setParentOnly(Node parent) {
-        this.m_Parent = parent;
-    }
-
 } // class Node

@@ -117,7 +117,7 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        //Hastings dimension coefficient calcultation
+        //Hastings dimension coefficient calculation
         /*if (iP.getChildCount() == 2 && attachingToLeaf) {
             DimensionCoefficient = (double)(nodeCount-1)/(nodeCount-2);
         } else {
@@ -170,10 +170,10 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                     PiP.removeChild(iP);   // remove <PiP,iP>  (deleting reference to iP from PiP)
                     PiP.addChild(CiP);   // add <PiP, CiP >     (deleting reference to iP from CiP)
                 } else {
-                    ((SampledAncestorNode)CiP).reattachFromParent(); // completely remove <iP, CiP>     (deleting reference to iP from CiP)
-                    ((SampledAncestorTree)tree).setRootOnly(CiP);
+                    CiP.setParent(null); // completely remove <iP, CiP>     (deleting reference to iP from CiP)
+                    tree.setRootOnly(CiP);
                 }
-                ((SampledAncestorTree)tree).removeNode(iP.getNr());    // remove node iP from the array and update members of the tree
+                ((SampledAncestorTree) tree).removeNode(iP.getNr());    // remove node iP from the array and update members of the tree
             } else {     // removing from a branch and attaching to a branch (from <PiP, CiP> to <jP, j> or above the root j)
                 //update
                 iP.removeChild(CiP); //remove <iP, CiP>
@@ -182,16 +182,16 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                     PiP.removeChild(iP);   // remove <PiP,iP>
                     PiP.addChild(CiP);   // add <PiP, CiP>
                 } else {
-                    ((SampledAncestorNode)CiP).reattachFromParent(); // completely remove <iP, CiP>
-                    ((SampledAncestorTree)tree).setRootOnly(CiP);
+                    CiP.setParent(null); // completely remove <iP, CiP>
+                    tree.setRootOnly(CiP);
                 }
 
                 if (jP != null) {
                     jP.removeChild(j);  // remove <jP, j>
                     jP.addChild(iP);   // add <jP, iP>
                 } else {
-                    ((SampledAncestorNode)iP).reattachFromParent(); // completely remove <PiP, iP>
-                    ((SampledAncestorTree)tree).setRootOnly(iP);
+                    iP.setParent(null); // completely remove <PiP, iP>
+                    tree.setRootOnly(iP);
                 }
                 iP.addChild(j);
                 iP.setHeight(newAge);
@@ -212,12 +212,12 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                     jP.removeChild(j); // remove <jP, j>
                     jP.addChild(k);// add <jP, k>, <k, j>, and <k, i>
                 } else {
-                    ((SampledAncestorTree)tree).setRootOnly(k);
+                    ((SampledAncestorTree) tree).setRootOnly(k);
                 }
                 k.addChild(j);
                 k.addChild(i);
                 k.setHeight(newAge);
-                ((SampledAncestorTree)tree).addNode(k);
+                ((SampledAncestorTree) tree).addNode(k);
             }
         }
 
