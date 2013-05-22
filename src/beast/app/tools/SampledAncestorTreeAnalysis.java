@@ -36,7 +36,7 @@ public class SampledAncestorTreeAnalysis {
         int dCladeCount = 0;
 
         for (int i =0; i < trace.getTreeCount(); i++) {
-            tree = new SampledAncestorTreeParser(null, trace.getTrees()[i], 1);
+            tree = new SampledAncestorTreeParser(null, trace.getTrees()[i], 1, false);
             int j;
             for (j=0; j<tree.getNodeCount(); j++)
                 if (tree.getNode(j).getChildCount() == 1) {
@@ -46,7 +46,7 @@ public class SampledAncestorTreeAnalysis {
         }
 
         double a =  (double)dCladeCount/trace.getTreeCount();
-        System.out.format(dCladeCount + " trees (or %2.2f ) have sampled internal nodes.%n", a*100);
+        System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
         System.out.println();
     }
 
@@ -58,7 +58,7 @@ public class SampledAncestorTreeAnalysis {
         int dCladeCount = 0;
 
         for (int i=0; i < trace.getTreeCount(); i++) {
-            SampledAncestorTreeParser tree = new SampledAncestorTreeParser(null, trace.getTrees()[i], 1);
+            SampledAncestorTreeParser tree = new SampledAncestorTreeParser(null, trace.getTrees()[i], 1, false);
             ArrayList<String> dClades =  extractAllDClades(tree.getRoot());
             tmp.addAll(dClades);
             for (int j=0; j<tree.getNodeCount(); j++)
@@ -93,7 +93,7 @@ public class SampledAncestorTreeAnalysis {
         }
         System.out.println();
         double a =  (double)dCladeCount/trace.getTreeCount();
-        System.out.format(dCladeCount + " trees (or %2.2f ) have sampled internal nodes.%n", a*100);
+        System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
         System.out.println();
     }
 

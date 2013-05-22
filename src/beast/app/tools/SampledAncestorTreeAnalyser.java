@@ -90,8 +90,6 @@ public class SampledAncestorTreeAnalyser {
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 
             analysis.perform();
-
-            analysis.countTreesWithDClades();
         }
         catch (IOException e) {
             //

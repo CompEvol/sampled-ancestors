@@ -212,12 +212,12 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                     jP.removeChild(j); // remove <jP, j>
                     jP.addChild(k);// add <jP, k>, <k, j>, and <k, i>
                 } else {
-                    ((SampledAncestorTree) tree).setRootOnly(k);
+                    tree.setRootOnly(k);
                 }
                 k.addChild(j);
                 k.addChild(i);
                 k.setHeight(newAge);
-                ((SampledAncestorTree) tree).addNode(k);
+                tree.addNode(k);
             }
         }
 

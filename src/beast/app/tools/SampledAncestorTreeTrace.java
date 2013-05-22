@@ -95,73 +95,73 @@ public class SampledAncestorTreeTrace {
         return buf.toString();
     }
 
-    private SampledAncestorNode makeNewNode(String strTree, int[] currentPosition, int[] nodeLabel) {
-
-        SampledAncestorNode node = new SampledAncestorNode();
-        String label = new String();
-
-        for (int i = currentPosition[0]; i < strTree.length(); i++) {
-            if (strTree.charAt(i) != '(' && strTree.charAt(i) != ':') {
-                label += strTree.charAt(i);
-            } else {
-                currentPosition[0] = i;
-                break;
-            }
-        }
-
-        char ch;
-
-        if (label.equals("")) {
-            node.setNr(nodeLabel[0]);
-            nodeLabel[0]++;
-        }  else {
-            if (labelSet.contains(Integer.parseInt(label)))
-                node.setNr(Integer.parseInt(label)-1);
-            else {
-                System.out.println("Incorrect string tree representation (label set is incorrect)");
-                return null;
-            }
-        }
-
-        ch = strTree.charAt(currentPosition[0]);
-        currentPosition[0]++;
-
-        // checking if the node has label
-
-
-        //checking if the node has children
-        if (ch == '(') {
-            SampledAncestorNode left = makeNewNode(strTree, currentPosition, nodeLabel);
-            node.setLeft(left);
-            left.setParent(node);
-            ch = strTree.charAt(currentPosition[0]);
-            currentPosition[0]++;
-            if ( ch == ',') {
-                SampledAncestorNode right = makeNewNode(strTree, currentPosition, nodeLabel);
-                node.setRight(right);
-                right.setParentOnly(node);
-                ch = strTree.charAt(currentPosition[0]);
-                currentPosition[0]++;
-            }
-            if (ch == ')') {
-                ch = strTree.charAt(currentPosition[0]);
-                currentPosition[0]++;
-            }  else {
-                System.out.println("Incorrect string tree representation");
-                return null;
-            }
-
-        }
-
-        //  reading length
-        if (ch == ':') {
-            node.setHeight(-readLength(strTree, currentPosition));
-        }
-
-        shiftHeights(node, node.getHeight());
-
-        return node;
-    }
+//    private SampledAncestorNode makeNewNode(String strTree, int[] currentPosition, int[] nodeLabel) {
+//
+//        SampledAncestorNode node = new SampledAncestorNode();
+//        String label = new String();
+//
+//        for (int i = currentPosition[0]; i < strTree.length(); i++) {
+//            if (strTree.charAt(i) != '(' && strTree.charAt(i) != ':') {
+//                label += strTree.charAt(i);
+//            } else {
+//                currentPosition[0] = i;
+//                break;
+//            }
+//        }
+//
+//        char ch;
+//
+//        if (label.equals("")) {
+//            node.setNr(nodeLabel[0]);
+//            nodeLabel[0]++;
+//        }  else {
+//            if (labelSet.contains(Integer.parseInt(label)))
+//                node.setNr(Integer.parseInt(label)-1);
+//            else {
+//                System.out.println("Incorrect string tree representation (label set is incorrect)");
+//                return null;
+//            }
+//        }
+//
+//        ch = strTree.charAt(currentPosition[0]);
+//        currentPosition[0]++;
+//
+//        // checking if the node has label
+//
+//
+//        //checking if the node has children
+//        if (ch == '(') {
+//            SampledAncestorNode left = makeNewNode(strTree, currentPosition, nodeLabel);
+//            node.setLeft(left);
+//            left.setParent(node);
+//            ch = strTree.charAt(currentPosition[0]);
+//            currentPosition[0]++;
+//            if ( ch == ',') {
+//                SampledAncestorNode right = makeNewNode(strTree, currentPosition, nodeLabel);
+//                node.setRight(right);
+//                right.setParentOnly(node);
+//                ch = strTree.charAt(currentPosition[0]);
+//                currentPosition[0]++;
+//            }
+//            if (ch == ')') {
+//                ch = strTree.charAt(currentPosition[0]);
+//                currentPosition[0]++;
+//            }  else {
+//                System.out.println("Incorrect string tree representation");
+//                return null;
+//            }
+//
+//        }
+//
+//        //  reading length
+//        if (ch == ':') {
+//            node.setHeight(-readLength(strTree, currentPosition));
+//        }
+//
+//        shiftHeights(node, node.getHeight());
+//
+//        return node;
+//    }
 
     private void shiftHeights(SampledAncestorNode node, double shift) {
         if (node.getLeft() != null) {
@@ -196,7 +196,7 @@ public class SampledAncestorTreeTrace {
 
     }
 
-    public static void main (String[] arg) throws Exception {
+    /*public static void main (String[] arg) throws Exception {
         String exTree = "9(10(8(7(6(5(4(3(2((1:1.0,11:1.0):1.0):1.0):1.0):1.0):1.0):1.0):1.0):1.0):1.0):0.0";
         //String exTree = "1(2(3:1.0):1.0):0.0";
         SampledAncestorTreeTrace analysis = new SampledAncestorTreeTrace(11);
@@ -209,7 +209,7 @@ public class SampledAncestorTreeTrace {
         System.out.println("Tree now = " + tree.getRoot().toShortNewick(false));
         //for (int i=0; i< tmp.size(); i++)
         //  System.out.println("Clade " + i + " is " + tmp.get(i));
-    }
+    }        */
 
 
 }
