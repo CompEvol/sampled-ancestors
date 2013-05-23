@@ -2,8 +2,6 @@ package beast.evolution.operators;
 
 import beast.core.Description;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.SampledAncestorNode;
-import beast.evolution.tree.SampledAncestorTree;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
 
@@ -39,8 +37,12 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
         Tree tree = m_tree.get(this);
 
         double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;
-        double x0 = 100;
+        double x0 = 10;
         int newDimension, oldDimension;
+
+//        if (((SampledAncestorTree)tree).getTimeOfOrigin() != 0)
+//            x0 = ((SampledAncestorTree)tree).getTimeOfOrigin();
+//        else x0 = 0;
 
         // choose a random node avoiding root
         int nodeCount = tree.getNodeCount();
@@ -173,7 +175,7 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                     CiP.setParent(null); // completely remove <iP, CiP>     (deleting reference to iP from CiP)
                     tree.setRootOnly(CiP);
                 }
-                ((SampledAncestorTree) tree).removeNode(iP.getNr());    // remove node iP from the array and update members of the tree
+                tree.removeNode(iP.getNr());    // remove node iP from the array and update members of the tree
             } else {     // removing from a branch and attaching to a branch (from <PiP, CiP> to <jP, j> or above the root j)
                 //update
                 iP.removeChild(CiP); //remove <iP, CiP>
@@ -207,7 +209,7 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
 
                 //update
                 iP.removeChild(i); // remove <iP,i>
-                Node k = new SampledAncestorNode();
+                Node k = new Node();
                 if (jP != null) {
                     jP.removeChild(j); // remove <jP, j>
                     jP.addChild(k);// add <jP, k>, <k, j>, and <k, i>
