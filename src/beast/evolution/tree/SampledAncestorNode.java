@@ -49,40 +49,6 @@ public class SampledAncestorNode extends Node {
         return node;
     } // copy
 
-    /**
-     * @return beast.tree in Newick format, with length and meta data
-     *         information. Unlike toNewick(), here Nodes are numbered, instead of
-     *         using the taxon names.
-     *         Also, internal nodes are labelled if bPrintInternalNodeLabels
-     *         is set true. This is useful for example when storing a State to file
-     *         so that it can be restored.
-     */
-
-    @Override
-    public String toShortNewick(boolean bPrintInternalNodeLabels) {
-        StringBuilder buf = new StringBuilder();
-        if (getLeft() != null) {
-            if (bPrintInternalNodeLabels) {
-                buf.append(m_iLabel + 1).append(":");
-            }
-            buf.append("(");
-            buf.append(getLeft().toShortNewick(bPrintInternalNodeLabels));
-            if (getRight() != null) {
-                buf.append(',');
-                buf.append(getRight().toShortNewick(bPrintInternalNodeLabels));
-            }
-            buf.append(")");
-            if (getID() != null && !bPrintInternalNodeLabels) {
-                buf.append(m_iLabel + 1);
-            }
-        } else {
-            buf.append(m_iLabel + 1);
-        }
-
-        //buf.append(getNewickMetaData());
-        buf.append(":").append(getLength());
-        return buf.toString();
-    }
 
     @Override
     public String toSortedNewick(int[] iMaxNodeInClade, boolean printMetaData) {
