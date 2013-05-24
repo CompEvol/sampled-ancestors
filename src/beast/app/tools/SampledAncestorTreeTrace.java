@@ -1,7 +1,6 @@
 package beast.app.tools;
 
-import beast.evolution.tree.SampledAncestorNode;
-import beast.util.SampledAncestorTreeParser;
+import beast.evolution.tree.Node;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -163,16 +162,16 @@ public class SampledAncestorTreeTrace {
 //        return node;
 //    }
 
-    private void shiftHeights(SampledAncestorNode node, double shift) {
+    private void shiftHeights(Node node, double shift) {
         if (node.getLeft() != null) {
             double tmp = node.getLeft().getHeight();
             node.getLeft().setHeight(tmp + shift);
-            shiftHeights((SampledAncestorNode)node.getLeft(), shift);
+            shiftHeights(node.getLeft(), shift);
         }
         if (node.getRight() != null) {
             double tmp = node.getRight().getHeight();
             node.getRight().setHeight(tmp + shift);
-            shiftHeights((SampledAncestorNode)node.getRight(), shift);
+            shiftHeights(node.getRight(), shift);
         }
     }
 
@@ -201,7 +200,7 @@ public class SampledAncestorTreeTrace {
         //String exTree = "1(2(3:1.0):1.0):0.0";
         SampledAncestorTreeTrace analysis = new SampledAncestorTreeTrace(11);
 
-        SampledAncestorTreeParser tree = new SampledAncestorTreeParser(null, exTree, 1);
+        TreeParser tree = new TreeParser(exTree, false, true, false, 1);
 
         //ArrayList<String> tmp = TraceFRSTree.extractAllDClades((TraceNode)tree.getRoot());
 

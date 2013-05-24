@@ -37,12 +37,8 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
         Tree tree = m_tree.get(this);
 
         double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;
-        double x0 = 10;
+        //double x0 = 10;
         int newDimension, oldDimension;
-
-//        if (((SampledAncestorTree)tree).getTimeOfOrigin() != 0)
-//            x0 = ((SampledAncestorTree)tree).getTimeOfOrigin();
-//        else x0 = 0;
 
         // choose a random node avoiding root
         int nodeCount = tree.getNodeCount();
@@ -141,10 +137,10 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                 newAge = newMinAge + (Randomizer.nextDouble() * newRange);
             } else {
                 double randomNumberFromExponential;
-                //randomNumberFromExponential = Randomizer.nextExponential(1);
-                newRange = x0 - j.getHeight();
-                randomNumberFromExponential = Randomizer.nextDouble() * newRange;
-                //newRange = Math.exp(randomNumberFromExponential);
+                randomNumberFromExponential = Randomizer.nextExponential(1);
+                //newRange = x0 - j.getHeight();
+                //randomNumberFromExponential = Randomizer.nextDouble() * newRange;
+                newRange = Math.exp(randomNumberFromExponential);
 
                 newAge = j.getHeight() + randomNumberFromExponential;
             }
@@ -158,8 +154,8 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
             if (PiP != null) {
                 oldRange = PiP.getHeight() - oldMinAge;
             } else {
-                //oldRange = Math.exp(iP.getHeight() - oldMinAge);
-                oldRange = x0 - oldMinAge;
+                oldRange = Math.exp(iP.getHeight() - oldMinAge);
+                //oldRange = x0 - oldMinAge;
             }
 
             if (attachingToLeaf) {   // removing from a branch and attaching to a leaf (from <PiP, CiP> to j)

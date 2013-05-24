@@ -3,7 +3,6 @@ package beast.evolution.speciation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.evolution.tree.SampledAncestorTree;
 import beast.evolution.tree.Tree;
 
 /**
@@ -19,7 +18,8 @@ import beast.evolution.tree.Tree;
 public class BDSamplingThroughTimeSampledAncestorModel extends SpeciesTreeDistribution {
 
     public Input<RealParameter> orig_root =
-            new Input<RealParameter>("orig_root", "The origin of infection x0", Input.Validate.REQUIRED);
+            new Input<RealParameter>("orig_root", "The time dictance between the most recent common ancestor time" +
+                    " and the origin of infection", Input.Validate.REQUIRED);
 
     public Input<RealParameter> birthRate =
             new Input<RealParameter>("birthRate", "BirthRate", Input.Validate.REQUIRED);
@@ -38,7 +38,7 @@ public class BDSamplingThroughTimeSampledAncestorModel extends SpeciesTreeDistri
     protected double psi;
     protected double c1;
     protected double c2;
-    protected double x0;
+    protected double origToRootDistance;
 
     public void initAndValidate() throws Exception {
         mu = deathRate.get().getValue();
@@ -47,13 +47,7 @@ public class BDSamplingThroughTimeSampledAncestorModel extends SpeciesTreeDistri
         r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
         c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
         c2 = -(lambda - mu - psi) / c1;
-        x0 = orig_root.get().getValue();
-        System.out.println("lambda = " + lambda);
-        System.out.println("mu = " + mu);
-        System.out.println("psi = " + psi);
-        System.out.println("r = " + r);
-        System.out.println("x0 = " + x0);
-
+        origToRootDistance = orig_root.get().getValue();
     }
 
     private double p0s(double t, double c1, double c2) {
@@ -65,9 +59,21 @@ public class BDSamplingThroughTimeSampledAncestorModel extends SpeciesTreeDistri
         return Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2);
     }
 
+    private void updateParameters() {
+        mu = deathRate.get().getValue();
+        psi = samplingRate.get().getValue();
+        lambda = birthRate.get().getValue();
+        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+        c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
+        c2 = -(lambda - mu - psi) / c1;
+        origToRootDistance = orig_root.get().getValue();
+    }
+
     @Override
     public double calculateTreeLogLikelihood(Tree tree) {
         int nodeCount = tree.getNodeCount();
+        updateParameters();
+        double x0 = tree.getRoot().getHeight() + origToRootDistance;
         if (x0 < tree.getRoot().getHeight()) {
             System.out.println("It is time to change the root height choice");
         }

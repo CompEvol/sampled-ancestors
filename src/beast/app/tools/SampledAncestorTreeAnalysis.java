@@ -2,7 +2,7 @@ package beast.app.tools;
 
 import beast.core.util.ESS;
 import beast.evolution.tree.Node;
-import beast.util.SampledAncestorTreeParser;
+import beast.util.TreeParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,13 +30,13 @@ public class SampledAncestorTreeAnalysis {
     }
 
     public void countTreesWithDClades() throws Exception {
-        SampledAncestorTreeParser tree;
+        TreeParser tree;
 
 
         int dCladeCount = 0;
 
         for (int i =0; i < trace.getTreeCount(); i++) {
-            tree = new SampledAncestorTreeParser(null, trace.getTrees()[i], 1, false);
+            tree = new TreeParser(trace.getTrees()[i], false, true, false, 1);
             int j;
             for (j=0; j<tree.getNodeCount(); j++)
                 if (tree.getNode(j).getChildCount() == 1) {
@@ -58,7 +58,7 @@ public class SampledAncestorTreeAnalysis {
         int dCladeCount = 0;
 
         for (int i=0; i < trace.getTreeCount(); i++) {
-            SampledAncestorTreeParser tree = new SampledAncestorTreeParser(null, trace.getTrees()[i], 1, false);
+            TreeParser tree = new TreeParser(trace.getTrees()[i], false, true, false, 1);
             ArrayList<String> dClades =  extractAllDClades(tree.getRoot());
             tmp.addAll(dClades);
             for (int j=0; j<tree.getNodeCount(); j++)
