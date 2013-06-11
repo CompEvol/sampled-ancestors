@@ -151,7 +151,7 @@
                    upper="1." dimension="1"/>
     </BDSamplingThroughTimeSampledAncestorModel>
 
-    <run spec="MCMC" id="mcmc" chainLength="1000000" preBurnin="0">
+    <run spec="MCMC" id="mcmc" chainLength="10000" preBurnin="0">
         <!-- <init spec='CalibratedYuleInitialTree' id='startTree' initial='@tree'
               taxonset='@taxa' calibrations='@cal'>
         </init> -->

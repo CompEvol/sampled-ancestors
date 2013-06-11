@@ -22,7 +22,7 @@ public class BDSamplingThroughTimeDirectAncestorModelTest extends TestCase {
     @Test
     public void testLikelihoodCalculation1() throws Exception {
         BDSamplingThroughTimeSampledAncestorModel model = new BDSamplingThroughTimeSampledAncestorModel();
-        Tree tree = new TreeParser("((1:1.0)2:1.0)3:0.0",  false, true, false, 1);
+        Tree tree = new TreeParser("((1:1.0)2:1.0)3:0.0", false, true, false, 1);
 
         model.setInputValue("tree", tree);
         model.setInputValue("orig_root", new RealParameter("8."));

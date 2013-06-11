@@ -111,7 +111,7 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
         jP = j.getParent();
 
         if (jP != null && jP.getNr() == i.getNr()) {
-            System.out.println("Proposal failed because jP = i. Heights of i = " + i.getHeight() + "Height of jP = " + jP.getHeight());
+            System.out.println("Proposal failed because jP = i. Heights of i = " + i.getHeight() + " Height of jP = " + jP.getHeight());
             return Double.NEGATIVE_INFINITY;
         }
 
@@ -206,6 +206,7 @@ public class WilsonBaldingForSampledAncestorTrees extends TreeOperator {
                 //update
                 iP.removeChild(i); // remove <iP,i>
                 Node k = new Node();
+               // k.makeDirty(Tree.IS_DIRTY);
                 if (jP != null) {
                     jP.removeChild(j); // remove <jP, j>
                     jP.addChild(k);// add <jP, k>, <k, j>, and <k, i>
