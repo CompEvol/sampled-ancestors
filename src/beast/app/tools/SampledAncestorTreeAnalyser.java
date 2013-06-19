@@ -1,6 +1,8 @@
 package beast.app.tools;
 
 import beast.evolution.tree.Tree;
+import beast.util.NexusParser;
+
 import java.io.*;
 
 /**
@@ -82,10 +84,21 @@ public class SampledAncestorTreeAnalyser {
         //HashSet<Integer> taxaLabelSet = new HashSet<Integer>(Arrays.asList(new Integer[] {1, 2, 3}));
 
         try {
-            reader = new FileReader(file);
-            NexusImporter importer = new NexusImporter(reader);
 
-            SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(importer.getTrees(), importer.getLabelCount());
+
+
+            reader = new FileReader(file);
+            //NexusImporter importer = new NexusImporter(reader);
+
+            NexusParser parser = new NexusParser();
+            parser.parseFile(file);
+
+
+
+            SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
+
+
+            //SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(importer.getTrees(), importer.getLabelCount());
 
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 

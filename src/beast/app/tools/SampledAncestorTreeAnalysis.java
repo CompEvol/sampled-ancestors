@@ -26,7 +26,7 @@ public class SampledAncestorTreeAnalysis {
     public void perform() throws Exception {
         countTopologies();
         //countTreesWithDClades();
-        countClades();
+        //countClades();
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -99,7 +99,8 @@ public class SampledAncestorTreeAnalysis {
 
     public void countTopologies() {
         FrequencySet<String> topologies = new FrequencySet<String>();
-        String[] trees = trace.getShortTrees();
+        //String[] trees = trace.getShortTrees();
+        String[] trees = trace.getLabeledTrees();
 
         for (int i=0; i < trees.length; i++) {
             topologies.add(trees[i]);

@@ -1,9 +1,11 @@
 package beast.app.tools;
 
 import beast.evolution.tree.Node;
+import beast.util.NexusParser;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author Alexandra Gavryushkina
@@ -18,6 +20,8 @@ public class SampledAncestorTreeTrace {
     private String[] trees;
 
     private String[] shortTrees;
+
+    private String[] labeledTrees;
 
     private String[] rankedTrees;
 
@@ -35,10 +39,20 @@ public class SampledAncestorTreeTrace {
         return treeCount;
     }
 
-    public SampledAncestorTreeTrace(String[] newTrees, int newLabelCount) throws Exception {
+    public String[] getLabeledTrees() {
+        return labeledTrees;
+    }
 
-        labelCount = newLabelCount;
-        trees = newTrees;
+    public SampledAncestorTreeTrace(NexusParser newParser) throws Exception {
+
+        NexusParser parser = newParser;
+
+        String[] newick = new String[parser.m_trees.size()];
+        for (int i =0 ; i < newick.length; i++) {
+            newick[i] = parser.m_trees.get(i).getRoot().toSortedNewick(new int[] {1}, false);
+        }
+        labelCount = parser.translationMap.keySet().size();
+        trees = newick;
         treeCount = trees.length;
 
         Integer[] tmp = new Integer[labelCount];
@@ -52,6 +66,13 @@ public class SampledAncestorTreeTrace {
         for (int i =0; i < treeCount; i++) {
             shortTrees[i] = convertToShortTree(trees[i]);
         }
+
+        labeledTrees = new String[treeCount];
+
+        for (int i=0; i < treeCount; i++){
+            labeledTrees[i] = convertToLabeledTree(shortTrees[i], parser.translationMap);
+        }
+
     }
 
     public SampledAncestorTreeTrace(int newLabelCount) {
@@ -65,28 +86,103 @@ public class SampledAncestorTreeTrace {
         labelSet = new HashSet<Integer>(Arrays.asList(tmp));
     }
 
+    public String convertToLabeledTree(String strIn, Map<String,String> translationMap) {
+
+        StringBuilder buf = new StringBuilder();
+        boolean readingInt = false;
+        int begin=0;
+        int end=1;
+        String sInt;
+
+        for (int i=0; i < strIn.length(); i++) {
+            if (!readingInt) {
+                if (strIn.charAt(i) == '(' || strIn.charAt(i) == ')' || strIn.charAt(i) == ',' ) {
+                    buf.append(strIn.charAt(i));
+                } else {
+                begin = i;
+                end = i+1;
+                readingInt = true;
+                }
+            } else {
+                if (strIn.charAt(i) == '(' || strIn.charAt(i) == ')' || strIn.charAt(i) == ',' ) {
+                    String key = strIn.substring(begin, end);
+                    buf.append(translationMap.get(key));
+                    buf.append(strIn.charAt(i));
+                    readingInt = false;
+                } else {
+                    end++;
+                }
+            }
+        }
+        if(readingInt) {
+            String key = strIn.substring(begin, end);
+            buf.append(translationMap.get(key));
+        }
+
+        return buf.toString();
+    }
+
+//    public static String convertToShortTree1(String strIn) {
+//
+//        StringBuilder buf = new StringBuilder();
+//        boolean skipping = false;
+//
+//        for (int i=0; i < strIn.length(); i++) {
+//            if (!skipping) {
+//                if (strIn.charAt(i) != ':') {
+//                    buf.append(strIn.charAt(i));
+//                } else {
+//                    if (strIn.charAt(i+1) != '(') {
+//                        skipping = true;
+//                        i++;
+//                    } else {
+//                        buf.append(strIn.charAt(i+1));
+//                        i++;
+//                    }
+//                }
+//            } else {
+//                if (strIn.charAt(i) == ',' || strIn.charAt(i) == ')') {
+//                    buf.append(strIn.charAt(i));
+//                    skipping = false;
+//                }
+//            }
+//        }
+//
+//        return buf.toString();
+//    }
+
+
     public static String convertToShortTree(String strIn) {
 
         StringBuilder buf = new StringBuilder();
         boolean skipping = false;
+        boolean inComment = false;
 
         for (int i=0; i < strIn.length(); i++) {
-            if (!skipping) {
-                if (strIn.charAt(i) != ':') {
-                    buf.append(strIn.charAt(i));
-                } else {
-                    if (strIn.charAt(i+1) != '(') {
-                        skipping = true;
-                        i++;
-                    } else {
-                        buf.append(strIn.charAt(i+1));
-                        i++;
-                    }
+            if (!skipping && !inComment) {
+
+                switch (strIn.charAt(i)) {
+                    case ':':
+                        if (strIn.charAt(i+1) != '(') {
+                            skipping = true;
+                            i += 1;
+                        } else {
+                            buf.append(strIn.charAt(i));
+                        }
+                        break;
+                    case '[':
+                        inComment = true;
+                        break;
+                    default:
+                        buf.append(strIn.charAt(i));
                 }
             } else {
-                if (strIn.charAt(i) == ',' || strIn.charAt(i) == ')') {
+                if (!inComment && (strIn.charAt(i) == ',' || strIn.charAt(i) == ')')) {
                     buf.append(strIn.charAt(i));
                     skipping = false;
+                }
+                if (inComment && strIn.charAt(i) == ']') {
+                    inComment = false;
                 }
             }
         }
