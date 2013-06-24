@@ -24,8 +24,9 @@
         <trait idref='traitset'/>
     </tree>
 
-    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeSampledAncestorModel" id="birthDeath" tree="@tree">
-        <parameter name="orig_root" id="orig_root" value="1." lower="0." upper="1000." dimension="1"/>
+
+    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
+        <parameter name="orig_root" id="orig_root" value="10." lower="0." upper="1000." dimension="1"/>
 
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
         <parameter name="deathRate" id="deathRate" value="0.99" lower="0." upper="1." dimension="1"/>
@@ -41,25 +42,20 @@
 
         <state>
             <stateNode idref='tree' />
-            <stateNode idref='orig_root'/>
         </state>
 
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution idref='birthDeath'/>
         </distribution>
 
-        <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
-        <operator id="SampledNodeDatesRandomWalkerForFakeSATrees" windowSize="1" spec="SampledNodeDatesRandomWalker" tree="@tree" weight="10"/>
+        <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="15" tree="@tree"/>
 
-           <operator id='orig_scaler' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@orig_root"/>
-
-
-           <logger logEvery="1000" fileName="testSampledAncestorTreeOperator.$(seed).log">
-               <model idref='posterior'/>
-               <!-- <log idref="posterior"/> -->
+        <logger logEvery="1000" fileName="testFakeNodes3.$(seed).log">
+            <model idref='posterior'/>
+            <!-- <log idref="posterior"/> -->
             <log idref="birthDeath"/>
         </logger>
-        <logger logEvery="100" fileName="testSampledAncestorTreeOperator.$(seed).trees">
+        <logger logEvery="100" fileName="testFakeNodes3.$(seed).trees">
             <log idref="tree"/>
         </logger>
         <logger logEvery="1000">

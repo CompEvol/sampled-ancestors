@@ -1,6 +1,7 @@
 package beast.app.tools;
 
 import beast.evolution.tree.Node;
+import beast.evolution.tree.Tree;
 import beast.util.NexusParser;
 
 import java.util.Arrays;
@@ -289,6 +290,25 @@ public class SampledAncestorTreeTrace {
 
         return Double.parseDouble(tmp);
 
+    }
+
+    public void changeTaxaNumbers(Tree tree, Map<String,String> newTranslationMap) {
+        for (int i=0; i < tree.getLeafNodeCount(); i++) {
+            String taxon = newTranslationMap.get(String.valueOf(i));
+            int oldIndex = i;
+            for (int j=i; j < tree.getLeafNodeCount(); j++) {
+                if (tree.getNode(j).getID().equals(taxon)) {
+                    oldIndex = j;
+                    break;
+                }
+            }
+            if (i != oldIndex) {
+                tree.getNode(i).setNr(oldIndex);
+                tree.getNode(oldIndex).setNr(i);
+                // tree.initArray          TODO implement this, but an array of nodes is private so...
+            }
+
+        }
     }
 
     /*public static void main (String[] arg) throws Exception {

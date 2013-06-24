@@ -49,16 +49,23 @@ public class SampledAncestorTreeAnalyser {
     public static void main(String[] args) throws IOException, Exception {
 
         int percentCredSet = 0;
+        boolean useNumbers = true;
 
         BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
-        String a= new String();
+        String a;
         try {
             System.out.println("Type the size of credible set in percents: ");
             a = buf.readLine();
             percentCredSet = Integer.parseInt(a);
+            System.out.println("Would you like to use taxa names for tip labels? If so type 'yes'. Otherwise numbers will be used.");
+            a = buf.readLine();
+            if (a.equals("yes")) {
+                useNumbers = false;
+            }
         } catch (IOException err) {
             System.out.println("Error");
         }
+
 
         if (0 >= percentCredSet || percentCredSet > 100) {
             System.out.println("The percent for credible set is out of the interval (0,100]" + "95% credible set will be shown");
@@ -84,16 +91,11 @@ public class SampledAncestorTreeAnalyser {
         //HashSet<Integer> taxaLabelSet = new HashSet<Integer>(Arrays.asList(new Integer[] {1, 2, 3}));
 
         try {
-
-
-
             reader = new FileReader(file);
             //NexusImporter importer = new NexusImporter(reader);
 
             NexusParser parser = new NexusParser();
             parser.parseFile(file);
-
-
 
             SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
 
@@ -102,7 +104,7 @@ public class SampledAncestorTreeAnalyser {
 
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 
-            analysis.perform();
+            analysis.perform(useNumbers);
         }
         catch (IOException e) {
             //

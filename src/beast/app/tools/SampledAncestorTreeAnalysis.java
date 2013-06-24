@@ -23,8 +23,8 @@ public class SampledAncestorTreeAnalysis {
         percentCredSet = percent;
     }
 
-    public void perform() throws Exception {
-        countTopologies();
+    public void perform(boolean useNumbers) throws Exception {
+        countTopologies(useNumbers);
         //countTreesWithDClades();
         //countClades();
     }
@@ -97,10 +97,14 @@ public class SampledAncestorTreeAnalysis {
         System.out.println();
     }
 
-    public void countTopologies() {
+    public void countTopologies(boolean useNumbers) {
         FrequencySet<String> topologies = new FrequencySet<String>();
-        //String[] trees = trace.getShortTrees();
-        String[] trees = trace.getLabeledTrees();
+        String[] trees;
+        if (useNumbers) {
+            trees = trace.getShortTrees();
+        } else {
+            trees = trace.getLabeledTrees();
+        }
 
         for (int i=0; i < trees.length; i++) {
             topologies.add(trees[i]);
