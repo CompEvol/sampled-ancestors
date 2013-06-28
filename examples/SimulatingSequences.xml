@@ -1,0 +1,42 @@
+<beast version='2.0'
+       namespace='beast.evolution.alignment:beast.core:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood'>
+
+
+    <data id="alignment" dataType="nucleotide">
+        <sequence taxon="A">?</sequence>
+        <sequence taxon="B">?</sequence>
+        <sequence taxon="C">?</sequence>
+        <sequence taxon="D">?</sequence>
+        <sequence taxon="E">?</sequence>
+    </data>
+
+
+    <tree id='tree' spec='beast.util.TreeParser' taxa='@alignment' adjustTipHeights ='false'>
+        <input name='newick'>
+            ((A:0.25,(B:0.55,C:0.0):0.2):0.12,(D:0.3,E:0.0):0.22);
+        </input>
+    </tree>
+
+    <run spec="beast.app.seqgen.SequenceSimulator" id="seqgen" data='@alignment' tree='@tree' sequencelength='3000'>
+
+        <siteModel id="SiteModel" spec="SiteModel">
+            <parameter dimension="1"  id="mutationRate" name="mutationRate" value="10.0"/>
+            <parameter dimension="1"  id="proportionInvariant" name="proportionInvariant" value="0.5"/>
+            <substModel id="gtr" spec="GTR">
+                <parameter dimension="1"  id="rateAG" lower="0.0" name="rateAG" value="1.0"/>
+                <parameter dimension="1"  id="rateAC" lower="0.0" upper="100.0" name="rateAC" value="0.4"/>
+                <parameter dimension="1"  id="rateGT" lower="0.0" upper="100.0" name="rateGT" value="0.15"/>
+                <parameter dimension="1"  id="rateAT" lower="0.0" upper="100.0" name="rateAT" value="0.1"/>
+                <parameter dimension="1"  id="rateCG" lower="0.0" upper="100.0" name="rateCG" value="0.15"/>
+                <parameter dimension="1"  id="rateCT" lower="0.0" upper="100.0" name="rateCT" value="1.04"/>
+                <frequencies estimate="true" id="freqs" spec="Frequencies">
+                    <parameter name='frequencies' id='freqParameter' value='0.25' dimension='4' lower="0." upper="1."/>
+                </frequencies>
+            </substModel>
+        </siteModel>
+        <branchRateModel id="StrictClock" spec="beast.evolution.branchratemodel.StrictClockModel">
+            <parameter dimension="1" id="clock.rate" name="clock.rate" value="0.1" lower="0." upper="1."/>
+        </branchRateModel>
+
+    </run>
+</beast>

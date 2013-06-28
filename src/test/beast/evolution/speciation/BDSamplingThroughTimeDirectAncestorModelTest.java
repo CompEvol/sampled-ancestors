@@ -7,11 +7,7 @@ import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
 import junit.framework.TestCase;
 
-import beast.core.Description;
-
 import org.junit.Test;
-
-import java.io.PrintStream;
 
 /**
  * @author Alexandra Gavryushkina

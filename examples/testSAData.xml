@@ -143,7 +143,7 @@
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
         <parameter name="deathRate" id="deathRate" value="0.99" lower="0." upper="1." dimension="1"/>
         <parameter name="samplingRate" id="samplingRate" value="0.5" lower="0." upper="1." dimension="1"/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.9" lower="0."
+        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.5" lower="0."
                    upper="1." dimension="1"/>
     </BDSamplingThroughTimeModel>
 
@@ -174,6 +174,9 @@
             <distribution  id='orig_root_Prior' x="@orig_root" spec='beast.math.distributions.Prior'>
                 <distr spec='beast.math.distributions.LogNormalDistributionModel' M="1." S="1.25" offset="0.0" meanInRealSpace="false"/>
             </distribution>
+            <distribution  id='bNASP_Prior' x="@bNASP" spec='beast.math.distributions.Prior'>
+                <distr spec='beast.math.distributions.Beta' alpha="2." beta="2."/>
+            </distribution>
             <distribution id="BDlikelihood" spec="util.CompoundDistribution">
                 <distribution idref="birthDeath"/>
             </distribution>
@@ -189,6 +192,8 @@
         <state id="state" storeEvery="10000">
             <stateNode idref='tree'/>
             <stateNode idref="orig_root"/>
+            <stateNode idref="bNASP"/>
+
 
             <stateNode idref="clock.rate"/>
             <stateNode idref="freqParameter"/>
@@ -203,16 +208,19 @@
 
 
         <operator id='origOperator' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@orig_root"/>
+        <operator id='bNASPOperator' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@bNASP"/>
+
 
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="5" tree="@tree"/>
 
         <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="1.0"/>
-        <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateAC"/>
-        <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateAT"/>
-        <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateCG"/>
-        <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateCT"/>
-        <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateGT"/>
-        <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@proportionInvariant"/>
+        <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateAC"/>
+        <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateAT"/>
+        <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateCG"/>
+        <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateCT"/>
+        <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateGT"/>
+        <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@proportionInvariant"/>
         <operator id='gammaShapeScaler' spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@gammaShape"/>
         <operator autoOptimize="true" delta="0.2" id="FrequenciesExchanger" integer="false" spec="DeltaExchangeOperator" weight="0.1" parameter="@freqParameter"/>
 
@@ -223,6 +231,7 @@
             <log idref="jointTreeLikelihood"/>
             <log id="treeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
             <log idref="orig_root"/>
+            <log idref="bNASP"/>
 
             <!--
             <log idref="birth"/>
@@ -249,6 +258,7 @@
             <log idref="clock.rate"/>
             <log idref="treeHeight"/>
             <log idref="orig_root"/>
+            <log idref="bNASP"/>
             <!--
             <log idref="birth"/>
             <log idref="death"/>

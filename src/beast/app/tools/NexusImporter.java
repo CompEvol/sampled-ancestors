@@ -3,6 +3,7 @@ package beast.app.tools;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author Alexandra Gavryushkina
@@ -26,27 +27,22 @@ public class NexusImporter {
         return labelCount;
     }
 
-    //public ArrayList<Integer> getLabels() {
-    //    return labels;
-    //}
-
-    public NexusImporter(Reader newReader) {
+       public NexusImporter(Reader newReader) {
         reader = newReader;
         importFromReader();
     }
 
     public void importFromReader() {
+
         skipUntil(reader, ';');
         skipUntil(reader, '=');
         labelCount = readInteger(reader);
-        for (int i=0; i < 5; i++)
+        for (int i=0; i < 4; i++)
             skipUntil(reader, ';');
         importTrees();
 
-    }
 
-    //public void importLabels() {
-    //}
+    }
 
     public void importTrees() {
 

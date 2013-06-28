@@ -30,7 +30,7 @@
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
         <parameter name="deathRate" id="deathRate" value="0.99" lower="0." upper="1." dimension="1"/>
         <parameter name="samplingRate" id="samplingRate" value="0.5" lower="0." upper="1." dimension="1"/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.9" lower="0."
+        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.1" lower="0."
                    upper="1." dimension="1"/>
     </BDSamplingThroughTimeSampledAncestorModel>
 
@@ -51,15 +51,15 @@
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
         <operator id="SampledNodeDatesRandomWalkerForFakeSATrees" windowSize="1" spec="SampledNodeDatesRandomWalker" tree="@tree" weight="10"/>
 
-           <operator id='orig_scaler' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@orig_root"/>
+           <operator id='orig_scaler' spec='ScaleOperator' scaleFactor=".041" weight="1" parameter="@orig_root"/>
 
 
-           <logger logEvery="1000" fileName="testSampledAncestorTreeOperator.$(seed).log">
+           <logger logEvery="1000" fileName="testSamplingDates3.$(seed).log">
                <model idref='posterior'/>
                <!-- <log idref="posterior"/> -->
             <log idref="birthDeath"/>
         </logger>
-        <logger logEvery="100" fileName="testSampledAncestorTreeOperator.$(seed).trees">
+        <logger logEvery="100" fileName="testSamplingDates3.$(seed).trees">
             <log idref="tree"/>
         </logger>
         <logger logEvery="1000">

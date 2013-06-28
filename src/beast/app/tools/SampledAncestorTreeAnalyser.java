@@ -105,6 +105,7 @@ public class SampledAncestorTreeAnalyser {
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 
             analysis.perform(useNumbers);
+            //analysis.countTopologiesTest();
         }
         catch (IOException e) {
             //

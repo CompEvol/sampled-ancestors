@@ -20,6 +20,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
     public double proposal() {
 
         Tree tree = m_tree.get(this);
+        //double x0 = 10;
 
         double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;
         int newDimension, oldDimension;
@@ -164,8 +165,6 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
             j.setDirectAncestor(true);
         if (CiP.getNr() != j.getNr() && CiP.isDirectAncestor())
             CiP.setDirectAncestor(false);
-
-        //tree.setEverythingDirty(true);
 
         newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
         DimensionCoefficient = (double) oldDimension / newDimension;

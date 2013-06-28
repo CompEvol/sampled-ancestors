@@ -11,40 +11,11 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
 
-/**
- *@author Alexandra Gavryushkina
- */
-
-@Description("Implements branch exchange operations. There is a NARROW and WIDE variety. " +
-        "The narrow exchange is very similar to a rooted-beast.tree nearest-neighbour " +
-        "interchange but with the restriction that node height must remain consistent.")
-public class ExchangeForFakeSampledAncestorTrees extends TreeOperator {
-
-    public Input<Boolean> m_bIsNarrow = new Input<Boolean>("isNarrow", "if true (default) a narrow exchange is performed, otherwise a wide exchange", true);
-
-    @Override
-    public void initAndValidate() {
-    }
-
-    /**
-     * override this for proposals,
-     *
-     * @return log of Hastings Ratio, or Double.NEGATIVE_INFINITY if proposal should not be accepted *
-     */
-    @Override
-    public double proposal() {
-        final Tree tree = m_tree.get(this);
-
-        double fLogHastingsRatio = 0;
-
-        if (m_bIsNarrow.get()) {
-            fLogHastingsRatio = narrow(tree);
-        } else {
-            fLogHastingsRatio = wide(tree);
-        }
-
-        return fLogHastingsRatio;
-    }
+@Description("Implement Narrow and Wide Exchange for sampled ancestor trees." +
+        "Narrow move chooses a random internal node (not a fake node) with two non-leaf children." +
+        "Then it takes the older child of this node and exchange one of its children (or just a child" +
+        "if there is only one) with the younger child. Wide remains the same as for regular trees.")
+public class ExchangeForFakeSampledAncestorTrees extends Exchange {
 
     public double narrow(final Tree tree) {
 
@@ -92,53 +63,47 @@ public class ExchangeForFakeSampledAncestorTrees extends TreeOperator {
         }
 
         exchangeNodes(i, iUncle, iParent, iGrandParent);
-        return 0;
 
+        return 0;
 
     }
 
     /**
-     * WARNING: Assumes strictly bifurcating beast.tree. with more than 2 tips
+     * WARNING: Assumes strictly bifurcating beast.tree.
      * @param tree
      */
     public double wide(final Tree tree) {
 
         final int nodeCount = tree.getNodeCount();
 
-        Node i = tree.getRoot();
+        Node i, j, iP, jP;
 
-        while (i.isRoot() || i.isDirectAncestor()) {
+        //make sure that there are at least two distinct non-root nodes which are not direct ancestors.
+        if (tree.getNodeCount() == 3 && tree.getRoot().isFake()) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        do {
             i = tree.getNode(Randomizer.nextInt(nodeCount));
-        }
+        } while (i.isRoot() || i.isDirectAncestor());
 
-        Node j = i;
-        while (j.getNr() == i.getNr() || j.isRoot() || j.isDirectAncestor()) {
+
+        do {
             j = tree.getNode(Randomizer.nextInt(nodeCount));
-        }
+        } while (j.getNr() == i.getNr() || j.isRoot() || j.isDirectAncestor());
 
-        final Node iP = i.getParent();
-        final Node jP = j.getParent();
+        iP = i.getParent();
+        jP = j.getParent();
 
         if ((iP != jP) && (i != jP) && (j != iP)
                 && (j.getHeight() < iP.getHeight())
                 && (i.getHeight() < jP.getHeight())) {
             exchangeNodes(i, j, iP, jP);
-            // System.out.println("tries = " + tries+1);
+
             return 0;
         }
         // Couldn't find valid wide move on this beast.tree!
         return Double.NEGATIVE_INFINITY;
-    }
-
-
-    /* exchange sub-trees whose root are i and j */
-
-    protected void exchangeNodes(Node i, Node j,
-                                 Node iP, Node jP) {
-        // precondition iP -> i & jP -> j
-        replace(iP, i, j);
-        replace(jP, j, i);
-        // postcondition iP -> j & iP -> i
     }
 
 }

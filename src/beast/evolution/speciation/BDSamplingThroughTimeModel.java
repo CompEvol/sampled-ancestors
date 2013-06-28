@@ -74,6 +74,7 @@ public class BDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         int nodeCount = tree.getNodeCount();
         updateParameters();
         double x0 = tree.getRoot().getHeight() + origToRootDistance;
+        //double x0 = origToRootDistance;
         if (x0 < tree.getRoot().getHeight()) {
             System.out.println("It is time to change the root height choice");
         }

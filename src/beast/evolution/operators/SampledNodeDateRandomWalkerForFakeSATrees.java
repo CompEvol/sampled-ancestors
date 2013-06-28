@@ -12,21 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Description("Randomly moves sampled node dates on a tree by randomly selecting one either from a subset of taxa or from leaves")
-public class SampledNodeDateRandomWalkerForFakeSATrees extends TreeOperator {
+public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWalker {
 
-    public Input<Double> windowSizeInput =
-            new Input<Double>("windowSize", "the size of the window both up and down when using uniform interval OR standard deviation when using Gaussian", Input.Validate.REQUIRED);
-    public Input<TaxonSet> m_taxonsetInput = new Input<TaxonSet>("taxonset", "limit scaling to a subset of taxa. By default all tips are scaled.");
-    public Input<Boolean> useGaussianInput =
-            new Input<Boolean>("useGaussian", "Use Gaussian to move instead of uniform interval. Default false.", false);
 
-    /**
-     * node indices of taxa to choose from *
-     */
-    int[] m_iTaxa;
-
-    double windowSize = 1;
-    boolean m_bUseGaussian;
     boolean useNodeNumbers;
 
 
@@ -63,6 +51,14 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TreeOperator {
     public double proposal() {
         // randomly select leaf node
         Tree tree = m_tree.get();
+
+//        System.out.println("Tree was before Random = " + tree.getRoot().toShortNewick(false));
+//        for (int i=0; i< tree.getNodeCount(); i ++) {
+//            if (tree.getNode(i).isDirectAncestor()) {
+//                System.out.println("Node " + i + " is direct ancestor");
+//            }
+//        }
+
         Node node;
         if (useNodeNumbers) {
             int leafNodeCount = tree.getLeafNodeCount();
@@ -112,46 +108,17 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TreeOperator {
         }
         node.setHeight(newValue);
 
+//        System.out.println("Proposed tree = " + tree.getRoot().toShortNewick(false));
+//        for (int inx=0; inx< tree.getNodeCount(); inx ++) {
+//            if (tree.getNode(inx).isDirectAncestor()) {
+//                System.out.println("Node " + inx + " is direct ancestor");
+//            }
+//        }
+
+        //tree.setEverythingDirty(true);
+
         return 0.0;
     }
-
-   @Override
-    public double getCoercableParameterValue() {
-        return windowSize;
-    }
-
-    @Override
-    public void setCoercableParameterValue(double fValue) {
-        windowSize = fValue;
-    }
-
-//    @Override
-//    public void optimize(double logAlpha) {
-//        // must be overridden by operator implementation to have an effect
-//        double fDelta = calcDelta(logAlpha);
-//        fDelta += Math.log(windowSize);
-//        windowSize = Math.exp(fDelta);
-//    }
-
-//    @Override
-//    public final String getPerformanceSuggestion() {
-//        double prob = m_nNrAccepted / (m_nNrAccepted + m_nNrRejected + 0.0);
-//        double targetProb = getTargetAcceptanceProbability();
-//
-//        double ratio = prob / targetProb;
-//        if (ratio > 2.0) ratio = 2.0;
-//        if (ratio < 0.5) ratio = 0.5;
-//
-//        // new scale factor
-//        double newWindowSize = windowSize * ratio;
-//
-//        DecimalFormat formatter = new DecimalFormat("#.###");
-//        if (prob < 0.10) {
-//            return "Try setting window size to about " + formatter.format(newWindowSize);
-//        } else if (prob > 0.40) {
-//            return "Try setting window size to about " + formatter.format(newWindowSize);
-//        } else return "";
-//    }
 }
 
 // TODO 1. Should the height of a leaf be greater than zero?

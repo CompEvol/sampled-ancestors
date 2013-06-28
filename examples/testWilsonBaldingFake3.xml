@@ -50,12 +50,12 @@
 
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="15" tree="@tree"/>
 
-        <logger logEvery="1000" fileName="testFakeNodes3.$(seed).log">
+        <logger logEvery="1000" fileName="testWilsonBaldingFake3.$(seed).log">
             <model idref='posterior'/>
             <!-- <log idref="posterior"/> -->
             <log idref="birthDeath"/>
         </logger>
-        <logger logEvery="100" fileName="testFakeNodes3.$(seed).trees">
+        <logger logEvery="100" fileName="testWilsonBaldingFake3.$(seed).trees">
             <log idref="tree"/>
         </logger>
         <logger logEvery="1000">
