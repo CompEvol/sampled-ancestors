@@ -67,17 +67,18 @@
         </distribution>
     </distribution>
 
-    <run chainLength="10000" id="mcmc" spec="MCMC" distribution = '@posterior'>
+    <run chainLength="1000000" id="mcmc" spec="MCMC" distribution = '@posterior'>
 
     <state id="state">
         <stateNode idref='tree'/>
     </state>
 
-    <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="true" weight="1" tree="@tree"/>
+    <!-- <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="true" weight="1" tree="@tree"/> -->
     <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
-    <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="1" tree="@tree"/>
+        <!-- <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="1" tree="@tree"/>  -->
     <operator spec='UniformForFakeSATrees' weight="5" tree="@tree"/>
-    <operator spec='ScaleOperatorForFakeSATrees' rootOnly="true" scaleFactor="0.5" weight="1" tree="@tree" />
+    <operator spec='ScaleOperatorForFakeSATrees' rootOnly="true" scaleFactor="0.9" weight="1" tree="@tree" />
+       <!-- <operator spec='TipJump' weight="10" tree="@tree"/>   -->
 
 
     <logger logEvery="1000" fileName="TestingSimulation.$(seed).log">

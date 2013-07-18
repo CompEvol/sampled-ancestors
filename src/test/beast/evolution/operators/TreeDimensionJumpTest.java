@@ -26,7 +26,6 @@ public class TreeDimensionJumpTest extends TestCase {
             Node right = new Node();
             right.setNr(i);
             right.setHeight(i);
-            right.setDirectAncestor(true);
             Node parent = new Node();
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
@@ -63,7 +62,6 @@ public class TreeDimensionJumpTest extends TestCase {
             Node right = new Node();
             right.setNr(i);
             right.setHeight(i);
-            right.setDirectAncestor(true);
             Node parent = new Node();
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
@@ -74,7 +72,6 @@ public class TreeDimensionJumpTest extends TestCase {
             left = parent;
         }
         left.setHeight(left.getRight().getHeight()+2);
-        left.getRight().setDirectAncestor(false);
         tree = new Tree(left);
 
         System.out.println("Tree was = " + tree.getRoot().toShortNewick(false));

@@ -161,11 +161,6 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
         }
         iP.setHeight(newAge);
 
-        if (attachingToLeaf)
-            j.setDirectAncestor(true);
-        if (CiP.getNr() != j.getNr() && CiP.isDirectAncestor())
-            CiP.setDirectAncestor(false);
-
         newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
         DimensionCoefficient = (double) oldDimension / newDimension;
 

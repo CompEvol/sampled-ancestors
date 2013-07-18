@@ -139,16 +139,11 @@ public class SampledAncestorTreeAnalysis {
         System.out.println();
         int i;
 
-        String strForPlottingx = new String();
-        String strForPlottingy = new String();
-
         for (i =0; i < topologies.size(); i++)
             if (sumPercentage < percentCredSet) {
                 double percent = (double) (topologies.getFrequency(i) * 100)/(trees.length);
                 System.out.format("%-10d %-10.2f", topologies.getFrequency(i), percent);
                 System.out.println(topologies.get(i));
-                strForPlottingx += i + ", ";
-                strForPlottingy += (double) (topologies.getFrequency(i))/(trees.length) + ", ";
                 sumPercentage += percent;
             } else {
                 break;
@@ -157,9 +152,6 @@ public class SampledAncestorTreeAnalysis {
         System.out.println("Total \t" + Math.round(sumPercentage) + "%");
         System.out.println();
         System.out.println(percentCredSet + "% credible set has " + i + " trees.");
-        System.out.println();
-        System.out.println("X = " + strForPlottingx);
-        System.out.println("Y = " + strForPlottingy);
         System.out.println();
 
         /*System.out.println("Numeric tree representation");
@@ -171,8 +163,10 @@ public class SampledAncestorTreeAnalysis {
 
     }
 
-
-    public void countTopologiesTest() {
+    //test for sampling from prior.
+    // testType = 1 --- test with fixed time of origin.
+    // testType = 2 --- with logNormal prior on distance between root height and origin time.
+    public void countTopologiesTest(int testType) {
         FrequencySet<String> topologies = new FrequencySet<String>();
         String[] trees = trace.getShortTrees();
 
@@ -219,7 +213,13 @@ public class SampledAncestorTreeAnalysis {
         for (i =0; i < topologies.size(); i++)
             if (sumPercentage < percentageCredSet) {
                 double percent = (double) (topologies.getFrequency(i) * 100)/(trees.length);
-                double trueVal = SDE(topologies.get(i));
+                double trueVal=0;
+                switch (testType) {
+                    case 1: trueVal = SDE1(topologies.get(i));
+                            break;
+                    case 2: trueVal = SDE2(topologies.get(i));
+                            break;
+                }
                 double sde = 200 * Math.sqrt((trueVal * (1-trueVal))/ESS);
                 String correctness;
                 if ((100 * trueVal < percent && percent < 100 * trueVal + sde) || (100 * trueVal -sde < percent && percent < 100 * trueVal))
@@ -238,7 +238,7 @@ public class SampledAncestorTreeAnalysis {
 
     }
 
-    private double SDE(String tree) {
+    private double SDE1(String tree) {
 
         if (tree.equals("((1,2),3)")) {
             return 0.7133;
@@ -252,6 +252,23 @@ public class SampledAncestorTreeAnalysis {
             return 0.0124;
         } else if (tree.equals("((1)2)3")) {
             return 0.0074;
+        } else return 0.0;
+    }
+
+    private double SDE2(String tree) {
+
+        if (tree.equals("((1,2),3)")) {
+            return 0.6805;
+        } else if (tree.equals("((1,2))3")) {
+            return 0.1377;
+        } else if (tree.equals("((1)2,3)")) {
+            return 0.0676;
+        } else if (tree.equals("((1,3),2)") || tree.equals("(1,(2,3))")) {
+            return 0.0377;
+        } else if (tree.equals("(1,(2)3)") || tree.equals("((1)3,2)")) {
+            return 0.0121;
+        } else if (tree.equals("((1)2)3")) {
+            return 0.0145;
         } else return 0.0;
     }
 

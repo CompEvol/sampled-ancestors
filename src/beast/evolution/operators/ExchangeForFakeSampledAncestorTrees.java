@@ -21,24 +21,25 @@ public class ExchangeForFakeSampledAncestorTrees extends Exchange {
 
         // make sure that the tree has at least two internal nodes and at least one non-fake node
         final int nInternalNodes = tree.getInternalNodeCount();
-        if (nInternalNodes <= 1 || tree.getDirectAncestorNodeCount() == nInternalNodes ) {
+        final int leafNodeCount = tree.getLeafNodeCount();
+        if (nInternalNodes <= 1 ) {
             return Double.NEGATIVE_INFINITY;
         }
+//
+//        // if there is only one non-fake internal node, make sure that it has at least one non-leaf child
+//        if (tree.getDirectAncestorNodeCount() == nInternalNodes-1) {
+//            for (int inx = 0; inx < nInternalNodes ; inx++) {
+//                Node parent = tree.getNode(nInternalNodes+ 1 + inx);
+//                if (!parent.isFake() && parent.getLeft().isLeaf() && parent.getRight().isLeaf()) {
+//                    return Double.NEGATIVE_INFINITY;
+//                }
+//            }
+//        }
 
-        // if there is only one non-fake internal node, make sure that it has at least one non-leaf child
-        if (tree.getDirectAncestorNodeCount() == nInternalNodes-1) {
-            for (int inx = 0; inx < nInternalNodes ; inx++) {
-                Node parent = tree.getNode(nInternalNodes+ 1 + inx);
-                if (!parent.isFake() && parent.getLeft().isLeaf() && parent.getRight().isLeaf()) {
-                    return Double.NEGATIVE_INFINITY;
-                }
-            }
-        }
-
-        Node iGrandParent = tree.getNode(nInternalNodes + 1 + Randomizer.nextInt(nInternalNodes));
-        while (iGrandParent.isFake() && iGrandParent.getLeft().isLeaf() && iGrandParent.getRight().isLeaf()) {
-            iGrandParent = tree.getNode(nInternalNodes + 1 + Randomizer.nextInt(nInternalNodes));
-        }
+        Node iGrandParent;
+        do  {
+            iGrandParent = tree.getNode(leafNodeCount + Randomizer.nextInt(nInternalNodes));
+        } while (iGrandParent.getLeft().isLeaf() && iGrandParent.getRight().isLeaf());
 
         Node iParent = iGrandParent.getLeft();
         Node iUncle = iGrandParent.getRight();

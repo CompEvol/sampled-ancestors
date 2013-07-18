@@ -28,16 +28,16 @@ public class UniformForFakeSATrees extends TreeOperator {
         int leafNodeCount = tree.getLeafNodeCount();
 
         //make sure that there is at least one non-fake node
-        if (tree.getDirectAncestorNodeCount() == leafNodeCount-1) {
+        int fakeNodeCount = tree.getDirectAncestorNodeCount();
+        if (fakeNodeCount == leafNodeCount-1 || (fakeNodeCount == leafNodeCount-2 && !tree.getRoot().isFake())) {
             return Double.NEGATIVE_INFINITY;
         }
 
         // randomly select internal node
         Node node;
         do {
-            final int iNodeNr = leafNodeCount + Randomizer.nextInt(nNodeCount / 2);
-            node = tree.getNode(iNodeNr);
-        } while (node.isRoot() || node.isLeaf() || node.isFake());
+            node = tree.getNode(leafNodeCount + Randomizer.nextInt(nNodeCount / 2));
+        } while (node.isRoot() || node.isFake());
         final double fUpper = node.getParent().getHeight();
         final double fLower = Math.max(node.getLeft().getHeight(), node.getRight().getHeight());
         final double newValue = (Randomizer.nextDouble() * (fUpper - fLower)) + fLower;

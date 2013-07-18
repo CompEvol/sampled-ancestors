@@ -25,13 +25,13 @@
     </tree>
 
 
-    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeSampledAncestorModel" id="birthDeath" tree="@tree">
-        <parameter name="orig_root" id="orig_root" value="1." lower="0." upper="1000." dimension="1"/>
+    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
+        <parameter name="orig_root" id="orig_root" value="10." lower="0." upper="1000." dimension="1"/>
 
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
         <parameter name="deathRate" id="deathRate" value="0.99" lower="0." upper="1." dimension="1"/>
         <parameter name="samplingRate" id="samplingRate" value="0.5" lower="0." upper="1." dimension="1"/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.9" lower="0."
+        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.5" lower="0."
                    upper="1." dimension="1"/>
     </BDSamplingThroughTimeSampledAncestorModel>
 
@@ -42,25 +42,28 @@
 
         <state>
             <stateNode idref='tree' />
-            <stateNode idref='orig_root'/>
         </state>
 
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution idref='birthDeath'/>
         </distribution>
 
-        <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="5" tree="@tree"/>
-        <operator id="SampledNodeDatesRandomWalkerForFakeSATrees" windowSize="1" spec="SampledNodeDatesRandomWalker" tree="@tree" weight="10"/>
-        <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
+        <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="1" tree="@tree"/>
+        <operator spec='TreeDimensionJump' weight="1" tree="@tree"/>
+        <operator spec='SampledNodeDateRandomWalkerForFakeSATrees' weight="1" tree="@tree" windowSize="10.0"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="1" tree="@tree" isNarrow="true"/>
+        <!--<operator spec='ScaleOperatorForFakeSATrees' weight="1" tree="@tree" scaleFactor="0.5"/>
+        <operator spec='UniformForFakeSATrees' weight="1" tree="@tree"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="1" tree="@tree" isNarrow="false"/>   -->
 
-        <operator id='orig_scaler' spec='ScaleOperator' scaleFactor=".041" weight="1" parameter="@orig_root"/>
 
-        <logger logEvery="1000" fileName="testExchange3.$(seed).log">
+
+        <logger logEvery="1000" fileName="testOperators.$(seed).log">
             <model idref='posterior'/>
             <!-- <log idref="posterior"/> -->
             <log idref="birthDeath"/>
         </logger>
-        <logger logEvery="100" fileName="testExchange3.$(seed).trees">
+        <logger logEvery="100" fileName="testOperators.$(seed).trees">
             <log idref="tree"/>
         </logger>
         <logger logEvery="1000">

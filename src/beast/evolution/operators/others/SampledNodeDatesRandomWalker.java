@@ -1,7 +1,8 @@
-package beast.evolution.operators;
+package beast.evolution.operators.others;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.evolution.operators.TreeOperator;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
