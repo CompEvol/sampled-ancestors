@@ -19,75 +19,95 @@ public class ExchangeForFakeSampledAncestorTrees extends Exchange {
 
     public double narrow(final Tree tree) {
 
-        // make sure that the tree has at least two internal nodes and at least one non-fake node
-        final int nInternalNodes = tree.getInternalNodeCount();
-        final int leafNodeCount = tree.getLeafNodeCount();
-        if (nInternalNodes <= 1 ) {
+        final int nodeCount = tree.getNodeCount();
+
+        //make sure that there are at least two distinct non-root nodes which are not direct ancestors.
+        if (nodeCount == 3 && tree.getRoot().isFake()) {
             return Double.NEGATIVE_INFINITY;
         }
-//
-//        // if there is only one non-fake internal node, make sure that it has at least one non-leaf child
-//        if (tree.getDirectAncestorNodeCount() == nInternalNodes-1) {
-//            for (int inx = 0; inx < nInternalNodes ; inx++) {
-//                Node parent = tree.getNode(nInternalNodes+ 1 + inx);
-//                if (!parent.isFake() && parent.getLeft().isLeaf() && parent.getRight().isLeaf()) {
-//                    return Double.NEGATIVE_INFINITY;
-//                }
-//            }
+
+        Node i;
+        do {
+            i = tree.getNode(Randomizer.nextInt(nodeCount));
+        } while (i.isRoot() || i.getParent().isRoot() || i.isDirectAncestor());
+
+        final Node iParent = i.getParent();
+        final Node iGrandParent = iParent.getParent();
+        Node iUncle = iGrandParent.getLeft();
+        if (iUncle.getNr() == iParent.getNr()) {
+            iUncle = iGrandParent.getRight();
+            //assert (iUncle.getNr() != iParent.getNr());
+        }
+        //assert iUncle == getOtherChild(iGrandParent, iParent);
+
+        //assert i.getHeight() <= iGrandParent.getHeight();
+
+        if (iUncle.getHeight() < iParent.getHeight()) {
+            exchangeNodes(i, iUncle, iParent, iGrandParent);
+            return 0.0;
+        } else {
+            // Couldn't find valid narrow move on this beast.tree!!
+            return Double.NEGATIVE_INFINITY;
+        }
+
+
+//        final int nInternalNodes = tree.getInternalNodeCount();
+//        final int leafNodeCount = tree.getLeafNodeCount();
+//        // make sure that the tree has at least two internal nodes
+//        if (nInternalNodes <= 1 ) {
+//            return Double.NEGATIVE_INFINITY;
 //        }
-
-        Node iGrandParent;
-        do  {
-            iGrandParent = tree.getNode(leafNodeCount + Randomizer.nextInt(nInternalNodes));
-        } while (iGrandParent.getLeft().isLeaf() && iGrandParent.getRight().isLeaf());
-
-        Node iParent = iGrandParent.getLeft();
-        Node iUncle = iGrandParent.getRight();
-        if (iParent.getHeight() < iUncle.getHeight()) {
-            iParent = iGrandParent.getRight();
-            iUncle = iGrandParent.getLeft();
-        }
-
-        if( iParent.isLeaf() ) {
-            // tree with dated tips
-            return Double.NEGATIVE_INFINITY;
-        }
-
-        final Node i;
-
-        if (iParent.isFake()) {
-            if (iParent.getLeft().isDirectAncestor()) {
-                i = iParent.getRight();
-            }  else i = iParent.getLeft();
-        }  else {
-            i = (Randomizer.nextBoolean() ? iParent.getLeft() : iParent.getRight());
-        }
-
-        exchangeNodes(i, iUncle, iParent, iGrandParent);
-
-        return 0;
+//
+//        //choose one of internal nodes that has at least one non-leaf node
+//        //(there is always at least one such node as long as the tree has at least 2 internal nodes)
+//        Node iGrandParent;
+//        do  {
+//            iGrandParent = tree.getNode(leafNodeCount + Randomizer.nextInt(nInternalNodes));
+//        } while (iGrandParent.getLeft().isLeaf() && iGrandParent.getRight().isLeaf());
+//
+//        Node iParent = iGrandParent.getLeft();
+//        Node iUncle = iGrandParent.getRight();
+//        if (iParent.getHeight() < iUncle.getHeight()) {
+//            iParent = iGrandParent.getRight();
+//            iUncle = iGrandParent.getLeft();
+//        }
+//
+//        if( iParent.isLeaf() ) {
+//            return Double.NEGATIVE_INFINITY;
+//        }
+//
+//        final Node i;
+//
+//        if (iParent.isFake()) {
+//            if (iParent.getLeft().isDirectAncestor()) {
+//                i = iParent.getRight();
+//            }  else i = iParent.getLeft();
+//        }  else {
+//            i = (Randomizer.nextBoolean() ? iParent.getLeft() : iParent.getRight());
+//        }
+//
+//        exchangeNodes(i, iUncle, iParent, iGrandParent);
+//
+//        return 0.0;
 
     }
 
     /**
-     * WARNING: Assumes strictly bifurcating beast.tree.
      * @param tree
      */
     public double wide(final Tree tree) {
 
         final int nodeCount = tree.getNodeCount();
 
-        Node i, j, iP, jP;
-
         //make sure that there are at least two distinct non-root nodes which are not direct ancestors.
-        if (tree.getNodeCount() == 3 && tree.getRoot().isFake()) {
+        if (nodeCount == 3 && tree.getRoot().isFake()) {
             return Double.NEGATIVE_INFINITY;
         }
 
+        Node i, j, iP, jP;
         do {
             i = tree.getNode(Randomizer.nextInt(nodeCount));
         } while (i.isRoot() || i.isDirectAncestor());
-
 
         do {
             j = tree.getNode(Randomizer.nextInt(nodeCount));
@@ -101,8 +121,9 @@ public class ExchangeForFakeSampledAncestorTrees extends Exchange {
                 && (i.getHeight() < jP.getHeight())) {
             exchangeNodes(i, j, iP, jP);
 
-            return 0;
+            return 0.0;
         }
+
         // Couldn't find valid wide move on this beast.tree!
         return Double.NEGATIVE_INFINITY;
     }

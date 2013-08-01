@@ -10,12 +10,13 @@ import beast.evolution.tree.Tree;
  */
 public class ScaleOperatorForFakeSATrees extends ScaleOperator {
 
-    public Input<Boolean> m_pScaleTips = new Input<Boolean>("scaleTips", "If it is true then tip dates are not scaled (default false)", false);
+    public Input<Boolean> m_pScaleSNodes = new Input<Boolean>("scaleSampledNodes", "If it is true then sampled node dates are scaled (default false).", false);
 
-    @Override
+    @Override   //WARNING works with bifurcating (exactly 2 children) trees only
     public double proposal() {
 
         final double scale = getScaler();
+        final boolean scaleSNodes = m_pScaleSNodes.get();
 
         try {
 
@@ -23,18 +24,34 @@ public class ScaleOperatorForFakeSATrees extends ScaleOperator {
                 Tree tree = m_pTree.get(this);
                 if (m_pRootOnly.get()) {
                     Node root = tree.getRoot();
-                    if (root.isFake()) {
+                    if (root.isFake() && !scaleSNodes) {
                         return Double.NEGATIVE_INFINITY;
                     }
                     double fNewHeight = root.getHeight() * scale;
-                    if (fNewHeight < Math.max(root.getLeft().getHeight(), root.getRight().getHeight())) {
+
+                    //make sure the new height doesn't make a parent younger than a child
+                    double oldestChildHeight;
+                    if (root.isFake()) {
+                        oldestChildHeight = root.getRight().getHeight();
+                        if (root.getLeft().isDirectAncestor()) {
+                            oldestChildHeight = root.getLeft().getHeight();
+                        }
+                    } else oldestChildHeight = Math.max(root.getLeft().getHeight(), root.getRight().getHeight());
+                    if (fNewHeight < oldestChildHeight) {
                         return Double.NEGATIVE_INFINITY;
                     }
+
                     root.setHeight(fNewHeight);
+                    if (root.isFake() && scaleSNodes) {
+                        Node directAncestor = root.getLeft();
+                        if (!directAncestor.isDirectAncestor())
+                            directAncestor = root.getRight();
+                        directAncestor.setHeight(fNewHeight);
+                    }
                     return -Math.log(scale);
                 } else {
                     // scale the beast.tree
-                    final int nScaledDimensions = tree.scaleSATrees(scale, m_pScaleTips.get());
+                    final int nScaledDimensions = tree.scaleSATrees(scale, scaleSNodes);
                     return Math.log(scale) * (nScaledDimensions - 2);
                 }
             }

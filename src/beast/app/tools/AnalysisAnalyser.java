@@ -34,7 +34,7 @@ public class AnalysisAnalyser {
 
         int[] values = null;
         String[] treeStrings = new String[] {"((1,2),3)", "((1,2))3", "((1)2,3)", "((1,3),2)", "(1,(2,3))",
-                "(1,(2)3)", "((1)3,2)"};
+                "(1,(2)3)", "((1)3,2)", "((1)2)3"};
         Reader reader = null;
         try {
             reader = new FileReader(file);

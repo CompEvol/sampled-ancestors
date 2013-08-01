@@ -58,7 +58,7 @@
 
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="1" tree="@tree"/>
         <operator spec='TreeDimensionJump' weight="1" tree="@tree"/>
-        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="8" tree="@tree" isNarrow="false"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="8" tree="@tree" isNarrow="true"/>
         <!--<operator spec='SampledNodeDateRandomWalkerForFakeSATrees' weight="1" tree="@tree" windowSize="10.0"/>
 
         <operator spec='ScaleOperatorForFakeSATrees' weight="1" tree="@tree" scaleFactor="0.5"/>

@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@Description("Randomly moves sampled node dates on a tree by randomly selecting one either from a subset of taxa or from leaves")
+@Description("Randomly select a sampled node and shifts the date of the node within a given window")
 public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWalker {
 
 
