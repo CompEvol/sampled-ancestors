@@ -18,6 +18,9 @@ public class SampledAncestorTreeTrace {
 
     private int treeCount;
 
+    /**
+     * an array of short newick representation of trees from the parser
+     */
     private String[] trees;
 
     private String[] shortTrees;

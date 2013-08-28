@@ -23,6 +23,10 @@ public class SampledAncestorTreeAnalysis {
         percentCredSet = percent;
     }
 
+    /**
+     * @parameter useNumbers is true if the indices of sampled nodes should be use as labels
+     * and taxa names are used otherwise
+     */
     public void perform(boolean useNumbers) throws Exception {
         countTopologies(useNumbers);
         //countTreesWithDClades();

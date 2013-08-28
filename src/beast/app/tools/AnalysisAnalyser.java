@@ -1,5 +1,7 @@
 package beast.app.tools;
 
+import beast.core.Description;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,7 +11,9 @@ import java.util.Arrays;
 /**
  * @author Alexandra Gavryushkina
  */
-
+@Description("Count the number of trees that have the same topology to obtain the distribution of tree topologies. " +
+        "Each tree is supposed to have 3 sequentially sampled nodes. Then it compares this distribution with " +
+        "the true distribution under serially-sampled birth-death model with sampled ancestors calculated in Mathematica.")
 public class AnalysisAnalyser {
 
     public static void main(String[] args) throws Exception {
