@@ -333,19 +333,19 @@ public class Node extends Plugin {
         StringBuilder buf = new StringBuilder();
         if (getLeft() != null) {
             buf.append("(");
-            if (getLeft().isDirectAncestor() || (getRight() != null && getRight().isDirectAncestor())) {
-                Node real;
+            if (isFake()) {
+                Node directAncestor;
                 Node otherChild;
                 if (getLeft().isDirectAncestor()) {
-                    real = getLeft();
+                    directAncestor = getLeft();
                     otherChild = getRight();
                 }   else {
-                    real = getRight();
+                    directAncestor = getRight();
                     otherChild = getLeft();
                 }
                 buf.append(otherChild.toShortNewick(bPrintInternalNodeNumbers));
                 buf.append(")");
-                buf.append(real.getNr());
+                buf.append(directAncestor.getNr());
             } else {
                 buf.append(getLeft().toShortNewick(bPrintInternalNodeNumbers));
                 if (getRight() != null) {
@@ -380,19 +380,19 @@ public class Node extends Plugin {
         StringBuilder buf = new StringBuilder();
         if (getLeft() != null) {
             buf.append("(");
-            if (getLeft().isDirectAncestor() || (getRight() != null && getRight().isDirectAncestor())){
-                Node real;
+            if (isFake()){
+                Node directAncestor;
                 Node otherChild;
                 if (getLeft().isDirectAncestor()) {
-                    real = getLeft();
+                    directAncestor = getLeft();
                     otherChild = getRight();
                 }   else {
-                    real = getRight();
+                    directAncestor = getRight();
                     otherChild = getLeft();
                 }
                 buf.append(otherChild.toSortedNewick(iMaxNodeInClade, printMetaData));
                 buf.append(")");
-                buf.append(real.getNr()+1);
+                buf.append(directAncestor.getNr()+1);
             } else {
                 String sChild1 = getLeft().toSortedNewick(iMaxNodeInClade, printMetaData);
                 int iChild1 = iMaxNodeInClade[0];
@@ -767,7 +767,8 @@ public class Node extends Plugin {
 
     //is true if this internal node is fake (shouldn't be in the tree)
     // and one of its children is a direct ancestor
-    public boolean isFake() {//TODO decide if this method can be applied to nodes with more than 2 children
+    //works only for trees where each node has at least 2 children
+    public boolean isFake() {
         if (this.isLeaf())
             return false;
         return (this.getLeft().isDirectAncestor() || (this.getRight() != null && this.getRight().isDirectAncestor()));
