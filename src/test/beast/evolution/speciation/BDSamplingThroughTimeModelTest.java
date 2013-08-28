@@ -1,7 +1,8 @@
 package test.beast.evolution.speciation;
 
 import beast.core.parameter.RealParameter;
-import beast.evolution.speciation.BDSamplingThroughTimeSampledAncestorModel;
+import beast.evolution.speciation.BDSamplingThroughTimeModel;
+import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 
 import beast.util.TreeParser;
@@ -13,12 +14,13 @@ import org.junit.Test;
  * @author Alexandra Gavryushkina
  */
 
-public class BDSamplingThroughTimeDirectAncestorModelTest extends TestCase {
+public class BDSamplingThroughTimeModelTest extends TestCase {
 
     @Test
     public void testLikelihoodCalculation1() throws Exception {
-        BDSamplingThroughTimeSampledAncestorModel model = new BDSamplingThroughTimeSampledAncestorModel();
+        BDSamplingThroughTimeModel model = new BDSamplingThroughTimeModel();
         Tree tree = new TreeParser("((1:1.0)2:1.0)3:0.0", false, true, false, 1);
+
 
         model.setInputValue("tree", tree);
         model.setInputValue("orig_root", new RealParameter("8."));
@@ -29,9 +31,6 @@ public class BDSamplingThroughTimeDirectAncestorModelTest extends TestCase {
         model.initAndValidate();
 
         assertEquals(-25.3707, model.calculateTreeLogLikelihood(tree), 1e-5);
-
     }
-
-
 
 }

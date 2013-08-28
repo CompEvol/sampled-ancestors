@@ -210,9 +210,13 @@
         <operator id='origOperator' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@orig_root"/>
         <operator id='bNASPOperator' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@bNASP"/>
 
-
+        <operator spec='TreeDimensionJump' weight="5" tree="@tree"/>
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
         <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="5" tree="@tree"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="5" tree="@tree"/>
+        <operator spec='UniformForFakeSATrees' weight="1" tree="@tree"/>
+        <operator spec='ScaleOperatorForFakeSATrees' weight="1" tree="@tree"/>
+        <operator spec='ScaleOperatorForFakeSATrees' weight="1" tree="@tree" rootOnly="true"/>
 
         <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="1.0"/>
         <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateAC"/>
@@ -250,7 +254,7 @@
             <log idref="proportionInvariant"/>
         </logger>
 
-        <logger id="screenlog" logEvery="1000" mode="autodetect">
+        <logger id="screenlog" logEvery="100000" mode="autodetect">
             <distribution idref="posterior" name="log"/>
             <log arg="@posterior" id="ESS.0" spec="util.ESS"/>
             <log idref="BDlikelihood"/>
