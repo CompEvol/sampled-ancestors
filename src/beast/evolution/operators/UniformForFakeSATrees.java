@@ -27,7 +27,7 @@ public class UniformForFakeSATrees extends TreeOperator {
         final int nNodeCount = tree.getNodeCount();
         int leafNodeCount = tree.getLeafNodeCount();
 
-        //make sure that there is at least one non-fake node
+        //make sure that there is at least one non-fake and non-root internal node
         int fakeNodeCount = tree.getDirectAncestorNodeCount();
         if (fakeNodeCount == leafNodeCount-1 || (fakeNodeCount == leafNodeCount-2 && !tree.getRoot().isFake())) {
             return Double.NEGATIVE_INFINITY;

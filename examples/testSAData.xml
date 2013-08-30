@@ -138,12 +138,11 @@
 
     <BDSamplingThroughTimeModel spec="BDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
         <parameter name="orig_root" id="orig_root" value ="1." lower="0."/>
-        <!-- <parameter name="orig_root" id="orig_root" value="10." lower="0." upper="1000." dimension="1"/>   -->
 
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
         <parameter name="deathRate" id="deathRate" value="0.99" lower="0." upper="1." dimension="1"/>
         <parameter name="samplingRate" id="samplingRate" value="0.5" lower="0." upper="1." dimension="1"/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.5" lower="0."
+        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.99" lower="0."
                    upper="1." dimension="1"/>
     </BDSamplingThroughTimeModel>
 
@@ -187,13 +186,12 @@
     </distribution>
 
 
-    <run chainLength="100000" id="mcmc" spec="MCMC" storeEvery="1000" distribution="@posterior">
+    <run chainLength="1000000" id="mcmc" spec="MCMC" storeEvery="1000" distribution="@posterior">
 
         <state id="state" storeEvery="10000">
             <stateNode idref='tree'/>
             <stateNode idref="orig_root"/>
             <stateNode idref="bNASP"/>
-
 
             <stateNode idref="clock.rate"/>
             <stateNode idref="freqParameter"/>
@@ -210,13 +208,13 @@
         <operator id='origOperator' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@orig_root"/>
         <operator id='bNASPOperator' spec='ScaleOperator' scaleFactor=".75" weight="1" parameter="@bNASP"/>
 
-        <operator spec='TreeDimensionJump' weight="5" tree="@tree"/>
+        <operator spec='TreeDimensionJump' weight="1" tree="@tree"/>
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
-        <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="5" tree="@tree"/>
-        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="5" tree="@tree"/>
-        <operator spec='UniformForFakeSATrees' weight="1" tree="@tree"/>
-        <operator spec='ScaleOperatorForFakeSATrees' weight="1" tree="@tree"/>
-        <operator spec='ScaleOperatorForFakeSATrees' weight="1" tree="@tree" rootOnly="true"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="10" tree="@tree"/>
+        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
+        <operator spec='UniformForFakeSATrees' weight="20" tree="@tree"/>
+        <operator spec='ScaleOperatorForFakeSATrees' weight="20" tree="@tree"/>
+        <!--<operator spec='ScaleOperatorForFakeSATrees' weight="10" tree="@tree" rootOnly="true"/>  -->
 
         <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="1.0"/>
         <operator spec='ScaleOperator' scaleFactor=".35" weight=".2" parameter="@rateAC"/>
@@ -236,11 +234,6 @@
             <log id="treeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
             <log idref="orig_root"/>
             <log idref="bNASP"/>
-
-            <!--
-            <log idref="birth"/>
-            <log idref="death"/>
-            <log idref="sampling"/> -->
 
             <log idref="clock.rate"/>
             <log idref="gammaShape"/>
@@ -263,10 +256,6 @@
             <log idref="treeHeight"/>
             <log idref="orig_root"/>
             <log idref="bNASP"/>
-            <!--
-            <log idref="birth"/>
-            <log idref="death"/>
-            <log idref="sampling"/> -->
         </logger>
 
         <logger fileName="testSAData.$(seed).trees" id="treelog" logEvery="100" mode="tree">
