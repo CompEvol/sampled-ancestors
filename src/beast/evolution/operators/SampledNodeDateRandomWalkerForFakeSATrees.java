@@ -49,24 +49,18 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
 
     @Override
     public double proposal() {
-        // randomly select leaf node
+        // randomly select a leaf node
         Tree tree = m_tree.get();
-
-//        System.out.println("Tree was before Random = " + tree.getRoot().toShortNewick(false));
-//        for (int i=0; i< tree.getNodeCount(); i ++) {
-//            if (tree.getNode(i).isDirectAncestor()) {
-//                System.out.println("Node " + i + " is direct ancestor");
-//            }
-//        }
 
         Node node;
         if (useNodeNumbers) {
             int leafNodeCount = tree.getLeafNodeCount();
-            do {
-                int i = Randomizer.nextInt(leafNodeCount);
-                node = tree.getNode(i);
-            }  while (!node.isLeaf());
-
+            int i = Randomizer.nextInt(leafNodeCount);
+            node = tree.getNode(i);
+//            do {
+//                int i = Randomizer.nextInt(leafNodeCount);
+//                node = tree.getNode(i);
+//            }  while (!node.isLeaf());
         }  else {
             int i = Randomizer.nextInt(m_iTaxa.length);
             node = tree.getNode(m_iTaxa[i]);
@@ -107,13 +101,6 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
             fake.setHeight(newValue);
         }
         node.setHeight(newValue);
-
-//        System.out.println("Proposed tree = " + tree.getRoot().toShortNewick(false));
-//        for (int inx=0; inx< tree.getNodeCount(); inx ++) {
-//            if (tree.getNode(inx).isDirectAncestor()) {
-//                System.out.println("Node " + inx + " is direct ancestor");
-//            }
-//        }
 
         //tree.setEverythingDirty(true);
 
