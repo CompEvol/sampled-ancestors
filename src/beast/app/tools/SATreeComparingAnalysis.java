@@ -28,15 +28,15 @@ public class SATreeComparingAnalysis {
     }
 
     public void perform() {
-        int labelCount = parser1.translationMap.keySet().size();
+        //int labelCount = parser1.translationMap.keySet().size();
         List<Tree> trees1 = parser1.m_trees;
         List<Tree> trees2 = parser2.m_trees;
         int treeCount1 = trees1.size();
         int treeCount2 = trees2.size();
-        if (labelCount != parser2.translationMap.keySet().size()) {
-            System.out.println("The nubmer of sampled nodes are different in two files");
-            System.exit(0);
-        }
+//        if (labelCount != parser2.translationMap.keySet().size()) {
+//            System.out.println("The nubmer of sampled nodes are different in two files");
+//            System.exit(0);
+//        }
 
         SATreeComparingAnalysis.TreeSummary[] treeSummary1 = makeTreeSummeryForAllTrees(trees1, treeCount1);
         SATreeComparingAnalysis.TreeSummary[] treeSummary2 = makeTreeSummeryForAllTrees(trees2, treeCount2);

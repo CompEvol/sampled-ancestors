@@ -55,15 +55,15 @@ public class SampledAncestorTreeTrace {
         for (int i =0 ; i < newick.length; i++) {
             newick[i] = parser.m_trees.get(i).getRoot().toSortedNewick(new int[] {1}, false);
         }
-        labelCount = parser.translationMap.keySet().size();
+        //labelCount = parser.translationMap.keySet().size();
         trees = newick;
         treeCount = trees.length;
 
-        Integer[] tmp = new Integer[labelCount];
-        for (int i=0; i< labelCount; i++)
-            tmp[i] = i+1;
-
-        labelSet = new HashSet<Integer>(Arrays.asList(tmp));
+//        Integer[] tmp = new Integer[labelCount];
+//        for (int i=0; i< labelCount; i++)
+//            tmp[i] = i+1;
+//
+//        labelSet = new HashSet<Integer>(Arrays.asList(tmp));
 
         shortTrees = new String[treeCount];
 
@@ -74,7 +74,7 @@ public class SampledAncestorTreeTrace {
         labeledTrees = new String[treeCount];
 
         for (int i=0; i < treeCount; i++){
-            labeledTrees[i] = convertToLabeledTree(shortTrees[i], parser.translationMap);
+            labeledTrees[i] = convertToLabeledTree(shortTrees[i], null); //parser.translationMap);
         }
 
     }
