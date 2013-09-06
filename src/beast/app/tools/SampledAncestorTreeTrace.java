@@ -73,9 +73,9 @@ public class SampledAncestorTreeTrace {
 
         labeledTrees = new String[treeCount];
 
-        for (int i=0; i < treeCount; i++){
-            labeledTrees[i] = convertToLabeledTree(shortTrees[i], null); //parser.translationMap);
-        }
+//        for (int i=0; i < treeCount; i++){
+//            labeledTrees[i] = convertToLabeledTree(shortTrees[i], null); //parser.translationMap);
+//        }
 
     }
 

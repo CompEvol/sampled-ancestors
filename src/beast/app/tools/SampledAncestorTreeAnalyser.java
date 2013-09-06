@@ -48,7 +48,7 @@ public class SampledAncestorTreeAnalyser {
 
     public static void main(String[] args) throws IOException, Exception {
 
-        int percentCredSet = 0;
+        int percentCredSet = 100;
         boolean useNumbers = true;
 
 //        BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
@@ -100,8 +100,8 @@ public class SampledAncestorTreeAnalyser {
             SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 
-            //analysis.perform(useNumbers);
-            analysis.countTopologiesTest(2);
+            analysis.perform(useNumbers);
+            //analysis.countTopologiesTest(2);
         }
         catch (IOException e) {
             //

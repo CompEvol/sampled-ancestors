@@ -29,7 +29,7 @@ public class SampledAncestorTreeAnalysis {
      */
     public void perform(boolean useNumbers) throws Exception {
         countTopologies(useNumbers);
-        //countTreesWithDClades();
+        countTreesWithDClades();
         //countClades();
     }
 

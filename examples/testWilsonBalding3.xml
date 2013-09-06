@@ -22,7 +22,7 @@
     </tree>
 
 
-    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeSampledAncestorModel" id="birthDeath" tree="@tree">
+    <BDSamplingThroughTimeSampledAncestorModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
         <parameter name="orig_root" id="orig_root" value="10." lower="0." upper="1000." dimension="1"/>
 
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>

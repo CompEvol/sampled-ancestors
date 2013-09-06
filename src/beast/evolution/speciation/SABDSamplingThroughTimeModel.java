@@ -15,7 +15,7 @@ import beast.evolution.tree.Tree;
         "that is the BDM where an individual is sampled at a time with a constant rate psi" +
         " and where an individual becomes noninfectious immediately after the sampling" +
         "with a constant probability r")
-public class BDSamplingThroughTimeModel extends SpeciesTreeDistribution {
+public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
     public Input<RealParameter> orig_root =
             new Input<RealParameter>("orig_root", "The time dictance between the most recent common ancestor time" +

@@ -51,7 +51,7 @@ public class ScaleOperatorForFakeSATrees extends ScaleOperator {
                     return -Math.log(scale);
                 } else {
                     // scale the beast.tree
-                    final int nScaledDimensions = tree.scaleSATrees(scale, scaleSNodes);
+                    final int nScaledDimensions = tree.scale(scale, scaleSNodes);
                     return Math.log(scale) * (nScaledDimensions - 2);
                 }
             }

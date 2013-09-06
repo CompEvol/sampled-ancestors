@@ -27,7 +27,7 @@
     </tree>
 
 
-    <BDSamplingThroughTimeModel spec="BDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
+    <BDSamplingThroughTimeModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
         <parameter name="orig_root" id="orig_root" value ="0.5" lower="0."/>
         <!-- <parameter name="orig_root" id="orig_root" value="10." lower="0." upper="1000." dimension="1"/>   -->
 

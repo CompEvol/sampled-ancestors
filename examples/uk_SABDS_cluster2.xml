@@ -136,7 +136,7 @@
         <taxa idref="alignment"/>
     </tree>
 
-    <BDSamplingThroughTimeModel spec="BDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
+    <BDSamplingThroughTimeModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
         <parameter name="orig_root" id="orig_root" value ="1." lower="0."/>
 
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
@@ -227,7 +227,7 @@
         <operator autoOptimize="true" delta="0.2" id="FrequenciesExchanger" integer="false" spec="DeltaExchangeOperator" weight="0.1" parameter="@freqParameter"/>
 
 
-        <logger fileName="testSAData.$(seed).log" id="tracelog" logEvery="10000" mode="autodetect" model="@posterior">
+        <logger fileName="uk_SABDS_cluster2.$(seed).log" id="tracelog" logEvery="10000" mode="autodetect" model="@posterior">
             <distribution idref="posterior" name="log"/>
             <log idref="BDlikelihood"/>
             <log idref="jointTreeLikelihood"/>
@@ -258,7 +258,7 @@
             <log idref="bNASP"/>
         </logger>
 
-        <logger fileName="testSAData.$(seed).trees" id="treelog" logEvery="100" mode="tree">
+        <logger fileName="uk_SABDS_cluster2.$(seed).trees" id="treelog" logEvery="100" mode="tree">
             <tree idref="tree" name="log"/>
         </logger>
     </run>

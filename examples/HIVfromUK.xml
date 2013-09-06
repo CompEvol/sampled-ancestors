@@ -141,7 +141,7 @@
     </tree>
 
 
-    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeSampledAncestorModel" id="birthDeath" tree="@tree">
+    <BDSamplingThroughTimeSampledAncestorModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
         <parameter name="orig_root" id="orig_root" value="15." lower="0." upper="100." dimension="1"/>
 
         <parameter name="birthRate" id="birthRate" value="0.5" lower="0." upper="3." dimension="1"/>

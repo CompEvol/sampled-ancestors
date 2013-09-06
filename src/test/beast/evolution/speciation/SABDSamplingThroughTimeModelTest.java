@@ -1,7 +1,7 @@
 package test.beast.evolution.speciation;
 
 import beast.core.parameter.RealParameter;
-import beast.evolution.speciation.BDSamplingThroughTimeModel;
+import beast.evolution.speciation.SABDSamplingThroughTimeModel;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 
@@ -14,11 +14,11 @@ import org.junit.Test;
  * @author Alexandra Gavryushkina
  */
 
-public class BDSamplingThroughTimeModelTest extends TestCase {
+public class SABDSamplingThroughTimeModelTest extends TestCase {
 
     @Test
     public void testLikelihoodCalculation1() throws Exception {
-        BDSamplingThroughTimeModel model = new BDSamplingThroughTimeModel();
+        SABDSamplingThroughTimeModel model = new SABDSamplingThroughTimeModel();
         Tree tree = new TreeParser("((1:1.0)2:1.0)3:0.0", false, true, false, 1);
 
 

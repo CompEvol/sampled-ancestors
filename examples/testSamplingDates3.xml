@@ -24,7 +24,7 @@
         <trait idref='traitset'/>
     </tree>
 
-    <BDSamplingThroughTimeSampledAncestorModel spec="BDSamplingThroughTimeSampledAncestorModel" id="birthDeath" tree="@tree">
+    <BDSamplingThroughTimeModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree">
         <parameter name="orig_root" id="orig_root" value="1." lower="0." upper="1000." dimension="1"/>
 
         <parameter name="birthRate" id="birthRate" value="2." lower="0." upper="3." dimension="1"/>
@@ -32,7 +32,7 @@
         <parameter name="samplingRate" id="samplingRate" value="0.5" lower="0." upper="1." dimension="1"/>
         <parameter name="becomeNoninfectiousAfterSamplingProbability" id="bNASP" value="0.1" lower="0."
                    upper="1." dimension="1"/>
-    </BDSamplingThroughTimeSampledAncestorModel>
+    </BDSamplingThroughTimeModel>
 
     <run spec="MCMC" id="mcmc" chainLength="1000000" preBurnin="0">
         <!-- <init spec='CalibratedYuleInitialTree' id='startTree' initial='@tree'
@@ -49,7 +49,7 @@
         </distribution>
 
         <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
-        <operator id="SampledNodeDatesRandomWalkerForFakeSATrees" windowSize="1" spec="SampledNodeDatesRandomWalker" tree="@tree" weight="10"/>
+        <operator spec='SampledNodeDateRandomWalkerForFakeSATrees' windowSize="1"  tree="@tree" weight="10"/>
 
            <operator id='orig_scaler' spec='ScaleOperator' scaleFactor=".041" weight="1" parameter="@orig_root"/>
 
