@@ -21,8 +21,8 @@ public class ScaleOperatorForFakeSATrees extends ScaleOperator {
         try {
 
             if (m_bIsTreeScaler) {
-                Tree tree = m_pTree.get(this);
-                if (m_pRootOnly.get()) {
+                Tree tree = treeInput.get(this);
+                if (rootOnlyInput.get()) {
                     Node root = tree.getRoot();
                     if (root.isFake() && !scaleSNodes) {
                         return Double.NEGATIVE_INFINITY;

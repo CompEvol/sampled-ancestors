@@ -26,7 +26,7 @@ public class TreeDimensionJump extends TreeOperator {
 
         double newHeight, newRange, oldRange;
 
-        Tree tree = m_tree.get();
+        Tree tree = treeInput.get();
 
         int leafNodeCount = tree.getLeafNodeCount();
 

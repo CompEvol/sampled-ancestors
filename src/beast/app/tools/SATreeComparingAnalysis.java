@@ -29,8 +29,8 @@ public class SATreeComparingAnalysis {
 
     public void perform() {
         //int labelCount = parser1.translationMap.keySet().size();
-        List<Tree> trees1 = parser1.m_trees;
-        List<Tree> trees2 = parser2.m_trees;
+        List<Tree> trees1 = parser1.trees;
+        List<Tree> trees2 = parser2.trees;
         int treeCount1 = trees1.size();
         int treeCount2 = trees2.size();
 //        if (labelCount != parser2.translationMap.keySet().size()) {

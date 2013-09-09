@@ -19,7 +19,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
     @Override
     public double proposal() {
 
-        Tree tree = m_tree.get(this);
+        Tree tree = treeInput.get(this);
         //double x0 = 10;
 
         double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;

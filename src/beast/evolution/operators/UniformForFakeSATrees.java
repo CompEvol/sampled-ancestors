@@ -23,7 +23,7 @@ public class UniformForFakeSATrees extends TreeOperator {
      */
     @Override
     public double proposal() {
-        final Tree tree = m_tree.get(this);
+        final Tree tree = treeInput.get(this);
         final int nNodeCount = tree.getNodeCount();
         int leafNodeCount = tree.getLeafNodeCount();
 

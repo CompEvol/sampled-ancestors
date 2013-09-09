@@ -1,13 +1,10 @@
 package beast.evolution.operators;
 
 import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,26 +18,26 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
     @Override
     public void initAndValidate() throws Exception {
         windowSize = windowSizeInput.get();
-        m_bUseGaussian = useGaussianInput.get();
+        useGaussian = useGaussianInput.get();
 
         // determine taxon set to choose from
         if (m_taxonsetInput.get() != null) {
             useNodeNumbers = false;
             List<String> sTaxaNames = new ArrayList<String>();
-            for (String sTaxon : m_tree.get().getTaxaNames()) {
+            for (String sTaxon : treeInput.get().getTaxaNames()) {
                 sTaxaNames.add(sTaxon);
             }
 
             List<String> set = m_taxonsetInput.get().asStringList();
             int nNrOfTaxa = set.size();
-            m_iTaxa = new int[nNrOfTaxa];
+            taxonIndices = new int[nNrOfTaxa];
             int k = 0;
             for (String sTaxon : set) {
                 int iTaxon = sTaxaNames.indexOf(sTaxon);
                 if (iTaxon < 0) {
                     throw new Exception("Cannot find taxon " + sTaxon + " in tree");
                 }
-                m_iTaxa[k++] = iTaxon;
+                taxonIndices[k++] = iTaxon;
             }
         } else {
             useNodeNumbers = true;
@@ -50,7 +47,7 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
     @Override
     public double proposal() {
         // randomly select a leaf node
-        Tree tree = m_tree.get();
+        Tree tree = treeInput.get();
 
         Node node;
         if (useNodeNumbers) {
@@ -62,13 +59,13 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
 //                node = tree.getNode(i);
 //            }  while (!node.isLeaf());
         }  else {
-            int i = Randomizer.nextInt(m_iTaxa.length);
-            node = tree.getNode(m_iTaxa[i]);
+            int i = Randomizer.nextInt(taxonIndices.length);
+            node = tree.getNode(taxonIndices[i]);
         }
 
         double value = node.getHeight();
         double newValue = value;
-        if (m_bUseGaussian) {
+        if (useGaussian) {
             newValue += Randomizer.nextGaussian() * windowSize;
         } else {
             newValue += Randomizer.nextDouble() * 2 * windowSize - windowSize;

@@ -51,9 +51,9 @@ public class SampledAncestorTreeTrace {
 
         NexusParser parser = newParser;
 
-        String[] newick = new String[parser.m_trees.size()];
+        String[] newick = new String[parser.trees.size()];
         for (int i =0 ; i < newick.length; i++) {
-            newick[i] = parser.m_trees.get(i).getRoot().toSortedNewick(new int[] {1}, false);
+            newick[i] = parser.trees.get(i).getRoot().toSortedNewick(new int[] {1}, false);
         }
         //labelCount = parser.translationMap.keySet().size();
         trees = newick;
