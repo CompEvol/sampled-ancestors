@@ -70,7 +70,13 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 if (Double.isInfinite(logP))
                     return logP;
             } else {
-                logP += Math.log((1 - r)*psi[index]);
+                if (r != 1) {
+                    logP += Math.log((1 - r)*psi[index]);
+                } else {
+                    //throw new Exception("There is a sampled ancestor in the tree while r parameter is 1");
+                    System.out.println("There is a sampled ancestor in the tree while r parameter is 1");
+                    System.exit(0);
+                }
             }
         }
 
@@ -81,7 +87,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 double y = times[totalIntervals - 1] - tree.getNode(i).getHeight();
                 index = index(y);
 
-                temp = Math.log(psi[index] * (r - (1-r)*p0[index])) - Math.log(g(index, times[index], y)); //make it conditional on r != 0 if want to return it to the main class
+                temp = Math.log(psi[index] * (r - (1-r)*p0[index])) - Math.log(g(index, times[index], y));
                 logP += temp;
                 if (printTempResults) System.out.println("2nd PI = " + temp);
                 if (Double.isInfinite(logP))
