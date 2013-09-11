@@ -1,5 +1,7 @@
 package beast.evolution.operators;
 
+import beast.core.Input;
+import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
@@ -8,6 +10,9 @@ import beast.util.Randomizer;
  *@author Alexandra Gavryushkina
  */
 public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
+
+    public Input<RealParameter> rInput =
+            new Input<RealParameter>("becomeNoninfectiousAfterSamplingProbability", "The probability of an individual to become noninfectious immediately after the sampling");
 
     @Override
     public void initAndValidate() {
@@ -20,6 +25,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
     public double proposal() {
 
         Tree tree = treeInput.get(this);
+
         //double x0 = 10;
 
         double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;
@@ -160,6 +166,11 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
             j.makeDirty(Tree.IS_FILTHY);
         }
         iP.setHeight(newAge);
+
+        //make sure that either there are no direct ancestors or r<1
+        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
+            return Double.NEGATIVE_INFINITY;
+        }
 
         newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
         DimensionCoefficient = (double) oldDimension / newDimension;

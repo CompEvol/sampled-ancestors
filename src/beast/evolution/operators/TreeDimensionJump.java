@@ -1,6 +1,8 @@
 package beast.evolution.operators;
 
 import beast.core.Description;
+import beast.core.Input;
+import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
@@ -16,6 +18,9 @@ import beast.util.Randomizer;
         "a leaf by inserting a new parent node at a height which is uniformly chosen on the interval " +
         " between the sampled node height and its old parent height.")
 public class TreeDimensionJump extends TreeOperator {
+
+    public Input<RealParameter> rInput =
+            new Input<RealParameter>("becomeNoninfectiousAfterSamplingProbability", "The probability of an individual to become noninfectious immediately after the sampling");
 
     @Override
     public void initAndValidate() {
@@ -56,8 +61,12 @@ public class TreeDimensionJump extends TreeOperator {
             }
             newHeight = leaf.getHeight();
         }
-
         parent.setHeight(newHeight);
+
+        //make sure that either there are no direct ancestors or r<1
+        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
+            return Double.NEGATIVE_INFINITY;
+        }
 
         return Math.log(newRange/oldRange);
     }
