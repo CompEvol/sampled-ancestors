@@ -97,7 +97,7 @@ public class SampledAncestorTreeAnalysis {
             ArrayList<String> dClades =  extractAllDClades(tree.getRoot(),zeroBranchTrees);
             tmp.addAll(dClades);
             for (int j=0; j<tree.getNodeCount(); j++)
-                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && tree.getNode(i).isFake())) {
+                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && tree.getNode(j).isFake())) {
                     dCladeCount++;
                     break;
                 }
