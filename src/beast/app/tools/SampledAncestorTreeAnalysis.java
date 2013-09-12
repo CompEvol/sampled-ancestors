@@ -2,10 +2,12 @@ package beast.app.tools;
 
 import beast.core.util.ESS;
 import beast.evolution.tree.Node;
+import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Alexandra Gavryushkina
@@ -28,19 +30,17 @@ public class SampledAncestorTreeAnalysis {
      * and taxa names are used otherwise
      */
     public void perform(boolean useNumbers) throws Exception {
-        countTopologies(useNumbers);
-        countTreesWithDClades();
-        //countClades();
+       countClades(true, false);
+       countSampledAncestors(true);
     }
 
     public void countTreesWithDClades() throws Exception {
-        TreeParser tree;
-
 
         int dCladeCount = 0;
+        Tree tree;
 
-        for (int i =0; i < trace.getTreeCount(); i++) {
-            tree = new TreeParser(trace.getTrees()[i], false, true, false, 1);
+        for (int i =0; i < trace.treeCount; i++) {
+            tree = trace.beastTrees.get(i);
             int j;
             for (j=0; j<tree.getNodeCount(); j++)
                 if (tree.getNode(j).getChildCount() == 1) {
@@ -49,24 +49,55 @@ public class SampledAncestorTreeAnalysis {
                 }
         }
 
-        double a =  (double)dCladeCount/trace.getTreeCount();
+        double a =  (double)dCladeCount/trace.treeCount;
         System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
         System.out.println();
     }
 
-    public void countClades()throws Exception {
+    public void countSampledAncestors(boolean zeroBranchTrees){
+        Tree tree;
+        int sAcount;
+
+        if (zeroBranchTrees) {
+            for (int i =0; i < trace.treeCount-1; i++) {
+                tree = trace.beastTrees.get(i);
+                sAcount=0;
+                for (int j=0; j<tree.getNodeCount(); j++) {
+                    if (tree.getNode(j).isFake()) sAcount++;
+                }
+                System.out.print(sAcount + ", ");
+            }
+
+            tree = trace.beastTrees.get(trace.treeCount-1);
+            sAcount=0;
+            for (int j=0; j<tree.getNodeCount(); j++) {
+                if (tree.getNode(j).isFake()) sAcount++;
+            }
+            System.out.print(sAcount);
+        }
+
+    }
+
+    /**
+     * print the quantity of each sampled ancestor clade encountered in trees
+     *
+     * @param zeroBranchTrees  if true then beast trees are treated as zero branch SA trees
+     * @param countPairs       if true then sampled ancestors pairs are also counted and printed
+     * @throws Exception
+     */
+    public void countClades(boolean zeroBranchTrees, boolean countPairs) throws Exception {
 
         FrequencySet<String> clades = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
 
         int dCladeCount = 0;
 
-        for (int i=0; i < trace.getTreeCount(); i++) {
-            TreeParser tree = new TreeParser(trace.getTrees()[i], false, true, false, 1);
-            ArrayList<String> dClades =  extractAllDClades(tree.getRoot());
+        for (int i=0; i < trace.treeCount; i++) {
+            Tree tree = trace.beastTrees.get(i);
+            ArrayList<String> dClades =  extractAllDClades(tree.getRoot(),zeroBranchTrees);
             tmp.addAll(dClades);
             for (int j=0; j<tree.getNodeCount(); j++)
-                if (tree.getNode(j).getChildCount() == 1) {
+                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && tree.getNode(i).isFake())) {
                     dCladeCount++;
                     break;
                 }
@@ -80,34 +111,36 @@ public class SampledAncestorTreeAnalysis {
         System.out.println("Count \t Percent \t Clade");
         System.out.println();
         for (int i =0; i < clades.size(); i++) {
-            double percent = (double) (clades.getFrequency(i) * 100)/(trace.getTreeCount());
+            double percent = (double) (clades.getFrequency(i) * 100)/(trace.treeCount);
             System.out.format("%-10d %-10.2f", clades.getFrequency(i), percent);
             System.out.println(clades.get(i));
         }
         System.out.println();
 
-        System.out.println("Pair frequencies");
-        System.out.println();
-        System.out.println("Count \t Percent \t Pair");
-        System.out.println();
-        for (int i =0; i < pairs.size(); i++) {
-            double percent = (double) (pairs.getFrequency(i) * 100)/(trace.getTreeCount());
-            System.out.format("%-10d %-10.2f", pairs.getFrequency(i), percent);
-            System.out.println(pairs.get(i));
+        if (countPairs) {
+            System.out.println("Pair frequencies");
+            System.out.println();
+            System.out.println("Count \t Percent \t Pair");
+            System.out.println();
+            for (int i =0; i < pairs.size(); i++) {
+                double percent = (double) (pairs.getFrequency(i) * 100)/(trace.treeCount);
+                System.out.format("%-10d %-10.2f", pairs.getFrequency(i), percent);
+                System.out.println(pairs.get(i));
+            }
+            System.out.println();
+            double a =  (double)dCladeCount/trace.treeCount;
+            System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
+            System.out.println();
         }
-        System.out.println();
-        double a =  (double)dCladeCount/trace.getTreeCount();
-        System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
-        System.out.println();
     }
 
     public void countTopologies(boolean useNumbers) {
         FrequencySet<String> topologies = new FrequencySet<String>();
         String[] trees;
         if (useNumbers) {
-            trees = trace.getShortTrees();
+            trees = trace.shortTrees;
         } else {
-            trees = trace.getLabeledTrees();
+            trees = trace.labeledTrees;
         }
 
         for (int i=0; i < trees.length; i++) {
@@ -172,7 +205,7 @@ public class SampledAncestorTreeAnalysis {
     // testType = 2 --- with logNormal prior on distance between root height and origin time.
     public void countTopologiesTest(int testType) {
         FrequencySet<String> topologies = new FrequencySet<String>();
-        String[] trees = trace.getShortTrees();
+        String[] trees = trace.shortTrees;
 
         for (int i=0; i < trees.length; i++) {
             topologies.add(trees[i]);
@@ -288,36 +321,55 @@ public class SampledAncestorTreeAnalysis {
         return tmp;
     }
 
-    private String extractDClade(Node node) {
-        String tmp = new String();
-        String ancestor = Integer.toString(node.getNr() + 1);
-        tmp += ancestor + '<';
-
-        if (node.getChildCount() == 1) {
-            Integer[] descendants = listNodesUnder(node.getLeft()).toArray(new Integer[0]);
-            Arrays.sort(descendants);
-            for (int i=0; i < descendants.length; i++){
-                String pair = ancestor + '<' + descendants[i];
-                pairs.add(pair);
+    private ArrayList<String> listNodesUnder(Node node, boolean useID) {
+        ArrayList<String> tmp = new ArrayList<String>();
+        if (!node.isLeaf()) {
+            for (Node child : node.getChildren()) {
+                tmp.addAll(listNodesUnder(child, useID));
             }
-            tmp += Arrays.toString(descendants);
+        } else tmp.add(node.getID());
+        return tmp;
+    }
+
+    private String extractDClade(Node node, boolean zeroBranchTrees) {
+        String tmp = new String();
+        if (zeroBranchTrees) {
+            String ancestor = node.getID();
+            tmp += ancestor + '<';
+            if (node.isDirectAncestor()) {
+                tmp+= listNodesUnder(node.getParent(), true);
+            }
+        } else {
+            String ancestor = Integer.toString(node.getNr() + 1);
+            tmp += ancestor + '<';
+            if (node.getChildCount() == 1) {
+                Integer[] descendants = listNodesUnder(node.getLeft()).toArray(new Integer[0]);
+                Arrays.sort(descendants);
+                for (int i=0; i < descendants.length; i++){
+                    String pair = ancestor + '<' + descendants[i];
+                    pairs.add(pair);
+                }
+                tmp += Arrays.toString(descendants);
+            }
         }
 
+
         return tmp;
     }
 
-    public ArrayList<String> extractAllDClades(Node node) {
+    public ArrayList<String> extractAllDClades(Node node, boolean zeroBranchTrees) {
         ArrayList<String> tmp = new ArrayList<String>();
 
-        if (node.getChildCount() < 2)
-            tmp.add(extractDClade(node));
+        if ((!zeroBranchTrees && node.getChildCount() < 2) || (zeroBranchTrees && node.isLeaf()))
+            tmp.add(extractDClade(node, zeroBranchTrees));
         if (node.getLeft() != null)
-            tmp.addAll(extractAllDClades(node.getLeft()));
+            tmp.addAll(extractAllDClades(node.getLeft(), zeroBranchTrees));
         if (node.getRight() != null)
-            tmp.addAll(extractAllDClades(node.getRight()));
+            tmp.addAll(extractAllDClades(node.getRight(), zeroBranchTrees));
 
         return tmp;
     }
+
 
 
 

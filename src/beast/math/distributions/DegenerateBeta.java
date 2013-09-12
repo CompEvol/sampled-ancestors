@@ -1,49 +1,49 @@
 package beast.math.distributions;
 
 import beast.core.Input;
+import beast.core.parameter.RealParameter;
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.BetaDistributionImpl;
 import org.apache.commons.math.distribution.ContinuousDistribution;
 import org.apache.commons.math.distribution.Distribution;
 
 /**
  * @author Alexandra Gavryushkina
  */
-public class DegenerateUniform extends ParametricDistribution {
+public class DegenerateBeta extends ParametricDistribution {
 
-    public Input<Double> lowerInput = new Input<Double>("lower", "lower bound on the interval, defaul 0", 0.0);
-    public Input<Double> upperInput = new Input<Double>("upper", "lower bound on the interval, defaul 1", 1.0);
+    public Input<RealParameter> alphaInput = new Input<RealParameter>("alpha", "first shape parameter, defaults to 1", Input.Validate.REQUIRED);
+    public Input<RealParameter> betaInput = new Input<RealParameter>("beta", "the other shape parameter, defaults to 1", Input.Validate.REQUIRED);
     public Input<Double> massInput = new Input<Double>("mass", "probability mass to put on a point", 0.5);
     public Input<Double> pointInput = new Input<Double>("point", "the point on which the probability mass is put", 1.0);
 
-    DegenerateUniformImpl distr = new DegenerateUniformImpl();
+    DegenerateBetaImpl distr  = new DegenerateBetaImpl();
+    static org.apache.commons.math.distribution.BetaDistribution betaDistr = new BetaDistributionImpl(1, 1);
 
-    double lower, upper, point, mass, density;
+    double alpha, beta, point, mass, density;
 
     @Override
     public void initAndValidate() throws Exception {
-        lower = lowerInput.get();
-        upper = upperInput.get();
+        alpha = alphaInput.get().getValue();
+        beta = betaInput.get().getValue();
         point = pointInput.get();
-        if (lower >= upper || point < lower || upper < point) {
-            throw new Exception("Upper value should be higher than lower value and a mass point should be between lower and upper bound (inclusive)");
+        if (point < 0 || 1 < point) {
+            throw new Exception("Point should be between 0 and 1 (inclusive)");
         }
         mass = massInput.get();
         if (mass <= 0 || mass >= 1) {
             throw new Exception("Mass value should be between 0 and 1");
         }
-        distr.setParameters(lower, upper, point, mass);
-        density = (1-mass)/(upper - lower);
+        betaDistr.setAlpha(alpha);
+        betaDistr.setBeta(beta);
+        distr.setParameters(point, mass);
     }
 
-    class DegenerateUniformImpl implements ContinuousDistribution {
-        private double lower;
-        private double upper;
+    class DegenerateBetaImpl implements ContinuousDistribution {
         private double point;
         private double mass;
 
-        public void setParameters(double lower, double upper, double point, double mass) {
-            this.lower = lower;
-            this.upper = upper;
+        public void setParameters(double point, double mass) {
             this.point = point;
             this.mass = mass;
         }
@@ -52,14 +52,10 @@ public class DegenerateUniform extends ParametricDistribution {
         public double cumulativeProbability(double x) throws MathException {
 
             if (x < point) {
-                x = Math.max(x, lower);
-                return (1- mass) * (x - lower) / (upper - lower);
+                return (1- mass) * betaDistr.cumulativeProbability(x);
             }  else {
-                x = Math.min(x, upper);
-                return mass + (1-mass) * (x - lower)/(upper - lower);
+                return mass + (1-mass) * betaDistr.cumulativeProbability(x);
             }
-
-
 
         }
 
@@ -75,18 +71,18 @@ public class DegenerateUniform extends ParametricDistribution {
 
         @Override
         public double density(double x) {
-            if (x >= lower && x <= upper && x != point) {
-                return density;
+            if (x >= 0 && x <= 1 && x != point) {
+                return (1-mass) * betaDistr.density(x);
             } else if (x == point) {
-                    return mass;
-                } else  return 0;
+                return mass;
+            } else  return 0;
         }
 
         @Override
         public double logDensity(double x) {
             return Math.log(density(x));
         }
-    } // class DegenerateUniformImpl
+    } // class DegenerateBetaImpl
 
     @Override
     public Distribution getDistribution() {
@@ -95,10 +91,6 @@ public class DegenerateUniform extends ParametricDistribution {
 
     @Override
     public double density(double x) {
-        if (x >= lower && x <= upper) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return distr.density(x);
     }
 }

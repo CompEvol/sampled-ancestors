@@ -6,6 +6,7 @@ import beast.util.NexusParser;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,56 +15,39 @@ import java.util.Map;
 
 public class SampledAncestorTreeTrace {
 
-    private int labelCount;
+    public List<Tree> beastTrees;
 
-    private int treeCount;
+    public int treeCount;
 
     /**
      * an array of short newick representation of trees from the parser
      */
-    private String[] trees;
+    public String[] trees;
 
-    private String[] shortTrees;
+    /**
+     * an array of newick strings with no lengths
+     */
+    public String[] shortTrees;
 
-    private String[] labeledTrees;
+    public int labelCount;
 
-    private String[] rankedTrees;
+    public String[] labeledTrees;
 
-    private HashSet<Integer> labelSet;
+ //   private String[] rankedTrees;
 
-    public  String[] getTrees() {
-        return trees;
-    }
+    public HashSet<Integer> labelSet;
 
-    public  String[] getShortTrees() {
-        return shortTrees;
-    }
+    public SampledAncestorTreeTrace(NexusParser parser) throws Exception {
 
-    public int getTreeCount() {
-        return treeCount;
-    }
-
-    public String[] getLabeledTrees() {
-        return labeledTrees;
-    }
-
-    public SampledAncestorTreeTrace(NexusParser newParser) throws Exception {
-
-        NexusParser parser = newParser;
+        beastTrees = parser.trees;
 
         String[] newick = new String[parser.trees.size()];
         for (int i =0 ; i < newick.length; i++) {
-            newick[i] = parser.trees.get(i).getRoot().toSortedNewick(new int[] {1}, false);
+            newick[i] = beastTrees.get(i).getRoot().toSortedNewick(new int[] {1}, false);
         }
-        //labelCount = parser.translationMap.keySet().size();
+
         trees = newick;
         treeCount = trees.length;
-
-//        Integer[] tmp = new Integer[labelCount];
-//        for (int i=0; i< labelCount; i++)
-//            tmp[i] = i+1;
-//
-//        labelSet = new HashSet<Integer>(Arrays.asList(tmp));
 
         shortTrees = new String[treeCount];
 
@@ -71,7 +55,15 @@ public class SampledAncestorTreeTrace {
             shortTrees[i] = convertToShortTree(trees[i]);
         }
 
-        labeledTrees = new String[treeCount];
+       labeledTrees = new String[treeCount];
+
+        //labelCount = parser.translationMap.keySet().size();
+
+//        Integer[] tmp = new Integer[labelCount];
+//        for (int i=0; i< labelCount; i++)
+//            tmp[i] = i+1;
+//
+//        labelSet = new HashSet<Integer>(Arrays.asList(tmp));
 
 //        for (int i=0; i < treeCount; i++){
 //            labeledTrees[i] = convertToLabeledTree(shortTrees[i], null); //parser.translationMap);
