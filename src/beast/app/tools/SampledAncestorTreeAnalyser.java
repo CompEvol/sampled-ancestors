@@ -2,6 +2,7 @@ package beast.app.tools;
 
 import beast.evolution.tree.Tree;
 import beast.util.NexusParser;
+import beast.util.SANexusParser;
 
 import java.io.*;
 
@@ -95,7 +96,7 @@ public class SampledAncestorTreeAnalyser {
 
         try {
             reader = new FileReader(file);
-            NexusParser parser = new NexusParser();
+            SANexusParser parser = new SANexusParser();
             parser.parseFile(file);
             SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);

@@ -3,6 +3,7 @@ package beast.app.tools;
 import beast.core.util.ESS;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.util.Randomizer;
 import beast.util.TreeParser;
 
 import java.util.ArrayList;
@@ -54,18 +55,26 @@ public class SampledAncestorTreeAnalysis {
         System.out.println();
     }
 
+    /**
+     * print the number of sampled ancestor in each tree
+     *
+     * @param zeroBranchTrees
+     */
     public void countSampledAncestors(boolean zeroBranchTrees){
         Tree tree;
         int sAcount;
+        int totalsAcount = 0;
 
         if (zeroBranchTrees) {
+            //System.out.println("Sample \t Prior \t Posterior");
             for (int i =0; i < trace.treeCount-1; i++) {
                 tree = trace.beastTrees.get(i);
                 sAcount=0;
                 for (int j=0; j<tree.getNodeCount(); j++) {
                     if (tree.getNode(j).isFake()) sAcount++;
                 }
-                System.out.print(sAcount + ", ");
+                totalsAcount += sAcount;
+                //System.out.println(i + "\t" + sAcount + "\t" + Randomizer.nextDouble());
             }
 
             tree = trace.beastTrees.get(trace.treeCount-1);
@@ -73,7 +82,11 @@ public class SampledAncestorTreeAnalysis {
             for (int j=0; j<tree.getNodeCount(); j++) {
                 if (tree.getNode(j).isFake()) sAcount++;
             }
-            System.out.print(sAcount);
+            totalsAcount += sAcount;
+            //System.out.println(trace.treeCount-1 + "\t" + sAcount + "\t" + Randomizer.nextDouble());
+            System.out.format("The average number of sampled ancestors per tree is %2.2f", ((double) totalsAcount / trace.treeCount));
+            System.out.println();
+
         }
 
     }

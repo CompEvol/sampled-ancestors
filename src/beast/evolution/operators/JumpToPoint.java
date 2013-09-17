@@ -37,11 +37,10 @@ public class JumpToPoint extends Operator {
 
         if (r != 1 && tree.getDirectAncestorNodeCount() == 0) {
             rParameter.setValue(1.);
-            return Math.log((double)1/r);
+            return 0.0;
         } else if (r == 1) {
-            double u = Randomizer.nextDouble();
-            rParameter.setValue(u);
-            return Math.log(u);
+            rParameter.setValue(Randomizer.nextDouble());
+            return 0.0;
         } else return Double.NEGATIVE_INFINITY;
 
 
