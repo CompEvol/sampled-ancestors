@@ -83,30 +83,30 @@ public class SANexusParser extends NexusParser {
                 if (i > 0) {
                     sStr = sStr.substring(i);
                 }
-                FakeSATreeParser FakeSATreeParser = null;
+                ZeroBranchSATreeParser ZeroBranchSATreeParser = null;
 
                 if (origin != -1) {
-                    FakeSATreeParser = new FakeSATreeParser(taxa, sStr, origin, false);
+                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, origin, false);
                 } else {
                     try {
-                        FakeSATreeParser = new FakeSATreeParser(taxa, sStr, 0, false);
+                        ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 0, false);
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        FakeSATreeParser = new FakeSATreeParser(taxa, sStr, 1, false);
+                        ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 1, false);
                     }
                 }
 //                catch (NullPointerException e) {
-//                    FakeSATreeParser = new FakeSATreeParser(m_taxa, sStr, 1);
+//                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (m_taxa, sStr, 1);
 //                }
 
                 for (NexusParserListener listener : listenersSA) {
-                    listener.treeParsed(trees.size(), FakeSATreeParser);
+                    listener.treeParsed(trees.size(), ZeroBranchSATreeParser );
                 }
 
-                if (translationMap != null) FakeSATreeParser.translateLeafIds(translationMap);
+                if (translationMap != null) ZeroBranchSATreeParser .translateLeafIds(translationMap);
 
-                trees.add(FakeSATreeParser);
+                trees.add(ZeroBranchSATreeParser );
 
-//				Node tree = FakeSATreeParser.getRoot();
+//				Node tree = ZeroBranchSATreeParser .getRoot();
 //				tree.sort();
 //				tree.labelInternalNodes(nNrOfLabels);
             }

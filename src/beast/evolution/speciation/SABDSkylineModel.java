@@ -22,6 +22,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     public void initAndValidate() throws Exception {
         super.initAndValidate();
         r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+        //printTempResults = true;
     }
 
     @Override
@@ -86,8 +87,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
             if ((!isRhoTip[i] || m_rho.get() == null) && !tree.getNode(i).isDirectAncestor()) {
                 double y = times[totalIntervals - 1] - tree.getNode(i).getHeight();
                 index = index(y);
-
-                temp = Math.log(psi[index] * (r - (1-r)*p0[index])) - Math.log(g(index, times[index], y));
+                temp = Math.log(psi[index] * (r + (1-r)*p0[index])) - Math.log(g(index, times[index], y));
                 logP += temp;
                 if (printTempResults) System.out.println("2nd PI = " + temp);
                 if (Double.isInfinite(logP))

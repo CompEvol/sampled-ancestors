@@ -95,10 +95,6 @@ public class DegenerateUniform extends ParametricDistribution {
 
     @Override
     public double density(double x) {
-        if (x >= lower && x <= upper) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return distr.density(x);
     }
 }

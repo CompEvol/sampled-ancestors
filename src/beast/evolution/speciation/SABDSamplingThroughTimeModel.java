@@ -76,17 +76,22 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         double x0 = tree.getRoot().getHeight() + origToRootDistance;
         //double x0 = origToRootDistance;
         if (x0 < tree.getRoot().getHeight()) {
-            System.out.println("It is time to change the root height choice");
+            System.out.println("The root height is larger than the time of origin");
         }
 
         double logPost;
         logPost = -Math.log(q(x0, c1, c2));
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
-                if  (!tree.getNode(i).isDirectAncestor())
+                if  (!tree.getNode(i).isDirectAncestor())  {
                     logPost += Math.log(psi) + Math.log(q(tree.getNode(i).getHeight(), c1, c2)) + Math.log(p0s(tree.getNode(i).getHeight(), c1, c2));
+                }
             } else {
                 if (tree.getNode(i).isFake()) {
+                    if (r == 1) {
+                        System.out.println("r = 1 but there are sampled ancestors in the tree");
+                        System.exit(0);
+                    }
                     logPost += Math.log(psi) + Math.log(1 - r);
                 } else {
                     logPost += Math.log(lambda) - Math.log(q(tree.getNode(i).getHeight(), c1, c2));

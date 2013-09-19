@@ -21,7 +21,7 @@ import java.util.Vector;
 @Description("Create beast.tree by parsing from a specification of a beast.tree (which is a fake SA tree) in Newick" +
         " format (includes parsing of any meta data in the Newick string).")
 
-public class FakeSATreeParser extends Tree {
+public class ZeroBranchSATreeParser extends Tree {
     /**
      * default beast.tree branch length, used when that info is not in the Newick beast.tree
      */
@@ -117,10 +117,10 @@ public class FakeSATreeParser extends Tree {
      */
     List<Boolean> m_bTaxonIndexInUse = new ArrayList<Boolean>();
 
-    public FakeSATreeParser() {
+    public ZeroBranchSATreeParser() {
     }
 
-    public FakeSATreeParser(Alignment alignment, String newick) throws Exception {
+    public ZeroBranchSATreeParser(Alignment alignment, String newick) throws Exception {
         dataInput.setValue(alignment, this);
         newickInput.setValue(newick, this);
         initAndValidate();
@@ -138,7 +138,7 @@ public class FakeSATreeParser extends Tree {
      *                  true if tip heights should be adjusted to zero
      * @throws Exception
      */
-    public FakeSATreeParser(List<String> taxaNames,
+    public ZeroBranchSATreeParser(List<String> taxaNames,
                       String newick,
                       int offset,
                       boolean adjustTipHeightsWhenMissingDateTraits) throws Exception {
@@ -156,11 +156,11 @@ public class FakeSATreeParser extends Tree {
 
     /**
      * Parses newick format. The default does not adjust heights and allows single child nodes.
-     * Modifications of the input should be deliberately made by calling e.g. new FakeSATreeParser(newick, true, false).
+     * Modifications of the input should be deliberately made by calling e.g. new ZeroBranchSATreeParser(newick, true, false).
      *
      * @param newick a string representing a tree in newick format
      */
-    public FakeSATreeParser(String newick) throws Exception {
+    public ZeroBranchSATreeParser(String newick) throws Exception {
         this(newick, false, true, true, 1);
     }
 
@@ -170,7 +170,7 @@ public class FakeSATreeParser extends Tree {
      * @param allowSingleChildNodes true if internal nodes with single children are allowed
      * @throws Exception
      */
-    public FakeSATreeParser(String newick,
+    public ZeroBranchSATreeParser(String newick,
                       boolean adjustTipHeights,
                       boolean allowSingleChildNodes) throws Exception {
         this(newick, adjustTipHeights, allowSingleChildNodes, true, 1);
@@ -181,7 +181,7 @@ public class FakeSATreeParser extends Tree {
      * @param adjustTipHeights true if the tip heights should be adjusted to 0 (i.e. contemporaneous) after reading in tree.
      * @throws Exception
      */
-    public FakeSATreeParser(String newick,
+    public ZeroBranchSATreeParser(String newick,
                       boolean adjustTipHeights) throws Exception {
         this(newick, adjustTipHeights, true, true, 1);
     }
@@ -196,7 +196,7 @@ public class FakeSATreeParser extends Tree {
      *                              be 1 as by default.
      * @throws Exception
      */
-    public FakeSATreeParser(String newick,
+    public ZeroBranchSATreeParser(String newick,
                       boolean adjustTipHeights,
                       boolean allowSingleChildNodes,
                       boolean isLabeled,
@@ -215,7 +215,7 @@ public class FakeSATreeParser extends Tree {
 //    public static void main(String[] args) { //main for testing
 //
 //        try {
-//            FakeSATreeParser tree = new FakeSATreeParser(testTree);
+//            ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser(testTree);
 //            System.out.println(tree);
 //            System.out.println(tree.m_sLabels.size() + ", " + tree.m_sLabels);
 //            System.out.println(tree.getTaxaNames().length + ", " + tree.getTaxaNames()[0]);
@@ -656,4 +656,4 @@ public class FakeSATreeParser extends Tree {
             }
         }
     }
-} // class FakeSATreeParser
+} // class ZeroBranchSATreeParser
