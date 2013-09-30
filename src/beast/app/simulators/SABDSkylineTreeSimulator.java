@@ -24,6 +24,7 @@ public class SABDSkylineTreeSimulator {
                              //internal nodes when collecting nodes that will be presented in 'sampled tree' from the
                              // full simulated tree
     private HashSet<Node> sampledNodes; // a set where sampled nodes collected during the simulation
+    double origin = 0; //is the distance between the origin (0) and the youngest sampled node
 
     /**
      * construct a skyline model tree simulator with only sampling rate changing through
@@ -105,6 +106,7 @@ public class SABDSkylineTreeSimulator {
             }
         }  while (sampleCount < finalSampleCount && !newTipNodes.isEmpty()); //stop simulating tree when either there are enough sampled nodes
                                                                              // or all the individuals died
+
         //Remove children added at the last stage because the process has stopped and we don't need to know
         //what happens after this point
         for (Node node:tipNodes) {
@@ -117,8 +119,9 @@ public class SABDSkylineTreeSimulator {
         }
 
         //remove excess of sampled nodes
-        removeSampleExcess();
-
+        if (!sampledNodes.isEmpty()) {
+            removeSampleExcess();
+        }
 
         HashSet<Node> parents;
         HashSet<Node> children = sampledNodes;
@@ -211,10 +214,17 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
+        int treeCount = 10;
+        double[] origins = new double[10];
 
-        for (int i=0; i<2; i++) {
+        for (int i=0; i<treeCount; i++) {
             SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(1.0, 0.1, 0.5, 0.1, 30, 8.0);
             simulator.simulate();
+            origins[i] = simulator.origin;
+        }
+
+        for (int i=0; i<treeCount; i++) {
+            System.out.println(origins[i]);
         }
 
 
@@ -294,7 +304,11 @@ public class SABDSkylineTreeSimulator {
             sampledNodeList.subList(finalSampleCount, sampledNodes.size()).clear();
             sampledNodes = new HashSet<Node>(sampledNodeList);
             sampleCount = finalSampleCount;
+            origin = - sampledNodeList.get(finalSampleCount-1).getHeight();
+        } else {
+            origin = - sampledNodeList.get(sampleCount-1).getHeight();
         }
+
 
     }
 
