@@ -3,10 +3,7 @@ package beast.app.simulators;
 import beast.evolution.tree.Node;
 import beast.util.Randomizer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  *
@@ -61,15 +58,19 @@ public class SABDTreeSimulator {
         //After each stage, tipNodes represents tip nodes of the simulated tree that haven't died till this point
         do {
             Node node = tipNodes.get(0);
-            double nextRate = Randomizer.nextDouble();
             int typeOfEvent;
-            double timeInterval;
-            //if the node is older than samplingStartTime then sampling event becomes possible
-            timeInterval = Randomizer.nextExponential(lambda+mu+psi);
-            if (nextRate < lambda/(lambda+mu+psi)) {
+            double[] timeIntervals = new double[3];
+            double[] sortedTimeIntervals = new double[3];
+            timeIntervals[0] = Randomizer.nextExponential(lambda);
+            timeIntervals[1] = Randomizer.nextExponential(mu);
+            timeIntervals[2] = Randomizer.nextExponential(psi);
+            System.arraycopy(timeIntervals, 0, sortedTimeIntervals, 0, 3);
+            Arrays.sort(sortedTimeIntervals);
+            double timeInterval = sortedTimeIntervals[0];
+            if (timeInterval == timeIntervals[0]) {
                 typeOfEvent=BIRTH;
             } else {
-                if (nextRate < (lambda+mu)/(lambda+mu+psi)) {
+                if (timeInterval == timeIntervals[1]) {
                     typeOfEvent=DEATH;
                 } else typeOfEvent=SAMPLING;
             }
@@ -188,11 +189,11 @@ public class SABDTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 10;
+        int treeCount = 1;
         double[] origins = new double[10];
 
         for (int i=0; i<treeCount; i++) {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(1.0, 0.1, 0.5, 0.1, 30, 8.0);
+            SABDTreeSimulator simulator = new SABDTreeSimulator(1.0, 0.1, 0.5, 0.1, 20);
             simulator.simulate();
             origins[i] = simulator.origin;
         }

@@ -73,6 +73,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
             } else {
                 if (r != 1) {
                     logP += Math.log((1 - r)*psi[index]);
+                    //System.out.println("caught it. The time of sampled ancestor is " + tree.getNode(nTips+i).getHeight());
                 } else {
                     //throw new Exception("There is a sampled ancestor in the tree while r parameter is 1");
                     System.out.println("There is a sampled ancestor in the tree while r parameter is 1");

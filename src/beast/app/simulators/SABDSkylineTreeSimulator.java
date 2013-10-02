@@ -52,70 +52,89 @@ public class SABDSkylineTreeSimulator {
      * Note that nodes in the tree have negative heights (the origin node has height 0)
      */
     public void simulate() {
+
         //create an initial node (origin of tree)
         Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
-        ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
-        ArrayList<Node> newTipNodes = new ArrayList<Node>();  // an array of nodes (that are direct children of nodes from
-                                                              //tipNodes array) simulated on this stage
-        newTipNodes.add(initial);
-
-        //At each stage, for each node in TipNodes array simulate the next event and
-        //collect children nodes resulting from this event to newTipNodes array.
+        ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of temporary tip nodes sorted by their heights
+        tipNodes.add(initial);
+        boolean stopCondition;
+        //At each stage, take the oldest node in tipNodes array, simulate the next event for this node, remove
+        // this node from the tipNodes array and add its new children (if any) to tipNodes
         //After each stage, tipNodes represents tip nodes of the simulated tree that haven't died till this point
         do {
-            tipNodes.clear();
-            tipNodes.addAll(newTipNodes);
-            newTipNodes.clear();
-            // simulate children of nodes in tipNodes array
-            for (Node node:tipNodes) {
-                //pick the type of event depending on time of the node
-                double nextRate = Randomizer.nextDouble();
-                int typeOfEvent;
-                double timeInterval;
-                //if the node is older than samplingStartTime then sampling event becomes possible
-                if (node.getHeight() + samplingStartTime < 0) {
-                    timeInterval = Randomizer.nextExponential(lambda+mu+psi);
-                    if (nextRate < lambda/(lambda+mu+psi)) {
-                        typeOfEvent=BIRTH;
-                    } else {
-                        if (nextRate < (lambda+mu)/(lambda+mu+psi)) {
-                            typeOfEvent=DEATH;
-                        } else typeOfEvent=SAMPLING;
-                    }
-                }  else {
-                    timeInterval = Randomizer.nextExponential(lambda+mu);
-                    if (nextRate < lambda/(lambda+mu)) {
-                        typeOfEvent=BIRTH;
-                    } else typeOfEvent=DEATH;
-                    // if the next event happens after samplingStartTime when we should account fot the possibility
-                    // of sampling event happens after samplingStartTime and the proposed node age
-                    // (which is -(node.Height - timeInterval)). Note that samplingStartTime is given as a distance from the origin
-                    // and is positive, while node.Height - timeInterval is negative
-                    if (node.getHeight()-timeInterval +samplingStartTime <0) {
-                        double startTime_samplingEvent = Randomizer.nextExponential(psi);
-                        if (samplingStartTime + startTime_samplingEvent + node.getHeight()-timeInterval < 0) {
-                            typeOfEvent = SAMPLING;
-                            timeInterval = samplingStartTime + startTime_samplingEvent + node.getHeight();
-                        }
-                    }
+            Node node = tipNodes.get(0);
+            int typeOfEvent;
+            double timeInterval;
+            double[] timeIntervals = new double[3];
+            double[] sortedTimeIntervals = new double[3];
+
+            //if the node is older than samplingStartTime then sampling event becomes possible
+            if (node.getHeight() + samplingStartTime < 0) {
+                timeIntervals[0] = Randomizer.nextExponential(lambda);
+                timeIntervals[1] = Randomizer.nextExponential(mu);
+                timeIntervals[2] = Randomizer.nextExponential(psi);
+                System.arraycopy(timeIntervals, 0, sortedTimeIntervals, 0, 3);
+                Arrays.sort(sortedTimeIntervals);
+                timeInterval = sortedTimeIntervals[0];
+                if (timeInterval == timeIntervals[0]) {
+                    typeOfEvent=BIRTH;
+                } else {
+                    if (timeInterval == timeIntervals[1]) {
+                        typeOfEvent=DEATH;
+                    } else typeOfEvent=SAMPLING;
+                }
+            }  else {
+                timeIntervals[0] = Randomizer.nextExponential(lambda);
+                timeIntervals[1] = Randomizer.nextExponential(mu);
+                if (timeIntervals[0] < timeIntervals[1]) {
+                    timeInterval = timeIntervals[0];
+                }  else timeInterval = timeIntervals[1];
+
+                if (timeInterval == timeIntervals[0]) {
+                    typeOfEvent=BIRTH;
+                } else {
+                    typeOfEvent=DEATH;
                 }
 
-                newTipNodes.addAll(getNewNodes(node, typeOfEvent, timeInterval));
+                // if the next event happens after samplingStartTime when we should account fot the possibility
+                // of sampling event happens after samplingStartTime and the proposed node age
+                // (which is -(node.Height - timeInterval)). Note that samplingStartTime is given as a distance from the origin
+                // and is positive, while node.Height - timeInterval is negative
+                if (node.getHeight() - timeInterval +samplingStartTime < 0) {
+                    double startTime_samplingEvent = Randomizer.nextExponential(psi);
+                    if (samplingStartTime + startTime_samplingEvent + node.getHeight()-timeInterval < 0) {
+                        typeOfEvent = SAMPLING;
+                        timeInterval = samplingStartTime + startTime_samplingEvent + node.getHeight();
+                    }
+                }
             }
-        }  while (sampleCount < finalSampleCount && !newTipNodes.isEmpty()); //stop simulating tree when either there are enough sampled nodes
-                                                                             // or all the individuals died
+            tipNodes.remove(0);
+            ArrayList<Node> newNodes = getNewNodes(node, typeOfEvent, timeInterval);
+            for (Node child: newNodes)  {
+                int insPoint = -Collections.binarySearch(tipNodes, child, nodeComparator) - 1;
+                tipNodes.add(insPoint, child);
+
+            }
+            stopCondition = evaluateStopCondition(tipNodes);
+        }  while (!stopCondition && !tipNodes.isEmpty()); //stop simulation either then the number of sampled nodes reach
+                                                              //the given sample size (finalSampleCount)
+                                                              // or all the individuals died
 
         //Remove children added at the last stage because the process has stopped and we don't need to know
         //what happens after this point
         for (Node node:tipNodes) {
-            if (node.getRight() != null && node.getRight().getNr() != -1) {
-                node.setNr(node.getRight().getNr());
-                sampledNodes.remove(node.getRight());
-                sampledNodes.add(node);
+            Node parent = node.getParent();
+            if (parent != null){
+                if (parent.getRight() != null && parent.getRight().getNr() != -1) {
+                    parent.setNr(parent.getRight().getNr());
+                    sampledNodes.remove(parent.getRight());
+                    sampledNodes.add(parent);
+                }
+                parent.removeAllChildren(false);
             }
-            node.removeAllChildren(false);
+
         }
 
         //remove excess of sampled nodes
@@ -144,6 +163,9 @@ public class SABDSkylineTreeSimulator {
         }
 
         System.out.println(root.toShortNewick(false) + ";");
+//        for (Node node:sampledNodes) {
+//            System.out.println(node.getNr() + " = " + (origin+node.getHeight()) + ",");
+//        }
 
         //collect information about the tree
     }
@@ -214,17 +236,17 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 10;
-        double[] origins = new double[10];
+        int treeCount = 1;
+        double[] origins = new double[treeCount];
 
         for (int i=0; i<treeCount; i++) {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(1.0, 0.1, 0.5, 0.1, 30, 8.0);
+            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(1.5, 0.2, 0.5, 0.5, 5, 4.0);
             simulator.simulate();
             origins[i] = simulator.origin;
         }
 
         for (int i=0; i<treeCount; i++) {
-            System.out.println(origins[i]);
+            System.out.println("Origin " + origins[i]);
         }
 
 
@@ -286,6 +308,30 @@ public class SABDSkylineTreeSimulator {
             }
         }
     }
+
+    /**
+     * assess if the stop simulation condition is met. It is met if the sample size increase finalSampleCount
+     * and all the nodes are younger then the age of the last sampled node (to find the last sampled node, sampled nodes
+     * are sorted with respect to their heights and the node with finalSampleCount-1 number is the last sampled node).
+     * @param tipNodes  current nodes that have to be younger then  the last sampled node
+     * @return true if the stop condition is met and false otherwise
+     */
+    private boolean evaluateStopCondition(ArrayList<Node> tipNodes){
+
+        if (sampledNodes.size() > finalSampleCount) {
+            ArrayList<Node> sampledNodeList = new ArrayList<Node>(sampledNodes);
+            Collections.sort(sampledNodeList, nodeComparator);
+            double height=sampledNodeList.get(finalSampleCount-1).getHeight();
+
+            for (int i=0; i<tipNodes.size(); i++) {
+                if (tipNodes.get(i).getHeight() > height) {
+                    return false;
+                }
+            }
+            return true;
+        } else return false;
+    }
+
 
     /**
      * sort nodes by their heights and then only keep finalSampleCount of nodes that have been sampled first
