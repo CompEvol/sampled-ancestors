@@ -3,11 +3,7 @@ package beast.app.tools;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: agav755
- * Date: 22/05/13
- * Time: 9:24 AM
- * To change this template use File | Settings | File Templates.
+ *
  */
 
 public class FrequencySet<T> {

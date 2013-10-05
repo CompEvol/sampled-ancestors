@@ -18,6 +18,7 @@ public class SABDSkylineTreeSimulator {
     final static int BIRTH = 0;
     final static int DEATH = 1;
     final static int SAMPLING = 2;
+    int epidemicSizeAtStartSampling=0;
 
     int finalSampleCount;  // the number of sampled nodes in the simulated tree
     private int sampleCount; //a counter of sampled nodes that count nodes during simulation and also used for numbering
@@ -25,7 +26,6 @@ public class SABDSkylineTreeSimulator {
                              // full simulated tree
     private HashSet<Node> sampledNodes; // a set where sampled nodes collected during the simulation
     double origin = 0; //is the distance between the origin (0) and the youngest sampled node
-
     /**
      * construct a skyline model tree simulator with only sampling rate changing through
      * it changes from 0 to some positive rate at sampling start time (newSSTime)
@@ -51,7 +51,7 @@ public class SABDSkylineTreeSimulator {
      * Simulate a tree under the model.
      * Note that nodes in the tree have negative heights (the origin node has height 0)
      */
-    public void simulate() {
+    public int simulate() {
 
         //create an initial node (origin of tree)
         Node initial = new Node();
@@ -137,6 +137,10 @@ public class SABDSkylineTreeSimulator {
 
         }
 
+        if (sampledNodes.size()<finalSampleCount) {
+            return -1;
+        }
+
         //remove excess of sampled nodes
         if (!sampledNodes.isEmpty()) {
             removeSampleExcess();
@@ -162,7 +166,10 @@ public class SABDSkylineTreeSimulator {
             root=newRoot;
         }
 
+        root.setParent(null);
+
         System.out.println(root.toShortNewick(false) + ";");
+        return 1;
 //        for (Node node:sampledNodes) {
 //            System.out.println(node.getNr() + " = " + (origin+node.getHeight()) + ",");
 //        }
@@ -184,6 +191,9 @@ public class SABDSkylineTreeSimulator {
      */
     private ArrayList<Node> getNewNodes(Node node, int typeOfEvent, double timeInterval) {
         ArrayList<Node> newNodes = new ArrayList<Node>();
+        if (node.getHeight() + samplingStartTime > 0 && node.getHeight()-timeInterval +samplingStartTime >0) {
+            epidemicSizeAtStartSampling++;
+        }
         double height = node.getHeight() - timeInterval;
         node.setHeight(height);
 
@@ -236,19 +246,25 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 1;
+        int treeCount = 10;
         double[] origins = new double[treeCount];
+        int[] epidemicSizes = new int[treeCount];
+        int index=0;
+        do {
+            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.8, 60, 10.0);
+            if (simulator.simulate()>0) {
+                origins[index] = simulator.origin;
+                epidemicSizes[index]=simulator.epidemicSizeAtStartSampling;
+                index++;
+            }
+        } while (index<treeCount);
 
-        for (int i=0; i<treeCount; i++) {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(1.5, 0.2, 0.5, 0.5, 5, 4.0);
-            simulator.simulate();
-            origins[i] = simulator.origin;
-        }
-
+        int sum1 = 0;
         for (int i=0; i<treeCount; i++) {
             System.out.println("Origin " + origins[i]);
+            sum1 += epidemicSizes[i];
         }
-
+        System.out.println("mean epidemic size = " +(double)sum1/treeCount);
 
     }
 
