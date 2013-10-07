@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class PrintTraits {
     /**
      * Prints traits for a tree given in file args[0]
-     * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception{
@@ -26,13 +25,19 @@ public class PrintTraits {
         }
         BufferedReader fin = null;
         String newick = null;
+        String ssDate = null;
 
         try {
             fin = new BufferedReader(new FileReader(file));
             while (fin.ready()) {
                 String str = fin.readLine();
-                if (str.indexOf("<input name='newick'>") != -1) {
+                if (str.contains("<input name='newick'>")) {
                     newick = fin.readLine();
+                }
+                if (str.contains("<!-- start sampling date = ")){
+                    int begin = str.indexOf("=") + 2;
+                    int end = str.indexOf("-->");
+                    ssDate = str.substring(begin, end);
                     break;
                 }
 
@@ -64,6 +69,9 @@ public class PrintTraits {
             } catch (Exception e) {
                 System.out.println("Tree parser isn't happy");
             }
+
+            System.out.println("start sampling date");
+            System.out.println("<parameter name=\"samplingRateChangeTimes\" id=\"samplingRateChangeTimes\" value=\""  + ssDate + " 0.\"/>");
         }  else {
             throw new Exception("No tree is found");
         }

@@ -168,7 +168,9 @@ public class SABDSkylineTreeSimulator {
 
         root.setParent(null);
 
-        System.out.println(root.toShortNewick(false) + ";");
+        System.out.println("tree");
+        System.out.println(root.toShortNewick(false));
+        System.out.println(origin - samplingStartTime);
         return 1;
 //        for (Node node:sampledNodes) {
 //            System.out.println(node.getNr() + " = " + (origin+node.getHeight()) + ",");
@@ -246,7 +248,7 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 10;
+        int treeCount = 100;
         double[] origins = new double[treeCount];
         int[] epidemicSizes = new int[treeCount];
         int index=0;
