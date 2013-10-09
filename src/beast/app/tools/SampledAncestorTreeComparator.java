@@ -22,10 +22,10 @@ public class SampledAncestorTreeComparator {
 
     public static void main(String[] args) throws Exception{
 
-//        TreeParser tree = new TreeParser(null, "(((0:1.0,1:1.0):1.0)3:1.0,2:3.0):0.0", 0, false);
-//        System.out.println("Tree was " + tree.getRoot().toShortNewick(false) + ";");
-//        convertToFakeSATree(tree.getRoot(), new int[] {tree.getNodeCount()});
-//        System.out.println("Tree is now " + tree.getRoot().toShortNewick(false) + ";");
+        TreeParser tree = new TreeParser(null, "(((0:1.0,1:1.0):1.0)3:1.0,2:3.0):0.0", 0, false);
+        System.out.println("Tree was " + tree.getRoot().toShortNewick(false) + ";");
+        convertToFakeSATree(tree.getRoot(), new int[] {tree.getNodeCount()});
+        System.out.println("Tree is now " + tree.getRoot().toShortNewick(false) + ";");
 
         java.io.File file1, file2;
 

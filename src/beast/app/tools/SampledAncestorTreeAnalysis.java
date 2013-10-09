@@ -3,6 +3,7 @@ package beast.app.tools;
 import beast.core.util.ESS;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 import beast.util.TreeParser;
 
@@ -71,7 +72,7 @@ public class SampledAncestorTreeAnalysis {
                 tree = trace.beastTrees.get(i);
                 sAcount=0;
                 for (int j=0; j<tree.getNodeCount(); j++) {
-                    if (tree.getNode(j).isFake()) sAcount++;
+                    if (((ZeroBranchSANode)tree.getNode(j)).isFake()) sAcount++;
                 }
                 totalsAcount += sAcount;
                 //System.out.println(i + "\t" + sAcount + "\t" + Randomizer.nextDouble());
@@ -80,7 +81,7 @@ public class SampledAncestorTreeAnalysis {
             tree = trace.beastTrees.get(trace.treeCount-1);
             sAcount=0;
             for (int j=0; j<tree.getNodeCount(); j++) {
-                if (tree.getNode(j).isFake()) sAcount++;
+                if (((ZeroBranchSANode)tree.getNode(j)).isFake()) sAcount++;
             }
             totalsAcount += sAcount;
             //System.out.println(trace.treeCount-1 + "\t" + sAcount + "\t" + Randomizer.nextDouble());
@@ -110,7 +111,7 @@ public class SampledAncestorTreeAnalysis {
             ArrayList<String> dClades =  extractAllDClades(tree.getRoot(),zeroBranchTrees);
             tmp.addAll(dClades);
             for (int j=0; j<tree.getNodeCount(); j++)
-                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && tree.getNode(j).isFake())) {
+                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && ((ZeroBranchSANode)tree.getNode(j)).isFake())) {
                     dCladeCount++;
                     break;
                 }
@@ -349,7 +350,7 @@ public class SampledAncestorTreeAnalysis {
         if (zeroBranchTrees) {
             String ancestor = node.getID();
             tmp += ancestor + '<';
-            if (node.isDirectAncestor()) {
+            if (((ZeroBranchSANode)node).isDirectAncestor()) {
                 tmp+= listNodesUnder(node.getParent(), true);
             }
         } else {

@@ -59,7 +59,7 @@ public class PrintTraits {
             }
 
             try {
-                ZeroBranchSATreeParser parser = new ZeroBranchSATreeParser(taxa, newick, 0, false);
+                ZeroBranchSATreeParser parser = new ZeroBranchSATreeParser(taxa, newick, 0);
                 //TreeParser parser = new TreeParser(sStr, false, true, false, 0);
                 //System.out.println("The tree is " + parser.getRoot().toShortNewick(false));
                 for (int i=0; i<59; i++) {
