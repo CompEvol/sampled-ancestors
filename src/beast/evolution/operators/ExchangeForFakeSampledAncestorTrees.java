@@ -9,6 +9,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 @Description("Implement Narrow and Wide Exchange for sampled ancestor trees." +
@@ -22,14 +23,14 @@ public class ExchangeForFakeSampledAncestorTrees extends Exchange {
         final int nodeCount = tree.getNodeCount();
 
         //make sure that there are at least two distinct non-root nodes which are not direct ancestors.
-        if (nodeCount == 3 && tree.getRoot().isFake()) {
+        if (nodeCount == 3 && ((ZeroBranchSANode)tree.getRoot()).isFake()) {
             return Double.NEGATIVE_INFINITY;
         }
 
         Node i;
         do {
             i = tree.getNode(Randomizer.nextInt(nodeCount));
-        } while (i.isRoot() || i.getParent().isRoot() || i.isDirectAncestor());
+        } while (i.isRoot() || i.getParent().isRoot() || ((ZeroBranchSANode)i).isDirectAncestor());
 
         final Node iParent = i.getParent();
         final Node iGrandParent = iParent.getParent();
@@ -100,18 +101,18 @@ public class ExchangeForFakeSampledAncestorTrees extends Exchange {
         final int nodeCount = tree.getNodeCount();
 
         //make sure that there are at least two distinct non-root nodes which are not direct ancestors.
-        if (nodeCount == 3 && tree.getRoot().isFake()) {
+        if (nodeCount == 3 && ((ZeroBranchSANode)tree.getRoot()).isFake()) {
             return Double.NEGATIVE_INFINITY;
         }
 
         Node i, j, iP, jP;
         do {
             i = tree.getNode(Randomizer.nextInt(nodeCount));
-        } while (i.isRoot() || i.isDirectAncestor());
+        } while (i.isRoot() || ((ZeroBranchSANode)i).isDirectAncestor());
 
         do {
             j = tree.getNode(Randomizer.nextInt(nodeCount));
-        } while (j.getNr() == i.getNr() || j.isRoot() || j.isDirectAncestor());
+        } while (j.getNr() == i.getNr() || j.isRoot() || ((ZeroBranchSANode)j).isDirectAncestor());
 
         iP = i.getParent();
         jP = j.getParent();

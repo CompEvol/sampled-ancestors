@@ -4,6 +4,8 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
+import beast.evolution.tree.ZeroBranchSANode;
 
 /**
  * @author Alexandra Gavryushkina
@@ -70,7 +72,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     }
 
     @Override
-    public double calculateTreeLogLikelihood(Tree tree) {
+    public double calculateTreeLogLikelihood(TreeInterface tree) {
         int nodeCount = tree.getNodeCount();
         updateParameters();
         double x0 = tree.getRoot().getHeight() + origToRootDistance;
@@ -83,11 +85,11 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         logPost = -Math.log(q(x0, c1, c2));
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
-                if  (!tree.getNode(i).isDirectAncestor())  {
+                if  (!((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor())  {
                     logPost += Math.log(psi) + Math.log(q(tree.getNode(i).getHeight(), c1, c2)) + Math.log(p0s(tree.getNode(i).getHeight(), c1, c2));
                 }
             } else {
-                if (tree.getNode(i).isFake()) {
+                if (((ZeroBranchSANode)tree.getNode(i)).isFake()) {
                     if (r == 1) {
                         System.out.println("r = 1 but there are sampled ancestors in the tree");
                         System.exit(0);

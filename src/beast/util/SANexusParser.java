@@ -86,12 +86,12 @@ public class SANexusParser extends NexusParser {
                 ZeroBranchSATreeParser ZeroBranchSATreeParser = null;
 
                 if (origin != -1) {
-                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, origin, false);
+                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, origin);
                 } else {
                     try {
-                        ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 0, false);
+                        ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 1, false);
+                        ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 1);
                     }
                 }
 //                catch (NullPointerException e) {

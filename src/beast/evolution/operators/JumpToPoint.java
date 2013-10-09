@@ -4,6 +4,7 @@ import beast.core.Input;
 import beast.core.Operator;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 
 /**
@@ -35,7 +36,7 @@ public class JumpToPoint extends Operator {
 
         double r = rParameter.getValue();
 
-        if (r != 1 && tree.getDirectAncestorNodeCount() == 0) {
+        if (r != 1 && ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() == 0) {
             rParameter.setValue(1.);
             return 0.0;
         } else if (r == 1) {

@@ -3,6 +3,8 @@ package beast.evolution.speciation;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
+import beast.evolution.tree.ZeroBranchSANode;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,11 +28,11 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     }
 
     @Override
-    public double calculateTreeLogLikelihood(Tree tree) {
+    public double calculateTreeLogLikelihood(TreeInterface tree) {
 
         int nTips = tree.getLeafNodeCount();
 
-        if (preCalculation(tree) < 0)
+        if (preCalculation((Tree)tree) < 0)
             return Double.NEGATIVE_INFINITY;
 
         r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
@@ -63,7 +65,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         for (int i = 0; i < tree.getInternalNodeCount(); i++) {
             double x = times[totalIntervals - 1] - tree.getNode(nTips + i).getHeight();
             index = index(x);
-            if (!tree.getNode(nTips + i).isFake()) {
+            if (!((ZeroBranchSANode)tree.getNode(nTips + i)).isFake()) {
                 temp = Math.log(birth[index] * g(index, times[index], x));
                 logP += temp;
                 if (printTempResults) System.out.println("1st pwd" +
@@ -85,7 +87,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         // middle product term in f[T]
         for (int i = 0; i < nTips; i++) {
 
-            if ((!isRhoTip[i] || m_rho.get() == null) && !tree.getNode(i).isDirectAncestor()) {
+            if ((!isRhoTip[i] || m_rho.get() == null) && !((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
                 double y = times[totalIntervals - 1] - tree.getNode(i).getHeight();
                 index = index(y);
                 temp = Math.log(psi[index] * (r + (1-r)*p0[index])) - Math.log(g(index, times[index], y));
@@ -100,7 +102,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         double time;
         for (int j = 0; j < totalIntervals; j++) {
             time = j < 1 ? 0 : times[j - 1];
-            n[j] = ((j == 0) ? 0 : lineageCountAtTime(times[totalIntervals - 1] - time, tree));
+            n[j] = ((j == 0) ? 0 : lineageCountAtTime(times[totalIntervals - 1] - time, (Tree)tree));
 
             if (n[j] > 0) {
                 temp = n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j]));

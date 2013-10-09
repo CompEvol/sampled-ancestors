@@ -4,6 +4,8 @@ import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 
 /**
@@ -37,7 +39,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
 
         do {
             i = tree.getNode(Randomizer.nextInt(nodeCount));
-        } while (i.isRoot() || (i.isDirectAncestor()));
+        } while (i.isRoot() || (((ZeroBranchSANode)i).isDirectAncestor()));
 
         Node iP = i.getParent();
         Node CiP;
@@ -79,7 +81,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
                 if (jP != null)
                     newParentHeight = jP.getHeight();
                 else newParentHeight = Double.POSITIVE_INFINITY;
-                if (!CiP.isDirectAncestor())
+                if (!((ZeroBranchSANode)CiP).isDirectAncestor())
                     adjacentEdge = (CiP.getNr() == j.getNr() || iP.getNr() == j.getNr());
                 attachingToLeaf = false;
             } else {
@@ -89,7 +91,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
                 attachingToLeaf = true;
                 //adjacentLeaf = (iP.getNr() == j.getNr());
             }
-        } while (j.isDirectAncestor() || (newParentHeight <= i.getHeight()) || (i.getNr() == j.getNr()) || adjacentEdge /*|| adjacentLeaf */);
+        } while (((ZeroBranchSANode)j).isDirectAncestor() || (newParentHeight <= i.getHeight()) || (i.getNr() == j.getNr()) || adjacentEdge /*|| adjacentLeaf */);
 
 
         if (attachingToLeaf && iP.getNr() == j.getNr()) {
@@ -102,7 +104,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        oldDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
+        oldDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
 
         //Hastings numerator calculation + newAge of iP
         if (attachingToLeaf) {
@@ -126,7 +128,7 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
         Node PiP = iP.getParent();
 
         //Hastings denominator calculation
-        if (CiP.isDirectAncestor()) {
+        if (((ZeroBranchSANode)CiP).isDirectAncestor()) {
             oldRange = 1;
         }
         else {
@@ -168,11 +170,11 @@ public class WilsonBaldingForFakeSampledAncestorTrees extends TreeOperator {
         iP.setHeight(newAge);
 
         //make sure that either there are no direct ancestors or r<1
-        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
+        if ((rInput.get() != null) && (((ZeroBranchSATree)tree).getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
             return Double.NEGATIVE_INFINITY;
         }
 
-        newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
+        newDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
         DimensionCoefficient = (double) oldDimension / newDimension;
 
         fHastingsRatio = Math.abs(DimensionCoefficient * newRange / oldRange);

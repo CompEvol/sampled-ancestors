@@ -5,6 +5,8 @@ import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 
 /**
@@ -38,7 +40,7 @@ public class TreeDimensionJump extends TreeOperator {
         Node leaf = tree.getNode(Randomizer.nextInt(leafNodeCount));
         Node parent = leaf.getParent();
 
-        if (leaf.isDirectAncestor()) {
+        if (((ZeroBranchSANode)leaf).isDirectAncestor()) {
             oldRange = 1;
             if (parent.isRoot()) {
                 final double randomNumber = Randomizer.nextExponential(1);
@@ -64,7 +66,7 @@ public class TreeDimensionJump extends TreeOperator {
         parent.setHeight(newHeight);
 
         //make sure that either there are no direct ancestors or r<1
-        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
+        if ((rInput.get() != null) && (((ZeroBranchSATree)tree).getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
             return Double.NEGATIVE_INFINITY;
         }
 

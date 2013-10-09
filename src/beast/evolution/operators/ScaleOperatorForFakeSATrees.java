@@ -4,6 +4,8 @@ import beast.core.Input;
 import beast.core.parameter.BooleanParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.ZeroBranchSATree;
 
 /**
  * @author Alexandra Gavryushkina
@@ -24,16 +26,16 @@ public class ScaleOperatorForFakeSATrees extends ScaleOperator {
                 Tree tree = treeInput.get(this);
                 if (rootOnlyInput.get()) {
                     Node root = tree.getRoot();
-                    if (root.isFake() && !scaleSNodes) {
+                    if (((ZeroBranchSANode)root).isFake() && !scaleSNodes) {
                         return Double.NEGATIVE_INFINITY;
                     }
                     double fNewHeight = root.getHeight() * scale;
 
                     //make sure the new height doesn't make a parent younger than a child
                     double oldestChildHeight;
-                    if (root.isFake()) {
+                    if (((ZeroBranchSANode)root).isFake()) {
                         oldestChildHeight = root.getRight().getHeight();
-                        if (root.getLeft().isDirectAncestor()) {
+                        if (((ZeroBranchSANode)root.getLeft()).isDirectAncestor()) {
                             oldestChildHeight = root.getLeft().getHeight();
                         }
                     } else oldestChildHeight = Math.max(root.getLeft().getHeight(), root.getRight().getHeight());
@@ -42,16 +44,16 @@ public class ScaleOperatorForFakeSATrees extends ScaleOperator {
                     }
 
                     root.setHeight(fNewHeight);
-                    if (root.isFake() && scaleSNodes) {
+                    if (((ZeroBranchSANode)root).isFake() && scaleSNodes) {
                         Node directAncestor = root.getLeft();
-                        if (!directAncestor.isDirectAncestor())
+                        if (!((ZeroBranchSANode)directAncestor).isDirectAncestor())
                             directAncestor = root.getRight();
                         directAncestor.setHeight(fNewHeight);
                     }
                     return -Math.log(scale);
                 } else {
                     // scale the beast.tree
-                    final int nScaledDimensions = tree.scale(scale, scaleSNodes);
+                    final int nScaledDimensions = ((ZeroBranchSATree)tree).scale(scale, scaleSNodes);
                     return Math.log(scale) * (nScaledDimensions - 2);
                 }
             }

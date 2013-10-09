@@ -18,7 +18,7 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
     @Test
     public void testLikelihoodCalculation1() throws Exception {
         SABDSamplingThroughTimeModel model = new SABDSamplingThroughTimeModel();
-        ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser("((1:1.0)2:1.0)3:0.0", false, true, false, 1);
+        ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser("((1:1.0)2:1.0)3:0.0", true, false, 1);
 
         model.setInputValue("tree", tree);
         model.setInputValue("orig_root", new RealParameter("8."));
@@ -35,7 +35,7 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
     @Test
     public void testLikelihoodCalculation2() throws Exception {        //TODO make this test actually test something
         SABDSamplingThroughTimeModel model = new SABDSamplingThroughTimeModel();
-        Tree tree = new ZeroBranchSATreeParser("(1:1.0,2:1.0)3:0.0", false, true, false, 1);
+        Tree tree = new ZeroBranchSATreeParser("(1:1.0,2:1.0)3:0.0", true, false, 1);
 
         model.setInputValue("tree", tree);
         model.setInputValue("orig_root", new RealParameter("1."));

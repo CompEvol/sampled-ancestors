@@ -3,6 +3,7 @@ package test.beast.evolution.operators;
 import beast.evolution.operators.TreeDimensionJump;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -19,14 +20,14 @@ public class TreeDimensionJumpTest extends TestCase {
         int taxaSize = 3;
 
         // make a caterpillar
-        Node left = new Node();
+        Node left = new ZeroBranchSANode();
         left.setNr(0);
         left.setHeight(0.0);
         for (int i = 1; i < taxaSize; i++) {
-            Node right = new Node();
+            Node right = new ZeroBranchSANode(); 
             right.setNr(i);
             right.setHeight(i);
-            Node parent = new Node();
+            Node parent = new ZeroBranchSANode(); 
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
             left.setParent(parent);
@@ -55,14 +56,14 @@ public class TreeDimensionJumpTest extends TestCase {
         int taxaSize = 3;
 
         // make a caterpillar
-        Node left = new Node();
+        Node left = new ZeroBranchSANode(); 
         left.setNr(0);
         left.setHeight(0.0);
         for (int i = 1; i < taxaSize; i++) {
-            Node right = new Node();
+            Node right = new ZeroBranchSANode(); 
             right.setNr(i);
             right.setHeight(i);
-            Node parent = new Node();
+            Node parent = new ZeroBranchSANode(); 
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
             left.setParent(parent);

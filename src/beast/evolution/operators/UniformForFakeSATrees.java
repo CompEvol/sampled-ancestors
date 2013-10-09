@@ -3,6 +3,8 @@ package beast.evolution.operators;
 import beast.core.Description;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 
 /**
@@ -28,8 +30,8 @@ public class UniformForFakeSATrees extends TreeOperator {
         int leafNodeCount = tree.getLeafNodeCount();
 
         //make sure that there is at least one non-fake and non-root internal node
-        int fakeNodeCount = tree.getDirectAncestorNodeCount();
-        if (fakeNodeCount == leafNodeCount-1 || (fakeNodeCount == leafNodeCount-2 && !tree.getRoot().isFake())) {
+        int fakeNodeCount = ((ZeroBranchSATree)tree).getDirectAncestorNodeCount();
+        if (fakeNodeCount == leafNodeCount-1 || (fakeNodeCount == leafNodeCount-2 && !((ZeroBranchSANode)tree.getRoot()).isFake())) {
             return Double.NEGATIVE_INFINITY;
         }
 
@@ -37,7 +39,7 @@ public class UniformForFakeSATrees extends TreeOperator {
         Node node;
         do {
             node = tree.getNode(leafNodeCount + Randomizer.nextInt(nNodeCount / 2));
-        } while (node.isRoot() || node.isFake());
+        } while (node.isRoot() || ((ZeroBranchSANode)node).isFake());
         final double fUpper = node.getParent().getHeight();
         final double fLower = Math.max(node.getLeft().getHeight(), node.getRight().getHeight());
         final double newValue = (Randomizer.nextDouble() * (fUpper - fLower)) + fLower;

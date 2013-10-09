@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class SABDSkylineModelTest  extends TestCase {
 
     @Test
-    public void testLikelihoodCalculation1() throws Exception {        //TODO make this test actually test something
+    public void testLikelihoodCalculation1() throws Exception {        //TODO make this test actually test something + replace the tree type
         SABDSkylineModel model = new SABDSkylineModel();
         Tree tree = new TreeParser("((1:1.0)2:1.0)3:0.0", false, true, false, 1);
 
@@ -45,7 +45,7 @@ public class SABDSkylineModelTest  extends TestCase {
             taxa.add(Integer.toString(i));
         }
 
-        ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser(taxa, newick, 0, false);
+        ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser(taxa, newick, 0);
 
         model.setInputValue("tree", tree);
         model.setInputValue("orig_root", new RealParameter("1."));

@@ -3,6 +3,7 @@ package beast.evolution.operators;
 import beast.core.Description;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
         Node fake = null;
         double lower, upper;
 
-        if (node.isDirectAncestor()) {
+        if (((ZeroBranchSANode)node).isDirectAncestor()) {
             fake = node.getParent();
             lower = getOtherChild(fake, node).getHeight();
             if (fake.getParent() != null) {

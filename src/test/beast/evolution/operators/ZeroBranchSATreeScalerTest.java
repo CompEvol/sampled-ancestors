@@ -22,7 +22,7 @@ public class ZeroBranchSATreeScalerTest  extends TestCase {
         for (int i=0; i<5; i++) {
             taxa.add(Integer.toString(i));
         }
-        ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser(taxa, newick, 0, false);
+        ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser(taxa, newick, 0);
 
         double oldTreeHeight = tree.getRoot().getHeight();
         double oldLeftLeftHeight = tree.getRoot().getLeft().getLeft().getHeight();
