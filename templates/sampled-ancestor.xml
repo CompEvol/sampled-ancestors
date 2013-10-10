@@ -1,5 +1,5 @@
 <beast version='2.0'
-       namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.Tree.t:coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions'>
+       namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.SATree.t:coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions'>
     
     <mergewith point='aux-partitions-panels'>
 
@@ -9,159 +9,159 @@
 
         <![CDATA[
             <!-- site model                                                              -->
-            <plugin spec='SiteModel' id="SiteModel.s:$(n)" gammaCategoryCount='0'>
+            <plugin spec='SiteModel' id="SASiteModel.s:$(n)" gammaCategoryCount='0'>
                 <!--substModel will be automatically detected /-->
-                <proportionInvariant spec='parameter.RealParameter' id='proportionInvariant.s:$(n)' value='0.0' lower='0' upper='1' estimate='false'/>
-                <mutationRate        spec='parameter.RealParameter' id='mutationRate.s:$(n)' value='1.0'        estimate='false'/>
-                <shape               spec='parameter.RealParameter' id='gammaShape.s:$(n)' value='1.0'         estimate='false'/>
+                <proportionInvariant spec='parameter.RealParameter' id='SAproportionInvariant.s:$(n)' value='0.0' lower='0' upper='1' estimate='false'/>
+                <mutationRate        spec='parameter.RealParameter' id='SAmutationRate.s:$(n)' value='1.0'        estimate='false'/>
+                <shape               spec='parameter.RealParameter' id='SAgammaShape.s:$(n)' value='1.0'         estimate='false'/>
             </plugin>
 
-            <plugin spec='TreeLikelihood' id="treeLikelihood.$(n)">
-                <data idref="data"/>
-                <tree idref="Tree.t:$(n)"/>
-                <siteModel idref="SiteModel.s:$(n)"/>
-                <branchRateModel spec='StrictClockModel' id='StrictClock.c:$(n)'>
-                    <clock.rate id='clockRate.c:$(n)' spec='parameter.RealParameter' value='1.0' estimate='false'/>
+            <plugin spec='TreeLikelihood' id="SAtreeLikelihood.$(n)">
+                <data idref="SAdata"/>
+                <tree idref="SATree.t:$(n)"/>
+                <siteModel idref="SASiteModel.s:$(n)"/>
+                <branchRateModel spec='StrictClockModel' id='SAStrictClock.c:$(n)'>
+                    <clock.rate id='SAclockRate.c:$(n)' spec='parameter.RealParameter' value='1.0' estimate='false'/>
                 </branchRateModel>
             </plugin>
 
-	        <prior id='ClockPrior.c:$(n)' x='@clockRate.c:$(n)'><distr spec="beast.math.distributions.Uniform" upper='Infinity'/></prior>
-	        <prior id='MutationRatePrior.s:$(n)' x='@mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
+	        <prior id='SAClockPrior.c:$(n)' x='@SAclockRate.c:$(n)'><distr spec="beast.math.distributions.Uniform" upper='Infinity'/></prior>
+	        <prior id='SAMutationRatePrior.s:$(n)' x='@SAmutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
 
             <!-- tree and its properties -->
-            <taxonset id='TaxonSet.$(n)' spec='beast.evolution.alignment.TaxonSet' alignment='@$(n)' />
-            <plugin spec='beast.evolution.tree.Tree' id='Tree.t:$(n)' taxonset='@TaxonSet.$(n)'/>
+            <taxonset id='SATaxonSet.$(n)' spec='beast.evolution.alignment.TaxonSet' alignment='@SA$(n)' />
+            <plugin spec='beast.evolution.SATree.tree' id='SATree.t:$(n)' taxonset='@SATaxonSet.$(n)'/>
 
-            <!--plugin spec='beast.evolution.tree.RandomTree' id='RandomTree.t:$(n)' estimate='false' trait='@datetrait.$(n)' initial='@Tree.t:$(n)'-->
-            <plugin spec='beast.evolution.tree.RandomTree' id='RandomTree.t:$(n)' estimate='false' initial='@Tree.t:$(n)'>
-                <taxa spec='Alignment' idref='data'/>
-                <populationModel id='ConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
-            		<popSize id='randomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
+            <!--plugin spec='beast.evolution.tree.RandomTree' id='SARandomSATree.t:$(n)' estimate='false' trait='@SAdatetrait.$(n)' initial='@SATree.t:$(n)'-->
+            <plugin spec='beast.evolution.tree.RandomTree' id='SARandomSATree.t:$(n)' estimate='false' initial='@SATree.t:$(n)'>
+                <taxa spec='Alignment' iderf='SAdata'/>
+                <populationModel id='SAConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
+            		<popSize id='SArandomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
 	            </populationModel>
             </plugin>
 
             <!-- default Sampled ancestor birth-death-sampling tree prior-->
-            <BirthDeathSamplingModel spec="SABDSamplingThroughTimeModel" id="BirthDeathSampling.t:$(n)" tree="@Tree.t:$(n)">
-		        <parameter name="orig_root" id="orig_root.t:$(n)" value ="1.0" lower="0." upper="1000."/>
-                <parameter name="birthRate" id="birthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
-                <parameter name="deathRate" id="deathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
-                <parameter name="samplingRate" id="samplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
-                <parameter name="becomeNoninfectiousAfterSamplingProbability" id="r.t:$(n)" value="0.5" lower="0." upper="1."/>
+            <BirthDeathSamplingModel spec="SABDSamplingThroughTimeModel" id="SABirthDeathSampling.t:$(n)" tree="@SATree.t:$(n)">
+		        <parameter name="orig_root" id="SAorig_root.t:$(n)" value ="1.0" lower="0." upper="1000."/>
+                <parameter name="birthRate" id="SAbirthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
+                <parameter name="deathRate" id="SAdeathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
+                <parameter name="samplingRate" id="SAsamplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
+                <parameter name="becomeNoninfectiousAfterSamplingProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
 	        </BirthDeathSamplingModel>
 
-	        <distribution  id='orig_rootPrior.t:$(n)' x="@orig_root.t:$(n)" spec='beast.math.distributions.Prior'>
+	        <distribution  id='SAorig_rootPrior.t:$(n)' x="@SAorig_root.t:$(n)" spec='beast.math.distributions.Prior'>
 		        <distr spec='beast.math.distributions.Uniform' lower="0." upper="1000."/>
             </distribution>
-            <distribution id="birthRatePrior.t:$(n)" spec="beast.math.distributions.Prior" x="@birthRate.t:$(n)">
+            <distribution id='SAbirthRatePrior.t:$(n)' spec="beast.math.distributions.Prior" x="@SAbirthRate.t:$(n)">
                 <distr spec='beast.math.distributions.LogNormalDistributionModel' M="0." S="1." offset="0.0" meanInRealSpace="false"/>
             </distribution>
-            <distribution id="deathRatePrior.t:$(n)" spec="beast.math.distributions.Prior" x="@deathRate.t:$(n)">
+            <distribution id='SAdeathRatePrior.t:$(n)' spec="beast.math.distributions.Prior" x="@SAdeathRate.t:$(n)">
                 <distr spec='beast.math.distributions.LogNormalDistributionModel' M="0." S="0.5" offset="0.0" meanInRealSpace="false"/>
             </distribution>
-            <distribution id="samplingRatePrior.t:$(n)" spec="beast.math.distributions.Prior" x="@samplingRate.t:$(n)">
+            <distribution id='SAsamplingRatePrior.t:$(n)' spec="beast.math.distributions.Prior" x="@SAsamplingRate.t:$(n)">
                 <distr spec='beast.math.distributions.LogNormalDistributionModel' M="0." S="0.5" offset="0.0" meanInRealSpace="false"/>
             </distribution>
-            <distribution id="rPrior.t:$(n)" spec="beast.math.distributions.Prior" x="@r.t:$(n)">
+            <distribution id='SArPrior.t:$(n)' spec="beast.math.distributions.Prior" x="@SAr.t:$(n)">
                 <distr spec='beast.math.distributions.DegenerateBeta' alpha = "1.0" beta = "1.0"/>
             </distribution>
 
-            <prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'><distr spec="beast.math.distributions.Exponential" mean='1'/></prior>
-            <prior id='PropInvariantPrior.t:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
+            <prior id='SAGammaShapePrior.s:$(n)' x='@SAgammaShape.s:$(n)'><distr spec="beast.math.distributions.Exponential" mean='1'/></prior>
+            <prior id='SAPropInvariantPrior.t:$(n)' x='@SAproportionInvariant.s:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
 
 
-            <plugin id='TreeHeight.t:$(n)' spec='beast.evolution.tree.TreeHeightLogger' tree='@Tree.t:$(n)'/>
+            <plugin id='SATreeHeight.t:$(n)' spec='beast.evolution.SATree.treeHeightLogger' tree='@SATree.t:$(n)'/>
 
-            <plugin id='SACount.t:$(n)' spec='beast.evolution.tree.SALogger' tree='@Tree.t:$(n)'/>
+            <plugin id='SASACount.t:$(n)' spec='beast.evolution.tree.SALogger' tree='@SATree.t:$(n)'/>
 
-            <logger id='treelog.t:$(n)' spec='beast.core.Logger' logEvery="1000" fileName="$(tree).trees" mode='tree'>
-	            <log id='TreeWithMetaDataLogger.t:$(n)' spec='beast.evolution.tree.TreeWithMetaDataLogger' tree='@Tree.t:$(n)'>
+            <logger id='SAtreelog.t:$(n)' spec='beast.core.Logger' logEvery="1000" fileName="$(tree).trees" mode='tree'>
+	            <log id='SATreeWithMetaDataLogger.t:$(n)' spec='beast.evolution.SATree.treeWithMetaDataLogger' tree='@SATree.t:$(n)'>
 	            </log>
             </logger>
 
-            <operator id='TreeDimensionJump.t:$(n)' spec='TreeDimensionJump' weight="10" tree="@Tree.t:$(n)"/>
-            <operator id='WilsonBalding.t:$(n)' spec='WilsonBaldingForFakeSampledAncestorTrees' weight="3" tree="@Tree.t:$(n)"/>
-            <operator id='wideExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="3" tree="@Tree.t:$(n)"/>
-            <operator id='narrowExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' weight="15" tree="@Tree.t:$(n)"/>
-            <operator id='treeUniform.t:$(n)' spec='UniformForFakeSATrees' weight="30" tree="@Tree.t:$(n)"/>
-            <operator id='rootScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)" rootOnly='true'/>
-            <operator id='treeScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
+            <operator id='SATreeDimensionJump.t:$(n)' spec='TreeDimensionJump' weight="10" tree="@SATree.t:$(n)"/>
+            <operator id='SAWilsonBalding.t:$(n)' spec='WilsonBaldingForFakeSampledAncestorTrees' weight="3" tree="@SATree.t:$(n)"/>
+            <operator id='SAwideExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="3" tree="@SATree.t:$(n)"/>
+            <operator id='SAnarrowExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' weight="15" tree="@SATree.t:$(n)"/>
+            <operator id='SAtreeUniform.t:$(n)' spec='UniformForFakeSATrees' weight="30" tree="@SATree.t:$(n)"/>
+            <operator id='SArootScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@SATree.t:$(n)" rootOnly='true'/>
+            <operator id='SAtreeScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@SATree.t:$(n)"/>
 
-            <operator id='proportionInvariantScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
-            <operator id='mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
-            <operator id='gammaShapeScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@gammaShape.s:$(n)"/>
+            <operator id='SAproportionInvariantScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@SAproportionInvariant.s:$(n)"/>
+            <operator id='SAmutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@SAmutationRate.s:$(n)"/>
+            <operator id='SAgammaShapeScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@SAgammaShape.s:$(n)"/>
 
-            <operator id='orig_rootScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@orig_root.t:$(n)"/>
-            <operator id='birthScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@birthRate.t:$(n)"/>
-            <operator id='deathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@deathRate.t:$(n)"/>
-	        <operator id='samplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingRate.t:$(n)"/>
-            <operator id='rScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@r.t:$(n)"/>
-            <operator id='rJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" becomeNoninfectiousAfterSamplingProbability="@r.t:$(n)" tree = "@Tree.t:$(n)"/>
+            <operator id='SAorig_rootScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@SAorig_root.t:$(n)"/>
+            <operator id='SAbirthScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAbirthRate.t:$(n)"/>
+            <operator id='SAdeathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAdeathRate.t:$(n)"/>
+	        <operator id='SAsamplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAsamplingRate.t:$(n)"/>
+            <operator id='SArScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@SAr.t:$(n)"/>
+            <operator id='SArJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" becomeNoninfectiousAfterSamplingProbability="@SAr.t:$(n)" tree = "@SATree.t:$(n)"/>
 
-			<operator id='StrictClockRateScaler.c:$(n)' spec='ScaleOperator' scaleFactor="0.75" weight="3" parameter='@clockRate.c:$(n)'/>
+			<operator id='SAStrictClockRateScaler.c:$(n)' spec='ScaleOperator' scaleFactor="0.75" weight="3" parameter='@SAclockRate.c:$(n)'/>
 
 ]]>
-        <connect srcID='treeLikelihood.$(n)'            targetID='likelihood' inputName='distribution' if="isInitializing"/>
-        <connect srcID='BirthDeathSampling.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+        <connect srcid='SAtreeLikelihood.$(n)'            targetid='likelihood' inputName='distribution' if="isInitializing"/>
+        <connect srcid='SABirthDeathSampling.t:$(n)' targetid='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and inlikelihood(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'/>
         <connect method="beast.app.beauti.SiteModelInputEditor.customConnector"/>
 
-        <connect srcID='treelog.t:$(n)'                 targetID='mcmc' inputName='logger' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>
-        <connect srcID='RandomTree.t:$(n)'                targetID='mcmc' inputName='init'   if='inposterior(Tree.t:$(n))'/>
+        <connect srcid='SAtreelog.t:$(n)'                 targetid='mcmc' inputName='logger' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'/>
+        <connect srcid='SARandomSATree.t:$(n)'                targetid='mcmc' inputName='init'   if='inposterior(SATree.t:$(n))'/>
 
-        <connect srcID='ClockPrior.c:$(n)'                targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+        <connect srcid='SAClockPrior.c:$(n)'                targetid='prior' inputName='distribution' if='inlikelihood(SAclockRate.c:$(n)) and SAclockRate.c:$(n)/estimate=true'/>
         <!-- when FixMeanMutationRatesOperator, the prior is uniform due to the operator -->
-        <connect srcID='MutationRatePrior.s:$(n)'         targetID='prior' inputName='distribution' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
+        <connect srcid='SAMutationRatePrior.s:$(n)'         targetid='prior' inputName='distribution' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(SAmutationRate.s:$(n)) and SAmutationRate.s:$(n)/estimate=true'/>
 
-        <connect srcID='Tree.t:$(n)'                      targetID='state' inputName='stateNode' if='inposterior(Tree.t:$(n))'/>
-        <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
-        <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
-        <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
-        <connect srcID='clockRate.c:$(n)'                 targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+        <connect srcid='SATree.t:$(n)'                      targetid='state' inputName='stateNode' if='inposterior(SATree.t:$(n))'/>
+        <connect srcid='SAproportionInvariant.s:$(n)'       targetid='state' inputName='stateNode' if='inlikelihood(SAproportionInvariant.s:$(n)) and SAproportionInvariant.s:$(n)/estimate=true'/>
+        <connect srcid='SAmutationRate.s:$(n)'              targetid='state' inputName='stateNode' if='inlikelihood(SAmutationRate.s:$(n)) and SAmutationRate.s:$(n)/estimate=true'/>
+        <connect srcid='SAgammaShape.s:$(n)'                targetid='state' inputName='stateNode' if='inlikelihood(SAgammaShape.s:$(n)) and SAgammaShape.s:$(n)/estimate=true'/>
+        <connect srcid='SAclockRate.c:$(n)'                 targetid='state' inputName='stateNode' if='inlikelihood(SAclockRate.c:$(n)) and SAclockRate.c:$(n)/estimate=true'/>
 
-        <connect srcID='proportionInvariantScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Scales proportion of invariant sites parameter of partition $(n)</connect>
-        <connect srcID='mutationRateScaler.s:$(n)'        targetID='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
-        <connect srcID='gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
-        <connect srcID='StrictClockRateScaler.c:$(n)'     targetID='mcmc' inputName='operator' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Scale clock rate of partition c:$(n)</connect>
+        <connect srcid='SAproportionInvariantScaler.s:$(n)' targetid='mcmc' inputName='operator' if='inlikelihood(SAproportionInvariant.s:$(n)) and SAproportionInvariant.s:$(n)/estimate=true'>Scales proportion of invariant sites parameter of partition $(n)</connect>
+        <connect srcid='SAmutationRateScaler.s:$(n)'        targetid='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(SAmutationRate.s:$(n)) and SAmutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
+        <connect srcid='SAgammaShapeScaler.s:$(n)'          targetid='mcmc' inputName='operator' if='inlikelihood(SAgammaShape.s:$(n)) and SAgammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
+        <connect srcid='SAStrictClockRateScaler.c:$(n)'     targetid='mcmc' inputName='operator' if='inlikelihood(SAclockRate.c:$(n)) and SAclockRate.c:$(n)/estimate=true'>Scale clock rate of partition c:$(n)</connect>
 
-        <connect srcID='orig_rootScaler.t:$(n)'           targetID='mcmc' inputName='operator' if='inposterior(BirthDeathSampling.t:$(n)) and orig_root.t:$(n)/estimate=true'/>
-        <connect srcID='birthScaler.t:$(n)'               targetID='mcmc' inputName='operator' if='inposterior(BirthDeathSampling.t:$(n)) and birthRate.t:$(n)/estimate=true'/>
-        <connect srcID='deathScaler.t:$(n)'               targetID='mcmc' inputName='operator' if='inposterior(BirthDeathSampling.t:$(n)) and deathRate.t:$(n)/estimate=true'/>
-        <connect srcID='samplingScaler.t:$(n)'            targetID='mcmc' inputName='operator' if='inposterior(BirthDeathSampling.t:$(n)) and samplingRate.t:$(n)/estimate=true'/>
-        <connect srcID='rScaler.t:$(n)'                   targetID='mcmc' inputName='operator' if='inposterior(BirthDeathSampling.t:$(n)) and r.t:$(n)/estimate=true'/>
-        <connect srcID='rJumpOperator.t:$(n)'             targetID='mcmc' inputName='operator' if='inposterior(BirthDeathSampling.t:$(n)) and r.t:$(n)/estimate=true'/>
+        <connect srcid='SAorig_rootScaler.t:$(n)'           targetid='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and SAorig_root.t:$(n)/estimate=true'/>
+        <connect srcid='SAbirthScaler.t:$(n)'               targetid='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and SAbirthRate.t:$(n)/estimate=true'/>
+        <connect srcid='SAdeathScaler.t:$(n)'               targetid='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and SAdeathRate.t:$(n)/estimate=true'/>
+        <connect srcid='SAsamplingScaler.t:$(n)'            targetid='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and SAsamplingRate.t:$(n)/estimate=true'/>
+        <connect srcid='SArScaler.t:$(n)'                   targetid='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and SAr.t:$(n)/estimate=true'/>
+        <connect srcid='SArJumpOperator.t:$(n)'             targetid='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and SAr.t:$(n)/estimate=true'/>
 
-        <connect srcID='treeScaler.t:$(n)'                targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Scales all none-sampled internal nodes for tree t:$(n)</connect>
-        <connect srcID='rootScaler.t:$(n)'                targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Scales root node for tree t:$(n)</connect>
-        <connect srcID='treeUniform.t:$(n)'               targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Draws new internal node heights uniformally for tree t:$(n)</connect>
-        <connect srcID='narrowExchange.t:$(n)'            targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Narrow exchange performs local rearrangement of tree t:$(n)</connect>
-        <connect srcID='wideExchange.t:$(n)'              targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Wide exchange performs global rearrangement of tree t:$(n)</connect>
-        <connect srcID='WilsonBalding.t:$(n)'             targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
-        <connect srcID='TreeDimensionJump.t:$(n)'         targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
+        <connect srcid='SAtreeScaler.t:$(n)'                targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Scales all none-sampled internal nodes for tree t:$(n)</connect>
+        <connect srcid='SArootScaler.t:$(n)'                targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Scales root node for tree t:$(n)</connect>
+        <connect srcid='SAtreeUniform.t:$(n)'               targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Draws new internal node heights uniformally for tree t:$(n)</connect>
+        <connect srcid='SAnarrowExchange.t:$(n)'            targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Narrow exchange performs local rearrangement of tree t:$(n)</connect>
+        <connect srcid='SAwideExchange.t:$(n)'              targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Wide exchange performs global rearrangement of tree t:$(n)</connect>
+        <connect srcid='SAWilsonBalding.t:$(n)'             targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
+        <connect srcid='SATreeDimensionJump.t:$(n)'         targetid='mcmc' inputName='operator' if='inposterior(SATree.t:$(n)) and SATree.t:$(n)/estimate=true'>Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
 
-        <connect srcID='r.t:$(n)' targetID='TreeDimensionJump.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
-        <connect srcID='r.t:$(n)' targetID='WilsonBalding.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
+        <connect srcid='SAr.t:$(n)' targetid='SATreeDimensionJump.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
+        <connect srcid='SAr.t:$(n)' targetid='SAWilsonBalding.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
 
-        <connect srcID='treeLikelihood.$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(treeLikelihood.$(n))'/>
-        <connect srcID='TreeHeight.t:$(n)'                targetID='tracelog' inputName='log' if='inposterior(Tree.t:$(n))'/>
-        <connect srcID='proportionInvariant.s:$(n)'       targetID='tracelog' inputName='log' if='inposterior(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
-        <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
-        <connect srcID='gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
-        <connect srcID='clockRate.c:$(n)'                 targetID='tracelog' inputName='log' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
-        <connect srcID='BirthDeathSampling.t:$(n)'        targetID='tracelog' inputName='log' if='inposterior(BirthDeathSampling.t:$(n))'/>
+        <connect srcid='SAtreeLikelihood.$(n)'              targetid='tracelog' inputName='log' if='inlikelihood(SAtreeLikelihood.$(n))'/>
+        <connect srcid='SATreeHeight.t:$(n)'                targetid='tracelog' inputName='log' if='inposterior(SATree.t:$(n))'/>
+        <connect srcid='SAproportionInvariant.s:$(n)'       targetid='tracelog' inputName='log' if='inposterior(SAproportionInvariant.s:$(n)) and SAproportionInvariant.s:$(n)/estimate=true'/>
+        <connect srcid='SAmutationRate.s:$(n)'              targetid='tracelog' inputName='log' if='inlikelihood(SAmutationRate.s:$(n)) and SAmutationRate.s:$(n)/estimate=true'/>
+        <connect srcid='SAgammaShape.s:$(n)'                targetid='tracelog' inputName='log' if='inlikelihood(SAgammaShape.s:$(n)) and SAgammaShape.s:$(n)/estimate=true'/>
+        <connect srcid='SAclockRate.c:$(n)'                 targetid='tracelog' inputName='log' if='inlikelihood(SAclockRate.c:$(n)) and SAclockRate.c:$(n)/estimate=true'/>
+        <connect srcid='SABirthDeathSampling.t:$(n)'        targetid='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n))'/>
 
-        <connect srcID='orig_rootPrior.t:$(n)'            targetID='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and orig_root.t:$(n)/estimate=true'>prior on orig_root.t:$(n)</connect>
-        <connect srcID='birthRatePrior.t:$(n)'            targetID='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and birthRate.t:$(n)/estimate=true'>prior on birthRate.t:$(n)</connect>
-        <connect srcID='deathRatePrior.t:$(n)'            targetID='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and deathRate.t:$(n)/estimate=true'>prior on deathRate.t:$(n)</connect>
-        <connect srcID='samplingRatePrior.t:$(n)'         targetID='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and samplingRate.t:$(n)/estimate=true'>prior on samplingRate.t:$(n)</connect>
-        <connect srcID='rPrior.t:$(n)'                    targetID='prior' inputName='distribution' if='inposterior(BirthDeathSampling.t:$(n)) and r.t:$(n)/estimate=true'>prior on r.t:$(n)</connect>
+        <connect srcid='SAorig_rootPrior.t:$(n)'            targetid='prior' inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and SAorig_root.t:$(n)/estimate=true'>prior on orig_root.t:$(n)</connect>
+        <connect srcid='SAbirthRatePrior.t:$(n)'            targetid='prior' inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and SAbirthRate.t:$(n)/estimate=true'>prior on birthRate.t:$(n)</connect>
+        <connect srcid='SAdeathRatePrior.t:$(n)'            targetid='prior' inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and SAdeathRate.t:$(n)/estimate=true'>prior on deathRate.t:$(n)</connect>
+        <connect srcid='SAsamplingRatePrior.t:$(n)'         targetid='prior' inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and SAsamplingRate.t:$(n)/estimate=true'>prior on samplingRate.t:$(n)</connect>
+        <connect srcid='SArPrior.t:$(n)'                    targetid='prior' inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and SAr.t:$(n)/estimate=true'>prior on r.t:$(n)</connect>
 
 
-        <connect srcID='GammaShapePrior.s:$(n)'           targetID='prior' inputName='distribution' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
-        <connect srcID='PropInvariantPrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
+        <connect srcid='SAGammaShapePrior.s:$(n)'           targetid='prior' inputName='distribution' if='inlikelihood(SAgammaShape.s:$(n)) and SAgammaShape.s:$(n)/estimate=true'/>
+        <connect srcid='SAPropInvariantPrior.s:$(n)'        targetid='prior' inputName='distribution' if='inlikelihood(SAproportionInvariant.s:$(n)) and SAproportionInvariant.s:$(n)/estimate=true'/>
         <plate var='p' range='orig_root,birthRate,deathRate,samplingRate,r'>
-             <connect srcID='$(p).t:$(n)' targetID='state' inputName='stateNode' if='inposterior(BirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'/>
-             <connect srcID='$(p).t:$(n)' targetID='tracelog' inputName='log' if='inposterior(BirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'/>
+             <connect srcid='SA$(p).t:$(n)' targetid='state' inputName='stateNode' if='inposterior(SABirthDeathSampling.t:$(n)) and SA$(p).t:$(n)/estimate=true'/>
+             <connect srcid='SA$(p).t:$(n)' targetid='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n)) and SA$(p).t:$(n)/estimate=true'/>
         </plate>
-            <connect srcID='SACount.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(Tree.t:$(n))'/>
+            <connect srcid='SASACount.t:$(n)' targetid='tracelog' inputName='log' if='inposterior(SATree.t:$(n))'/>
 
         </subtemplate>
     </mergewith>
