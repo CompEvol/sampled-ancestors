@@ -1,8 +1,8 @@
-package beast.app.simulations;
+package beast.app.simulators;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import beast.util.LogAnalyser;
+
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -12,27 +12,47 @@ public class LogAnalysisAnalyser {
 
     double treeHeight, orig_root, SACount;
 
-    private void setTreeInfo(){
-        treeHeight = 10;
-        orig_root = 2;
-        SACount = 2;
+    private void setTreeInfo(java.io.File file) throws Exception{
+        BufferedReader fin = null;
+
+        try {
+            fin = new BufferedReader(new FileReader(file));
+            while (fin.ready()) {
+                String str = fin.readLine();
+                if (str.contains("Tree height")) {
+                    treeHeight = Double.parseDouble(fin.readLine());
+                    fin.readLine();
+                    SACount = Double.parseDouble(fin.readLine());
+                    System.out.println("SA " + SACount);
+                    fin.readLine();
+                    String lastLine = fin.readLine();
+                    int end = lastLine.indexOf(" -->");
+                    orig_root = Double.parseDouble(lastLine.substring(0, end));
+                }
+            }
+        } catch (IOException e) {
+            //
+        }
+        finally {
+            if (fin != null) {
+                fin.close();
+            }
+        }
     }
 
-    private void pickUpInfo(java.io.File file) throws Exception{
+    private ArrayList<ParameterInfo> pickUpInfo(java.io.File file) throws Exception{
 
         BufferedReader fin = null;
-        String[] titles = null;
-        String ssDate = null;
+        ArrayList<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
 
-        try {    //TODO finish this
+        try {
             fin = new BufferedReader(new FileReader(file));
-            ArrayList<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
+
             while (fin.ready()) {
                 String str = fin.readLine();
                 if (!str.contains("item")) {
-                    setTreeInfo();
-                } else {
                     ParameterInfo parameter = new ParameterInfo(str);
+                    parameters.add(parameter);
                 }
             }
         } catch (IOException e) {
@@ -44,23 +64,54 @@ public class LogAnalysisAnalyser {
             }
         }
 
-        for (int i = 0; i<titles.length; i++) {
-            System.out.println(titles[i]);
-        }
+        return parameters;
 
     }
 
 
     public static void main(String[] args) throws Exception {
-        java.io.File file;
+        java.io.File file, xmlFile, outFile;
 
         if (args != null && args.length > 0) {
             file = new java.io.File(args[0]);
         } else {
             throw new Exception("there is no file");
         }
-        LogAnalysisAnalyser analyser = new LogAnalysisAnalyser();
-        analyser.pickUpInfo(file);
+
+        boolean type = true;
+        if (type) {
+            String fileName = file.getName();
+            int end = fileName.indexOf("_");
+            String xmlFileName = "/Users/agav755/Subversion/sampled-ancestors/simulationNew/xml/" + fileName.substring(0, end) + "_SABDSKY.xml";
+            xmlFile = new java.io.File(xmlFileName);
+            LogAnalysisAnalyser analyser = new LogAnalysisAnalyser();
+            analyser.setTreeInfo(xmlFile);
+            LogAnalyser logAnalyser = new LogAnalyser(args, 2000, 10);
+            outFile = new java.io.File("out.txt");
+
+            PrintStream writer = null;
+
+            try {
+                writer = new PrintStream(outFile);
+                logAnalyser.print(writer);
+
+            } catch (IOException e) {
+                //
+            }
+            finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+
+            ArrayList<ParameterInfo> parameters = analyser.pickUpInfo(outFile);
+
+            for (ParameterInfo parameter:parameters) {
+                System.out.println("The true value of " + parameter.name + " is " + parameter.insideHPO + " 95% HPO");
+            }
+        } else {
+
+        }
 
     }
 
