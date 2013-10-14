@@ -1,5 +1,6 @@
 package beast.app.tools;
 
+import beast.app.beastapp.BeastMain;
 import beast.util.ZeroBranchSATreeParser;
 
 import java.io.BufferedReader;
@@ -12,7 +13,11 @@ import java.util.ArrayList;
  */
 public class PrintTraits {
     /**
-     * Prints traits for a tree given in file args[0]
+     * Prints traits and start sampling date for a tree given in file args[0],
+     * which is a beast-xml file for simulating sequences
+     * and contains start sampling date in comments.
+     * The tree is supposed to have 60 sampled nodes labeled with 0..59.
+     * Then it runs BeastMain.main with args as an argument
      * @throws Exception
      */
     public static void main(String[] args) throws Exception{
@@ -23,6 +28,8 @@ public class PrintTraits {
         } else {
             throw new Exception("there is no file");
         }
+
+        System.out.println("Writing traits prior to data");
         BufferedReader fin = null;
         String newick = null;
         String ssDate = null;
@@ -75,6 +82,8 @@ public class PrintTraits {
         }  else {
             throw new Exception("No tree is found");
         }
+
+        BeastMain.main(args);
 
     }
 

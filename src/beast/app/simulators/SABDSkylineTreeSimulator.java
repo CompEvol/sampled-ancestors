@@ -253,7 +253,7 @@ public class SABDSkylineTreeSimulator {
         int[] epidemicSizes = new int[treeCount];
         int index=0;
         do {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.8, 60, 10.0);
+            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.5, 60, 10.0);
             if (simulator.simulate()>0) {
                 origins[index] = simulator.origin;
                 epidemicSizes[index]=simulator.epidemicSizeAtStartSampling;

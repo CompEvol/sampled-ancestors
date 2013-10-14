@@ -36,7 +36,6 @@ public class FileGenerator {
         treeInfo[0] = "<!-- Newick tree";
         String newickTree = stringWithTree.substring(12, stringWithTree.length());
         treeInfo[1] = newickTree;
-        System.out.println(treeInfo[1]);
         treeInfo[2] = "Tree height";
         ArrayList<String> taxa = new ArrayList<String>();
         for (int i=0; i<60; i++) {
@@ -195,70 +194,141 @@ public class FileGenerator {
 
         BufferedReader fin = null;
         String dataBegin = "<data dataType=\"nucleotide\" id=\"alignment\" name=\"alignment\">";
-        String traitsBegin = "<trait id=\"tipDates\" spec='beast.evolution.tree.TraitSet' traitname='date-backward' units='year' value='";
         String modelBegin = "<BirthDeathSkylineModel spec=\"SABDSkylineModel\" id=\"birthDeath\" tree=\"@tree\" >";
         String logFileSpec = "<logger fileName=\"simulated_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
         String treeFileSpec = "<logger fileName=\"simulated_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+        String traitLine = "<trait id=\"tipDates\" spec='beast.evolution.tree.TraitSet' traitname='date-backward' units='year' value='";
 
 
         try {
             fin = new BufferedReader(new FileReader(data_traitsFile));
             String str;
-            while (fin.ready()) {
-                str = fin.readLine();
-                if (str.contains("The tree is ")) {
-                    String seed =  Integer.toString(Randomizer.nextInt(100000000));
-                    String outputFileName = "/Users/agav755/Subversion/sampled-ancestors/" + seed + "_SABDSKY.xml";
-                    String newLogFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
-                    String newTreeFileSprc = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
-                    String[] treeInfo = null;
-                    String newickTree = str;
+            str = fin.readLine();
+            if (str.contains("Writing traits prior to data")) {
+                while (fin.ready()) {
+                    str = fin.readLine();
+                    if (str.contains("traits")) {
+                        String seed =  Integer.toString(Randomizer.nextInt(100000000));
+                        String outputFileName = "/Users/agav755/Subversion/sampled-ancestors/" + seed + "_SABDSKY.xml";
+                        String newLogFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
+                        String newTreeFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+                        String[] treeInfo = null;
+                        PrintWriter writer = null;
+                        BufferedReader finTemplate = null;
 
-                    PrintWriter writer = null;
-                    BufferedReader finTemplate = null;
+                        String traits = fin.readLine();
+                        readBefore(fin, "start sampling date");
+                        String samplingRateChangeTime = fin.readLine();
+
+                        try {
+                            finTemplate = new BufferedReader(new FileReader(templateFile));
+                            writer = new PrintWriter(new FileWriter(outputFileName));
+                            String strTemplate;
+                            while (finTemplate.ready()){
+                                strTemplate = finTemplate.readLine();
+                                if (strTemplate.contains(logFileSpec)) {
+                                    writer.println(newLogFileSpec);
+                                } else {
+                                    if (strTemplate.contains(treeFileSpec)) {
+                                        writer.println(newTreeFileSpec);
+                                    } else {
+                                        if (strTemplate.contains(traitLine)) {
+
+                                            writer.println(traitLine);
+                                            writer.println(traits + "'>");
+                                        }  else writer.println(strTemplate);
+                                    }
+                                }
+                                if (strTemplate.contains(modelBegin)){
+                                    writer.println(samplingRateChangeTime);
+                                }
+                                if (strTemplate.contains(dataBegin)) {
+                                    String newickTree = readBefore(fin, "The tree is");
+                                    treeInfo = collectTreeInfo(newickTree, samplingRateChangeTime);
+                                    readBefore(fin, "<data>");
+                                    copyBefore(fin, writer, "</data>");
+                                }
 
 
-                    try {
-                        finTemplate = new BufferedReader(new FileReader(templateFile));
-                        writer = new PrintWriter(new FileWriter(outputFileName));
-                        String strTemplate;
-                        while (finTemplate.ready()){
-                            strTemplate = finTemplate.readLine();
-                            if (strTemplate.contains(logFileSpec)) {
-                                writer.println(newLogFileSpec);
-                            } else {
-                                if (strTemplate.contains(treeFileSpec)) {
-                                    writer.println(newTreeFileSprc);
-                                } else writer.println(strTemplate);
                             }
 
-                            if (strTemplate.contains(dataBegin)) {
-                                copyBefore(fin, writer, "</data>");
+                            for (int i=0; i<treeInfo.length; i++){
+                                writer.println(treeInfo[i]);
                             }
-                            if (strTemplate.contains(traitsBegin)) {
-                                readBefore(fin, "traits");
-                                String traits = fin.readLine();
-                                writer.println(traits + "'>");
+                        } catch (IOException e) {
+                            //
+                        }
+                        finally {
+                            if (finTemplate != null) {
+                                finTemplate.close();
                             }
-                            if (strTemplate.contains(modelBegin)){
-                                readBefore(fin, "start sampling date");
-                                String samplingRateChangeTime = fin.readLine();
-                                treeInfo = collectTreeInfo(newickTree, samplingRateChangeTime);
-                                writer.println(samplingRateChangeTime);
+                            if (writer != null) {
+                                writer.close();
                             }
                         }
-                        for (int i=0; i<treeInfo.length; i++){
-                            writer.println(treeInfo[i]);
-                        }
-                    } catch (IOException e) {
-                        //
                     }
-                    finally {
-                        if (finTemplate != null) {
-                            finTemplate.close();
+                }
+            } else {
+                while (fin.ready()) {
+                    str = fin.readLine();
+                    if (str.contains("The tree is ")) {
+                        String seed =  Integer.toString(Randomizer.nextInt(100000000));
+                        String outputFileName = "/Users/agav755/Subversion/sampled-ancestors/" + seed + "_SABDSKY.xml";
+                        String newLogFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
+                        String newTreeFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+                        String[] treeInfo = null;
+                        String newickTree = str;
+
+                        PrintWriter writer = null;
+                        BufferedReader finTemplate = null;
+
+
+                        try {
+                            finTemplate = new BufferedReader(new FileReader(templateFile));
+                            writer = new PrintWriter(new FileWriter(outputFileName));
+                            String strTemplate;
+                            while (finTemplate.ready()){
+                                strTemplate = finTemplate.readLine();
+                                if (strTemplate.contains(logFileSpec)) {
+                                    writer.println(newLogFileSpec);
+                                } else {
+                                    if (strTemplate.contains(treeFileSpec)) {
+                                        writer.println(newTreeFileSpec);
+                                    } else {
+                                        if (strTemplate.contains(traitLine)) {
+                                            readBefore(fin, "traits");
+                                            String traits = fin.readLine();
+                                            writer.println(traitLine);
+                                            writer.println(traits + "'>");
+                                        }  else writer.println(strTemplate);
+                                    }
+                                }
+
+                                if (strTemplate.contains(dataBegin)) {
+                                    readBefore(fin, "<data>");
+                                    copyBefore(fin, writer, "</data>");
+                                }
+
+                                if (strTemplate.contains(modelBegin)){
+                                    readBefore(fin, "start sampling date");
+                                    String samplingRateChangeTime = fin.readLine();
+                                    treeInfo = collectTreeInfo(newickTree, samplingRateChangeTime);
+                                    writer.println(samplingRateChangeTime);
+                                }
+                            }
+                            for (int i=0; i<treeInfo.length; i++){
+                                writer.println(treeInfo[i]);
+                            }
+                        } catch (IOException e) {
+                            //
                         }
-                        if (writer != null) {
-                            writer.close();
+                        finally {
+                            if (finTemplate != null) {
+                                finTemplate.close();
+                            }
+                            if (writer != null) {
+                                writer.close();
+                            }
                         }
                     }
                 }
