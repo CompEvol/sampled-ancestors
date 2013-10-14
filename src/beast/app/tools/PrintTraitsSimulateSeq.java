@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Alexandra Gavryushkina
  */
-public class PrintTraits {
+public class PrintTraitsSimulateSeq {
     /**
      * Prints traits and start sampling date for a tree given in file args[0],
      * which is a beast-xml file for simulating sequences
