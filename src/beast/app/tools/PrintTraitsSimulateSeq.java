@@ -15,7 +15,7 @@ public class PrintTraitsSimulateSeq {
     /**
      * Prints traits and start sampling date for a tree given in file args[0],
      * which is a beast-xml file for simulating sequences
-     * and contains start sampling date in comments.
+     * and contains traits and start sampling date in comments.
      * The tree is supposed to have 60 sampled nodes labeled with 0..59.
      * Then it runs BeastMain.main with args as an argument
      * @throws Exception

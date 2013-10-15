@@ -28,7 +28,7 @@ public class LogAnalysisAnalyser {
                     SACount = Double.parseDouble(fin.readLine());
                     fin.readLine();
                     String lastLine = fin.readLine();
-                    int end = lastLine.indexOf(" -->");
+                    int end = lastLine.indexOf("-->");
                     orig_root = Double.parseDouble(lastLine.substring(0, end));
                 }
             }
@@ -119,10 +119,12 @@ public class LogAnalysisAnalyser {
 
             if (noTrueValue.contains(parameter)) {
                 System.out.format(parameter + "\t %2.2f \t - \t -", percent);
-                System.out.println();
+                System.out.println("\t out of " + convergenceCount.get(names.indexOf(parameter)));
+                //System.out.println();
             } else {
                 System.out.format(parameter + "\t %2.2f \t" + trueValues.get(parameterIndex) + "\t %2.4f", percent, medianMedians.get(parameterIndex));
-                System.out.println();
+                System.out.println("\t out of " + convergenceCount.get(names.indexOf(parameter)));
+                //System.out.println();
             }
 
         }
@@ -177,7 +179,7 @@ public class LogAnalysisAnalyser {
             String fileName = file.getName();
             int end = fileName.indexOf("_");
             String seed = fileName.substring(0, end);
-            String xmlFileName = "/Users/agav755/Subversion/sampled-ancestors/simulationNew/xml/" + seed + "_SABDSKY.xml";
+            String xmlFileName = "/Users/agav755/Subversion/sampled-ancestors/Simulation_r_jumps/xml_r=05/" + seed + "_SABDSKY.xml";
             xmlFile = new java.io.File(xmlFileName);
             LogAnalysisAnalyser analyser = new LogAnalysisAnalyser();
             analyser.setTreeInfo(xmlFile);
@@ -264,7 +266,7 @@ public class LogAnalysisAnalyser {
             return SACount;
         }
         if (str.equals("r")){
-            return 0.8;
+            return 0.5;
         }
         if (str.equals("clock.rate")){
             return 0.0023;

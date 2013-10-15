@@ -86,7 +86,7 @@ public class SANexusParser extends NexusParser {
                 ZeroBranchSATreeParser ZeroBranchSATreeParser = null;
 
                 if (origin != -1) {
-                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, origin);
+                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (null, sStr, origin);
                 } else {
                     try {
                         ZeroBranchSATreeParser = new ZeroBranchSATreeParser (taxa, sStr, 0);

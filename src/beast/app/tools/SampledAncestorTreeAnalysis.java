@@ -9,6 +9,7 @@ import beast.util.TreeParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -342,6 +343,7 @@ public class SampledAncestorTreeAnalysis {
                 tmp.addAll(listNodesUnder(child, useID));
             }
         } else tmp.add(node.getID());
+        Collections.sort(tmp);
         return tmp;
     }
 
