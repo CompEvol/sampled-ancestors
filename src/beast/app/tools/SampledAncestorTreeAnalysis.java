@@ -4,6 +4,7 @@ import beast.core.util.ESS;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 import beast.util.TreeParser;
 
@@ -33,8 +34,9 @@ public class SampledAncestorTreeAnalysis {
      * and taxa names are used otherwise
      */
     public void perform(boolean useNumbers) throws Exception {
-       countClades(true, false);
-       countSampledAncestors(true);
+       //countClades(true, false);
+       //countSampledAncestors(true);
+        countSAFrequencies(true);
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -147,6 +149,35 @@ public class SampledAncestorTreeAnalysis {
             System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
             System.out.println();
         }
+    }
+
+    public FrequencySet<String> countSAFrequencies(Boolean print) {
+        FrequencySet<String> sampledAncestors = new FrequencySet<String>();
+        ArrayList<String> tmp = new ArrayList<String>();
+
+        for (int i=0; i < trace.treeCount; i++) {
+            Tree tree = trace.beastTrees.get(i);
+            tmp.addAll(listSA(tree));
+        }
+
+        for (int i=0; i < tmp.size(); i++) {
+            sampledAncestors.add(tmp.get(i));
+        }
+
+        if (print) {
+            System.out.println("Sampled ancestors frequencies");
+            System.out.println();
+            System.out.println("Count \t Percent \t Clade");
+            System.out.println();
+            for (int i =0; i < sampledAncestors.size(); i++) {
+                double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(trace.treeCount);
+                System.out.format("%-10d %-10.2f", sampledAncestors.getFrequency(i), percent);
+                System.out.println(sampledAncestors.get(i));
+            }
+            System.out.println();
+        }
+
+        return sampledAncestors;
     }
 
     public void countTopologies(boolean useNumbers) {
@@ -384,6 +415,21 @@ public class SampledAncestorTreeAnalysis {
             tmp.addAll(extractAllDClades(node.getRight(), zeroBranchTrees));
 
         return tmp;
+    }
+
+    /**
+     * retern the list of sampled ancestors, WARNING works only for zeroBranchTrees
+     * @param tree
+     * @return
+     */
+    public ArrayList<String> listSA(Tree tree){
+        ArrayList<String> sampledAncestors = new ArrayList<String>();
+        for (int i=0; i<tree.getLeafNodeCount(); i++){
+            if (((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
+                sampledAncestors.add(tree.getNode(i).getID());
+            }
+        }
+        return  sampledAncestors;
     }
 
 

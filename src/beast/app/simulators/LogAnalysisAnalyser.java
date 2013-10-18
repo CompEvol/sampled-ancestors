@@ -46,7 +46,7 @@ public class LogAnalysisAnalyser {
 
         BufferedReader fin = null;
         ArrayList<String> names = new ArrayList<String>();
-        ArrayList<Integer> insideHPOCount = new ArrayList<Integer>();
+        ArrayList<Integer> insideHPDCount = new ArrayList<Integer>();
         ArrayList<Integer> convergenceCount = new ArrayList<Integer>();
         ArrayList<String> noise = new ArrayList<String>(Arrays.asList(new String[] {"name", "jointTreeLikelihood", "samplingRate1", "posterior", "BDlikelihood", "rateAG"}));
         ArrayList<String> noTrueValue = new ArrayList<String>(Arrays.asList(new String[] {"treeHeight", "orig_root", "SACount"}));
@@ -72,7 +72,7 @@ public class LogAnalysisAnalyser {
                     int parameterIndex;
                     if (!names.contains(fields[0])) {
                         names.add(fields[0]);
-                        insideHPOCount.add(0);
+                        insideHPDCount.add(0);
                         convergenceCount.add(0);
                         medians.add(new ArrayList<Double>());
                         trueValues.add("");
@@ -82,8 +82,8 @@ public class LogAnalysisAnalyser {
                         int convCount = convergenceCount.get(parameterIndex);
                         convergenceCount.set(parameterIndex, convCount+1);
                         if (fields[5].equals("inside")) {
-                            int count = insideHPOCount.get(parameterIndex);
-                            insideHPOCount.set(parameterIndex, count+1);
+                            int count = insideHPDCount.get(parameterIndex);
+                            insideHPDCount.set(parameterIndex, count+1);
                         }
                         medians.get(parameterIndex).add(Double.parseDouble(fields[4]));
                         trueValues.set(parameterIndex, fields[2]);
@@ -114,8 +114,8 @@ public class LogAnalysisAnalyser {
         System.out.println("parameter \t % of times inside 95% HPD \t trueValue \t median");
         for (String parameter:names){
             int parameterIndex = names.indexOf(parameter);
-            double percent = (double) 100 * insideHPOCount.get(parameterIndex)/convergenceCount.get(parameterIndex);
-            //System.out.println(parameter + "\t inside HPO " + insideHPOCount.get(names.indexOf(parameter)) + "\t out of " + convergenceCount.get(names.indexOf(parameter)) + "\t" + percent);
+            double percent = (double) 100 * insideHPDCount.get(parameterIndex)/convergenceCount.get(parameterIndex);
+            //System.out.println(parameter + "\t inside HPD " + insideHPDCount.get(names.indexOf(parameter)) + "\t out of " + convergenceCount.get(names.indexOf(parameter)) + "\t" + percent);
 
             if (noTrueValue.contains(parameter)) {
                 System.out.format(parameter + "\t %2.2f \t - \t -", percent);
@@ -168,18 +168,12 @@ public class LogAnalysisAnalyser {
     public static void main(String[] args) throws Exception {
         java.io.File file, xmlFile, outFile;
 
-        if (args != null && args.length > 0) {
+        if (args != null & args.length > 0) {
             file = new java.io.File(args[0]);
-        } else {
-            throw new Exception("there is no file");
-        }
-
-        boolean type = false;
-        if (type) {
             String fileName = file.getName();
             int end = fileName.indexOf("_");
             String seed = fileName.substring(0, end);
-            String xmlFileName = "/Users/agav755/Subversion/sampled-ancestors/Simulation_r_jumps/xml_r=05/" + seed + "_SABDSKY.xml";
+            String xmlFileName = "/Users/agav755/Subversion/Simulation_r_jumps/xml_r=05/" + seed + "_SABDSKY.xml";
             xmlFile = new java.io.File(xmlFileName);
             LogAnalysisAnalyser analyser = new LogAnalysisAnalyser();
             analyser.setTreeInfo(xmlFile);
@@ -203,11 +197,24 @@ public class LogAnalysisAnalyser {
             }
 
             ArrayList<ParameterInfo> parameters = analyser.pickUpInfo(outFile);
-            System.out.println("name \t convergence \t trueValue \t mean \t median \t insideHPO");
+            System.out.println("name \t convergence \t trueValue \t mean \t median \t insideHPD");
             for (ParameterInfo parameter:parameters) {
-                System.out.println(parameter.name+ "\t" + parameter.convergence + "\t" + parameter.trueValue + "\t" + parameter.mean + "\t" + parameter.median + "\t"+ parameter.insideHPO + "\t"+ parameter.seed );
+                System.out.println(parameter.name+ "\t" + parameter.convergence + "\t" + parameter.trueValue + "\t" + parameter.mean + "\t" + parameter.median + "\t"+ parameter.insideHPD + "\t"+ parameter.seed );
             }
         } else {
+            String message = "Choose logs out file";
+            java.awt.Frame frame = new java.awt.Frame();
+            java.awt.FileDialog chooser = new java.awt.FileDialog(frame, message,
+                    java.awt.FileDialog.LOAD);
+            chooser.setVisible(true);
+            if (chooser.getFile() != null) {
+                file = new java.io.File(chooser.getDirectory(), chooser.getFile());
+            } else {
+                throw new Exception("File was not chosen");
+            }
+            chooser.dispose();
+            frame.dispose();
+
             LogAnalysisAnalyser analyser = new LogAnalysisAnalyser();
             analyser.summarise(file);
         }
@@ -220,8 +227,8 @@ public class LogAnalysisAnalyser {
 //            freqParameter2, freqParameter3, freqParameter4, rateAC, rateAT, rateCG, rateCT, rateGT;
 
     private class ParameterInfo {
-        String name, insideHPO, convergence;
-        double trueValue, mean, median, hpoLow, hpoHigh, ESS;
+        String name, insideHPD, convergence;
+        double trueValue, mean, median, HPDLow, HPDHigh, ESS;
         int seed;
 
         public ParameterInfo(String logLine, int newSeed) {
@@ -231,12 +238,12 @@ public class LogAnalysisAnalyser {
             trueValue = assignTrueValue(name);
             mean = Double.parseDouble(fields[1]);
             median = Double.parseDouble(fields[4]);
-            hpoLow = Double.parseDouble(fields[5]);
-            hpoHigh = Double.parseDouble(fields[6]);
+            HPDLow = Double.parseDouble(fields[5]);
+            HPDHigh = Double.parseDouble(fields[6]);
             ESS =  Double.parseDouble(fields[8]);
-            if (hpoLow <= trueValue && hpoHigh >= trueValue) {
-                insideHPO = "inside";
-            }  else insideHPO = "outside";
+            if (HPDLow <= trueValue && HPDHigh >= trueValue) {
+                insideHPD = "inside";
+            }  else insideHPD = "outside";
             if (ESS>200) {
                 convergence = "converged";
             } else if (ESS > 100) {

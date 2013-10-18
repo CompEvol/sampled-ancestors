@@ -28,6 +28,29 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     }
 
     @Override
+    protected void transformParameters() {
+
+        Double[] R = R0.get().getValues();
+        Double[] b = becomeUninfectiousRate.get().getValues();
+        Double[] p = samplingProportion.get().getValues();
+        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+
+        birth = new Double[totalIntervals];
+        death = new Double[totalIntervals];
+        psi = new Double[totalIntervals];
+
+
+        if (isBDSIR()) birth[0] = R[0] * b[0]; // the rest will be done in BDSIR class
+
+        for (int i = 0; i < totalIntervals; i++) {
+            if (!isBDSIR()) birth[i] = R[birthChanges>0 ? index(times[i], birthRateChangeTimes) : 0] * b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0];
+            psi[i] = p[samplingChanges>0 ? index(times[i], samplingRateChangeTimes) : 0] * b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0]/r;
+            death[i] = b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0] - r*psi[i];
+
+        }
+    }
+
+    @Override
     public double calculateTreeLogLikelihood(TreeInterface tree) {
 
         int nTips = tree.getLeafNodeCount();
@@ -70,11 +93,19 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 logP += temp;
                 if (printTempResults) System.out.println("1st pwd" +
                         " = " + temp + "; interval = " + i);
-                if (Double.isInfinite(logP))
+                if (Double.isInfinite(logP)) {
+                    System.out.println("first where birth is " + birth[index] + " g is " + g(index, times[index], x) + " index is " + index + " times[index] " + times[index] + " x " + x + " A[index] " + Ai[index] + " B[index] " + Bi[index] + " r "+r);
+                    System.exit(0);
                     return logP;
+                }
             } else {
                 if (r != 1) {
                     logP += Math.log((1 - r)*psi[index]);
+                    if (Double.isInfinite(logP)) {
+                        System.out.println("second");
+                        System.exit(0);
+                        return logP;
+                    }
                     //System.out.println("caught it. The time of sampled ancestor is " + tree.getNode(nTips+i).getHeight());
                 } else {
                     //throw new Exception("There is a sampled ancestor in the tree while r parameter is 1");
@@ -93,8 +124,11 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 temp = Math.log(psi[index] * (r + (1-r)*p0[index])) - Math.log(g(index, times[index], y));
                 logP += temp;
                 if (printTempResults) System.out.println("2nd PI = " + temp);
-                if (Double.isInfinite(logP))
+                if (Double.isInfinite(logP)){
+                    System.out.println("third");
+                    System.exit(0);
                     return logP;
+                }
             }
         }
 
@@ -109,18 +143,22 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 logP += temp;
                 if (printTempResults)
                     System.out.println("3rd factor (nj loop) = " + temp + "; interval = " + j + "; n[j] = " + n[j]);//+ "; Math.log(g(j, times[j], time)) = " + Math.log(g(j, times[j], time)));
-                if (Double.isInfinite(logP))
+                if (Double.isInfinite(logP)) {
+                    System.out.println("forth");
+                    System.exit(0);
                     return logP;
-
+                }
             }
             if (rho[j] > 0 && N[j] > 0) {
                 temp = N[j] * Math.log(rho[j]);    // term for contemporaneous sampling
                 logP += temp;
                 if (printTempResults)
                     System.out.println("3rd factor (Nj loop) = " + temp + "; interval = " + j + "; N[j] = " + N[j]);
-                if (Double.isInfinite(logP))
+                if (Double.isInfinite(logP)){
+                    System.out.println("fifth");
+                    System.exit(0);
                     return logP;
-
+                }
             }
         }
         return logP;
