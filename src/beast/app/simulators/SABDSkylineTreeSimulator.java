@@ -3,6 +3,7 @@ package beast.app.simulators;
 import beast.core.Description;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 import java.util.*;
@@ -54,7 +55,7 @@ public class SABDSkylineTreeSimulator {
     public int simulate() {
 
         //create an initial node (origin of tree)
-        Node initial = new Node();
+        Node initial = new ZeroBranchSANode();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of temporary tip nodes sorted by their heights
@@ -154,7 +155,7 @@ public class SABDSkylineTreeSimulator {
         }
 
         //the unique node remains in the array is the root of the sampled tree
-        Node root = new Node();
+        Node root = new ZeroBranchSANode();
         for (Node node:children) {
             root=node;
         }
@@ -201,9 +202,9 @@ public class SABDSkylineTreeSimulator {
 
         switch (typeOfEvent) {
             case BIRTH: {
-                Node left = new Node();
+                Node left = new ZeroBranchSANode();
                 left.setNr(-1);
-                Node right = new Node();
+                Node right = new ZeroBranchSANode();
                 right.setNr(-1);
                 left.setHeight(height);
                 right.setHeight(height);
@@ -225,9 +226,9 @@ public class SABDSkylineTreeSimulator {
 
                 double remain = Randomizer.nextDouble();
                 if (r < remain) {
-                    Node left = new Node();
+                    Node left = new ZeroBranchSANode();
                     left.setNr(-1);
-                    Node right = new Node();
+                    Node right = new ZeroBranchSANode();
                     right.setNr(sampleCount);
                     left.setHeight(height);
                     right.setHeight(height);
@@ -253,7 +254,7 @@ public class SABDSkylineTreeSimulator {
         int[] epidemicSizes = new int[treeCount];
         int index=0;
         do {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.5, 60, 10.0);
+            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.8, 60, 0.0);
             if (simulator.simulate()>0) {
                 origins[index] = simulator.origin;
                 epidemicSizes[index]=simulator.epidemicSizeAtStartSampling;

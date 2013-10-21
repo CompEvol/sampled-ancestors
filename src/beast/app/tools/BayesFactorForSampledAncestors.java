@@ -112,18 +112,28 @@ public class BayesFactorForSampledAncestors {
             labels.add(posteriorSAFreq.get(i));
         }
 
-        System.out.println("Label \t prior \t posterior");
+        System.out.println("Label \t prior \t posterior \t Bayes factor in favour of being SA \t in favour of being a tip");
 
         for (String sa:labels){
-            double freqPost, freqPr;
+            double freqPost, freqPr, bayesFactor, bayesFactor1;
             if (posteriorSAFreq.getFrequency(sa) != null) {
                 freqPost = (double)posteriorSAFreq.getFrequency(sa)/treeCountPost;
             } else freqPost=0.;
             if (priorSAFreq.getFrequency(sa) != null) {
                 freqPr = (double)priorSAFreq.getFrequency(sa)/treeCountPr;
             } else freqPr=0.;
-            System.out.format(sa+"\t %2.4f \t %2.4f", freqPr, freqPost);
-            System.out.println();
+            if (freqPost !=0 && freqPr !=1) {
+                bayesFactor1 = (freqPr*(1-freqPost))/((1-freqPr)*freqPost);
+            } else bayesFactor1 =0.0;
+            if (freqPr != 0 && freqPost != 1) {
+                bayesFactor = (freqPost*(1-freqPr))/((1-freqPost)*freqPr);
+                System.out.format(sa+"\t\t %2.2f \t %2.2f \t %2.2f \t %2.2f", freqPr, freqPost, bayesFactor, bayesFactor1);
+                System.out.println();
+            } else {
+                System.out.format(sa+"\t\t %2.2f \t %2.2f \t - \t %2.2f", freqPr, freqPost, bayesFactor1);
+                System.out.println();
+            }
+
         }
 
 

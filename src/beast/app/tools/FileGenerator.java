@@ -49,7 +49,8 @@ public class FileGenerator {
 
         int begin = startSamplingDate.indexOf("value=\"") + 7;
         int end = startSamplingDate.indexOf(" 0.\"/>");
-        double orig_root = Double.parseDouble(startSamplingDate.substring(begin, end)) + 10 - tree.getRoot().getHeight();
+        //double orig_root = Double.parseDouble(startSamplingDate.substring(begin, end)) + 10 - tree.getRoot().getHeight();
+        double orig_root = Double.parseDouble(startSamplingDate.substring(begin, end)) - tree.getRoot().getHeight();
         treeInfo[7] = Double.toString(orig_root)+ "-->";
         return treeInfo;
 
@@ -194,9 +195,11 @@ public class FileGenerator {
 
         BufferedReader fin = null;
         String dataBegin = "<data dataType=\"nucleotide\" id=\"alignment\" name=\"alignment\">";
-        String modelBegin = "<BirthDeathSkylineModel spec=\"SABDSkylineModel\" id=\"birthDeath\" tree=\"@tree\" >";
-        String logFileSpec = "<logger fileName=\"simulated_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
-        String treeFileSpec = "<logger fileName=\"simulated_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+        String modelBegin = "<BirthDeathSkylineModel spec=\"SABDSkylineModel\" id=\"birthDeath\" tree=\"@tree\">";
+        //String logFileSpec = "<logger fileName=\"simulated_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
+        String logFileSpec = "<logger fileName=\"simulated_SABD.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
+        //String treeFileSpec = "<logger fileName=\"simulated_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+        String treeFileSpec = "<logger fileName=\"simulated_SABD.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
         String traitLine = "<trait id=\"tipDates\" spec='beast.evolution.tree.TraitSet' traitname='date-backward' units='year' value='";
 
 
@@ -209,14 +212,21 @@ public class FileGenerator {
                     str = fin.readLine();
                     if (str.contains("traits")) {
                         String seed =  Integer.toString(Randomizer.nextInt(100000000));
-                        String outputFileName = "/Users/agav755/Subversion/sampled-ancestors/" + seed + "_SABDSKY.xml";
-                        String newLogFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
-                        String newTreeFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+                        //String outputFileName = "/Users/agav755/Subversion/sampled-ancestors/" + seed + "_SABDSKY.xml";
+                        String outputFileName = "/Users/agav755/Subversion/sampled-ancestors/" + seed + "_SABD.xml";
+                        //String newLogFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
+                        String newLogFileSpec = "<logger fileName=\"" + seed + "_SABD.$(seed).log\" id=\"tracelog\" logEvery=\"10000\" mode=\"autodetect\" model=\"@posterior\">";
+                        //String newTreeFileSpec = "<logger fileName=\"" + seed + "_SABDSKY.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+                        String newTreeFileSpec = "<logger fileName=\"" + seed + "_SABD.$(seed).trees\" id=\"treelog\" logEvery=\"10000\" mode=\"tree\">";
+
                         String[] treeInfo = null;
                         PrintWriter writer = null;
                         BufferedReader finTemplate = null;
-
+                        if (str.contains("Writing traits prior to data")) {
+                            fin.readLine();
+                        }
                         String traits = fin.readLine();
+
                         readBefore(fin, "start sampling date");
                         String samplingRateChangeTime = fin.readLine();
 
@@ -239,9 +249,9 @@ public class FileGenerator {
                                         }  else writer.println(strTemplate);
                                     }
                                 }
-                                if (strTemplate.contains(modelBegin)){
-                                    writer.println(samplingRateChangeTime);
-                                }
+//                                if (strTemplate.contains(modelBegin)){
+//                                    writer.println(samplingRateChangeTime);
+//                                }
                                 if (strTemplate.contains(dataBegin)) {
                                     String newickTree = readBefore(fin, "The tree is");
                                     treeInfo = collectTreeInfo(newickTree, samplingRateChangeTime);

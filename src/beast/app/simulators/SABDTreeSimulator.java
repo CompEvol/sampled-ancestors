@@ -1,6 +1,7 @@
 package beast.app.simulators;
 
 import beast.evolution.tree.Node;
+import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 import java.util.*;
@@ -44,10 +45,12 @@ public class SABDTreeSimulator {
     /**
      * Simulate a tree under the model.
      * Note that nodes in the tree have negative heights (the origin node has height 0)
+     * @return 1 if sinulated tree has finalSampleCount sampled nodes and -1 if the process stopped
+     * (all the individuals died out) before the necessary number of samples had been reached.
      */
-    public void simulate() {
+    public int simulate() {
         //create an initial node (origin of tree)
-        Node initial = new Node();
+        Node initial = new ZeroBranchSANode();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
@@ -99,10 +102,13 @@ public class SABDTreeSimulator {
 
         }
 
-        //remove excess of sampled nodes
-        if (!sampledNodes.isEmpty()) {
-            removeSampleExcess();
+        if (sampledNodes.isEmpty() || sampledNodes.size() < finalSampleCount) {
+            return -1;
         }
+
+
+        //remove excess of sampled nodes
+        removeSampleExcess();
 
         HashSet<Node> parents;
         HashSet<Node> children = sampledNodes;
@@ -111,8 +117,8 @@ public class SABDTreeSimulator {
             children = parents;
         }
 
-        //the unique node remains in the array is the root of the sampled tree
-        Node root = new Node();
+        //the unique node remained in the array is the root of the sampled tree
+        Node root = new ZeroBranchSANode();
         for (Node node:children) {
             root=node;
         }
@@ -123,8 +129,10 @@ public class SABDTreeSimulator {
             Node newRoot = root.getLeft();
             root=newRoot;
         }
-
+        System.out.println("tree");
         System.out.println(root.toShortNewick(false) + ";");
+        System.out.println(origin);
+        return 1;
 
         //collect information about the tree
     }
@@ -148,9 +156,9 @@ public class SABDTreeSimulator {
 
         switch (typeOfEvent) {
             case BIRTH: {
-                Node left = new Node();
+                Node left = new ZeroBranchSANode();
                 left.setNr(-1);
-                Node right = new Node();
+                Node right = new ZeroBranchSANode();
                 right.setNr(-1);
                 left.setHeight(height);
                 right.setHeight(height);
@@ -166,9 +174,9 @@ public class SABDTreeSimulator {
             case SAMPLING: {
                 double remain = Randomizer.nextDouble();
                 if (r < remain) {
-                    Node left = new Node();
+                    Node left = new ZeroBranchSANode();
                     left.setNr(-1);
-                    Node right = new Node();
+                    Node right = new ZeroBranchSANode();
                     right.setNr(sampleCount);
                     left.setHeight(height);
                     right.setHeight(height);
@@ -189,14 +197,17 @@ public class SABDTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 1;
+        int treeCount = 10;
         double[] origins = new double[10];
 
-        for (int i=0; i<treeCount; i++) {
-            SABDTreeSimulator simulator = new SABDTreeSimulator(1.0, 0.1, 0.5, 0.1, 20);
-            simulator.simulate();
-            origins[i] = simulator.origin;
-        }
+        int index=0;
+        do {
+            SABDTreeSimulator simulator = new SABDTreeSimulator(0.8, 0.4, 0.2, 0.5, 60);
+            if (simulator.simulate()>0) {
+                origins[index] = simulator.origin;
+                index++;
+            }
+        } while (index<treeCount);
 
         for (int i=0; i<treeCount; i++) {
             System.out.println(origins[i]);

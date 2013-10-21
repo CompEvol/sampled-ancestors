@@ -79,6 +79,7 @@ public class PrintTraitsSimulateSeq {
 
             System.out.println("start sampling date");
             System.out.println("<parameter name=\"samplingRateChangeTimes\" id=\"samplingRateChangeTimes\" value=\""  + ssDate + " 0.\"/>");
+            //System.out.println("<parameter name=\"intervalTimes\" id=\"intervalTimes\" value=\""  + ssDate + " 0.\"/>");
         }  else {
             throw new Exception("No tree is found");
         }

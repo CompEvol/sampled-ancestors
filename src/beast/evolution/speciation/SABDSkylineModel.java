@@ -94,16 +94,12 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 if (printTempResults) System.out.println("1st pwd" +
                         " = " + temp + "; interval = " + i);
                 if (Double.isInfinite(logP)) {
-                    System.out.println("first where birth is " + birth[index] + " g is " + g(index, times[index], x) + " index is " + index + " times[index] " + times[index] + " x " + x + " A[index] " + Ai[index] + " B[index] " + Bi[index] + " r "+r);
-                    System.exit(0);
                     return logP;
                 }
             } else {
                 if (r != 1) {
                     logP += Math.log((1 - r)*psi[index]);
                     if (Double.isInfinite(logP)) {
-                        System.out.println("second");
-                        System.exit(0);
                         return logP;
                     }
                     //System.out.println("caught it. The time of sampled ancestor is " + tree.getNode(nTips+i).getHeight());
@@ -125,8 +121,6 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 logP += temp;
                 if (printTempResults) System.out.println("2nd PI = " + temp);
                 if (Double.isInfinite(logP)){
-                    System.out.println("third");
-                    System.exit(0);
                     return logP;
                 }
             }
