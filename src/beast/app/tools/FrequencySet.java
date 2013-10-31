@@ -26,7 +26,7 @@ public class FrequencySet<T> {
     }
 
 
-    protected Integer getFrequency(Object b) {
+    public Integer getFrequency(Object b) {
         Bin bin = hash.get(b.toString());
         if( bin == null ) {
             return null;
