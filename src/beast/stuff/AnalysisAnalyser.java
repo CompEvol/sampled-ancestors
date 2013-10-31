@@ -1,8 +1,7 @@
-package beast.app.tools;
+package beast.stuff;
 
 import beast.core.Description;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;

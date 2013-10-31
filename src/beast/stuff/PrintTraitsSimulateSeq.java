@@ -1,4 +1,4 @@
-package beast.app.tools;
+package beast.stuff;
 
 import beast.app.beastapp.BeastMain;
 import beast.util.ZeroBranchSATreeParser;

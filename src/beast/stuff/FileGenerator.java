@@ -1,4 +1,4 @@
-package beast.app.tools;
+package beast.stuff;
 
 import beast.util.Randomizer;
 import beast.util.ZeroBranchSATreeParser;

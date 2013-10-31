@@ -1,5 +1,8 @@
-package beast.app.tools;
+package beast.stuff;
 
+import beast.app.tools.FrequencySet;
+import beast.app.tools.SampledAncestorTreeAnalysis;
+import beast.app.tools.SampledAncestorTreeTrace;
 import beast.util.SANexusParser;
 
 import javax.swing.*;
