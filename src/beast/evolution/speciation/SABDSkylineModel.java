@@ -28,7 +28,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     }
 
     @Override
-    protected void transformParameters() {
+    protected void transformParameters() {      //TODO there is a bug in analysis with parameter R0, s, delta. Log Tree likelihood becomes positive. Find the bug.
 
         Double[] R = R0.get().getValues();
         Double[] b = becomeUninfectiousRate.get().getValues();
@@ -102,7 +102,6 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                     if (Double.isInfinite(logP)) {
                         return logP;
                     }
-                    //System.out.println("caught it. The time of sampled ancestor is " + tree.getNode(nTips+i).getHeight());
                 } else {
                     //throw new Exception("There is a sampled ancestor in the tree while r parameter is 1");
                     System.out.println("There is a sampled ancestor in the tree while r parameter is 1");
@@ -138,8 +137,6 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 if (printTempResults)
                     System.out.println("3rd factor (nj loop) = " + temp + "; interval = " + j + "; n[j] = " + n[j]);//+ "; Math.log(g(j, times[j], time)) = " + Math.log(g(j, times[j], time)));
                 if (Double.isInfinite(logP)) {
-                    System.out.println("forth");
-                    System.exit(0);
                     return logP;
                 }
             }
@@ -149,8 +146,6 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 if (printTempResults)
                     System.out.println("3rd factor (Nj loop) = " + temp + "; interval = " + j + "; N[j] = " + N[j]);
                 if (Double.isInfinite(logP)){
-                    System.out.println("fifth");
-                    System.exit(0);
                     return logP;
                 }
             }

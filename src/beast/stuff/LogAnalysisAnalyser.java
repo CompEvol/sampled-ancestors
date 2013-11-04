@@ -122,7 +122,12 @@ public class LogAnalysisAnalyser {
         }
         for (ArrayList<Double> med:medians) {
             Collections.sort(med);
-            double mm = med.get(med.size()/2);
+            double mm;
+            if (med.size() % 2 == 0) {
+                mm = (med.get(med.size()/2 - 1) + med.get(med.size()/2))/2;
+            } else {
+                mm = med.get(med.size()/2);
+            }
             medianMedians.set(medians.indexOf(med), mm);
         }
 
@@ -131,7 +136,12 @@ public class LogAnalysisAnalyser {
         }
         for (ArrayList<Double> err:errors) {
             Collections.sort(err);
-            double me = err.get(err.size()/2);
+            double me;
+            if (err.size() % 2 == 0) {
+                me = (err.get(err.size()/2 - 1) + err.get(err.size()/2))/2;
+            } else {
+                me = err.get(err.size()/2);
+            }
             medianErrors.set(errors.indexOf(err), me);
         }
 
@@ -140,7 +150,12 @@ public class LogAnalysisAnalyser {
         }
         for (ArrayList<Double> bias:biases) {
             Collections.sort(bias);
-            double mb = bias.get(bias.size()/2);
+            double mb;
+            if (bias.size() % 2 == 0) {
+                mb = (bias.get(bias.size()/2 - 1) + bias.get(bias.size()/2))/2;
+            } else {
+                mb = bias.get(bias.size()/2);
+            }
             medianBiases.set(biases.indexOf(bias), mb);
         }
 
@@ -153,8 +168,6 @@ public class LogAnalysisAnalyser {
             medianLengths.set(hpdLengths.indexOf(len), ml);
         }
 
-
-
         System.out.println("parameter \t trueValue \t median \t error \t bias \t 95% HPD length \t % of times inside 95% HPD");
         for (String parameter:names){
             int parameterIndex = names.indexOf(parameter);
@@ -164,15 +177,15 @@ public class LogAnalysisAnalyser {
             double error = medianErrors.get(parameterIndex);
             double median = medianMedians.get(parameterIndex);
             double bias = medianBiases.get(parameterIndex);
-            if (noTrueValue.contains(parameter)) {
-                System.out.format(parameter + " \t - \t - \t %2.4f \t %2.4f \t %2.4f \t %2.2f", error, bias, length, percent);
+            if (noTrueValue.contains(parameter)&& !parameter.equals("SACount")) {
+                System.out.format(parameter + " & - & - & %2.4f & %2.4f & %2.4f & %2.0f \\\\", error, bias, length, percent);
                 //System.out.println("\t out of " + convergenceCount.get(names.indexOf(parameter)));
                 System.out.println();
             } else {
                 //double error, trueValue;
                 //trueValue = Double.parseDouble(trueValues.get(parameterIndex));
                 //error = Math.abs((trueValue - median)/trueValue);
-                System.out.format(parameter + "\t" + trueValues.get(parameterIndex) + "\t %2.4f \t %2.4f \t %2.4f \t %2.4f \t %2.2f ", median, error, bias, length, percent);
+                System.out.format(parameter + " & " + trueValues.get(parameterIndex) + " & %2.4f & %2.4f & %2.4f & %2.4f & %2.0f \\\\", median, error, bias, length, percent);
                 //System.out.println("\t out of " + convergenceCount.get(names.indexOf(parameter)));
                 System.out.println();
             }

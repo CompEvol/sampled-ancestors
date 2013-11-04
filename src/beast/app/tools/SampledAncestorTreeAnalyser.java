@@ -95,6 +95,7 @@ public class SampledAncestorTreeAnalyser {
         FileReader reader = null;
 
         try {
+            System.out.println("Reading file " + file.getName());
             reader = new FileReader(file);
             SANexusParser parser = new SANexusParser();
             parser.parseFile(file);

@@ -70,7 +70,7 @@ public class BayesFactorForSampledAncestors {
             treeCountPr = tracePr.treeCount;
             SampledAncestorTreeAnalysis analysisPr = new SampledAncestorTreeAnalysis(tracePr, 95);
 
-            priorSAFreq = analysisPr.countSAFrequencies(false);
+            priorSAFreq = analysisPr.countSAFrequencies(false, false);
 
             readerPost = new FileReader(filePosterior);
             SANexusParser parserPost = new SANexusParser();
@@ -79,7 +79,7 @@ public class BayesFactorForSampledAncestors {
             treeCountPost = tracePost.treeCount;
             SampledAncestorTreeAnalysis analysisPost = new SampledAncestorTreeAnalysis(tracePost, 95);
 
-            posteriorSAFreq = analysisPost.countSAFrequencies(false);
+            posteriorSAFreq = analysisPost.countSAFrequencies(false, false);
         }
         catch (IOException e) {
             //

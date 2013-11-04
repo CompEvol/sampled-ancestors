@@ -8,10 +8,7 @@ import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 import beast.util.TreeParser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Alexandra Gavryushkina
@@ -29,14 +26,15 @@ public class SampledAncestorTreeAnalysis {
         percentCredSet = percent;
     }
 
+
     /**
      * @parameter useNumbers is true if the indices of sampled nodes should be use as labels
      * and taxa names are used otherwise
      */
     public void perform(boolean useNumbers) throws Exception {
-       //countClades(true, false);
+       countClades(true, true);
        //countSampledAncestors(true);
-        countSAFrequencies(true);
+        //countSAFrequencies(true, false);
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -149,15 +147,25 @@ public class SampledAncestorTreeAnalysis {
             System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
             System.out.println();
         }
+
     }
 
-    public FrequencySet<String> countSAFrequencies(Boolean print) {
+    /**
+     * for each sampled node, it counts the number of trees in which this sampled node is a sampled ancestor
+     * @param print  if is true then the counts are printed
+     * @param useRanking if is true then sampled nodes are distinguished by the time order of sampling
+     *                   (that is, for each n in {1,..., #SampledNodes} it counts the number of
+     *                   trees in which nth sampled node is a sampled ancestor)
+     *                   if is false, labels are used
+     * @return a set of sampled nodes with assigned frequencies
+     */
+    public FrequencySet<String> countSAFrequencies(boolean print, boolean useRanking) {
         FrequencySet<String> sampledAncestors = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
 
         for (int i=0; i < trace.treeCount; i++) {
             Tree tree = trace.beastTrees.get(i);
-            tmp.addAll(listSA(tree));
+            tmp.addAll(listSA(tree, useRanking));
         }
 
         for (int i=0; i < tmp.size(); i++) {
@@ -167,7 +175,7 @@ public class SampledAncestorTreeAnalysis {
         if (print) {
             System.out.println("Sampled ancestors frequencies");
             System.out.println();
-            System.out.println("Count \t Percent \t Clade");
+            System.out.println("Count \t Percent \t SA");
             System.out.println();
             for (int i =0; i < sampledAncestors.size(); i++) {
                 double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(trace.treeCount);
@@ -384,7 +392,13 @@ public class SampledAncestorTreeAnalysis {
             String ancestor = node.getID();
             tmp += ancestor + '<';
             if (((ZeroBranchSANode)node).isDirectAncestor()) {
-                tmp+= listNodesUnder(node.getParent(), true);
+                ArrayList<String> descendants = listNodesUnder(node.getParent(), true);
+                tmp+= descendants;
+                for (String des:descendants) {
+                    if (!des.equals(ancestor)) {
+                        pairs.add(ancestor + "<" + des);
+                    }
+                }
             }
         } else {
             String ancestor = Integer.toString(node.getNr() + 1);
@@ -422,14 +436,26 @@ public class SampledAncestorTreeAnalysis {
      * @param tree
      * @return
      */
-    public ArrayList<String> listSA(Tree tree){
+    public ArrayList<String> listSA(Tree tree, boolean useRanking){
         ArrayList<String> sampledAncestors = new ArrayList<String>();
         for (int i=0; i<tree.getLeafNodeCount(); i++){
             if (((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
-                sampledAncestors.add(tree.getNode(i).getID());
+                if (useRanking) {
+                    sampledAncestors.add(Integer.toString(getRank(tree, tree.getNode(i))));
+                } else {
+                    sampledAncestors.add(tree.getNode(i).getID());
+                }
             }
         }
         return  sampledAncestors;
+    }
+
+    public int getRank(Tree tree, Node node) {
+        ArrayList<Node> nodes = new ArrayList<Node>(tree.getExternalNodes());
+        Comparator<Node> comp = new NodeComparator();
+
+        Collections.sort(nodes, comp);
+        return nodes.size() - nodes.indexOf(node);
     }
 
 
