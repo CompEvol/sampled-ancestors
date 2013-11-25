@@ -12,6 +12,7 @@ import java.util.*;
  *@author Alexandra Gavryushkina
  */
 
+
 @Description("Simulate a tree under Sampled Ancestor Birth-death Skyline model")
 public class SABDSkylineTreeSimulator {
 
@@ -20,6 +21,7 @@ public class SABDSkylineTreeSimulator {
     final static int DEATH = 1;
     final static int SAMPLING = 2;
     int epidemicSizeAtStartSampling=0;
+
 
     int finalSampleCount;  // the number of sampled nodes in the simulated tree
     private int sampleCount; //a counter of sampled nodes that count nodes during simulation and also used for numbering
@@ -49,7 +51,8 @@ public class SABDSkylineTreeSimulator {
     }
 
     /**
-     * Simulate a tree under the model.
+     * Simulate a tree under the model with one sampling rate change time. Simulation is stopped if
+     * either the number of tips reaches the finalSampleCount or the population dies out.
      * Note that nodes in the tree have negative heights (the origin node has height 0)
      */
     public int simulate() {
@@ -169,7 +172,7 @@ public class SABDSkylineTreeSimulator {
 
         root.setParent(null);
 
-        System.out.println("tree");
+        //System.out.println("tree");
         System.out.println(root.toShortNewick(false));
         System.out.println(origin - samplingStartTime);
         return 1;
@@ -249,12 +252,12 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 100;
+        int treeCount = 50;
         double[] origins = new double[treeCount];
         int[] epidemicSizes = new int[treeCount];
         int index=0;
         do {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.8, 60, 0.0);
+            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.8, 200, 10.0);
             if (simulator.simulate()>0) {
                 origins[index] = simulator.origin;
                 epidemicSizes[index]=simulator.epidemicSizeAtStartSampling;
@@ -329,7 +332,7 @@ public class SABDSkylineTreeSimulator {
     }
 
     /**
-     * assess if the stop simulation condition is met. It is met if the sample size increase finalSampleCount
+     * assess if the stop simulation condition is met. It is met if the sample size exceeds finalSampleCount
      * and all the nodes are younger then the age of the last sampled node (to find the last sampled node, sampled nodes
      * are sorted with respect to their heights and the node with finalSampleCount-1 number is the last sampled node).
      * @param tipNodes  current nodes that have to be younger then  the last sampled node
@@ -353,7 +356,7 @@ public class SABDSkylineTreeSimulator {
 
 
     /**
-     * sort nodes by their heights and then only keep finalSampleCount of nodes that have been sampled first
+     * sort nodes by their heights and then keep only finalSampleCount of nodes that have been sampled first
      * also change the sampleCount to represent the actual number of sampled nodes.
      */
     public void removeSampleExcess() {
@@ -377,6 +380,11 @@ public class SABDSkylineTreeSimulator {
 
     }
 
+    /**
+     * Node1 is less than node2 if node1 is closer to the root (or to the origin)
+     * than node2. Note that, since the nodes heights are negative, node1 is less than node2 if
+     * node1 height is greater than node2 height.
+     */
     private Comparator<Node> nodeComparator = new Comparator<Node>() {
         public int compare(Node node1, Node node2) {
             return (node2.getHeight() - node1.getHeight() < 0)?-1:1;

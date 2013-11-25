@@ -28,7 +28,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     }
 
     @Override
-    protected void transformParameters() {      //TODO there is a bug in analysis with parameter R0, s, delta. Log Tree likelihood becomes positive. Find the bug.
+    protected void transformParameters() {      //TODO test the transform paramteres if everything is ok
 
         Double[] R = R0.get().getValues();
         Double[] b = becomeUninfectiousRate.get().getValues();
@@ -53,12 +53,13 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     @Override
     public double calculateTreeLogLikelihood(TreeInterface tree) {
 
+        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+
         int nTips = tree.getLeafNodeCount();
 
         if (preCalculation((Tree)tree) < 0)
             return Double.NEGATIVE_INFINITY;
 
-        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
 
         // number of lineages at each time ti
         int[] n = new int[totalIntervals];
@@ -112,11 +113,11 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
 
         // middle product term in f[T]
         for (int i = 0; i < nTips; i++) {
-
             if ((!isRhoTip[i] || m_rho.get() == null) && !((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
                 double y = times[totalIntervals - 1] - tree.getNode(i).getHeight();
                 index = index(y);
-                temp = Math.log(psi[index] * (r + (1-r)*p0[index])) - Math.log(g(index, times[index], y));
+                double t = 0;
+                temp = Math.log(psi[index] * (r + (1-r)*p0(index, times[index], y))) - Math.log(g(index, times[index], y));
                 logP += temp;
                 if (printTempResults) System.out.println("2nd PI = " + temp);
                 if (Double.isInfinite(logP)){
@@ -150,6 +151,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 }
             }
         }
+
         return logP;
     }
     
