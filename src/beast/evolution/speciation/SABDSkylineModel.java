@@ -27,28 +27,28 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         //printTempResults = true;
     }
 
-    @Override
-    protected void transformParameters() {      //TODO test the transform paramteres if everything is ok
-
-        Double[] R = R0.get().getValues();
-        Double[] b = becomeUninfectiousRate.get().getValues();
-        Double[] p = samplingProportion.get().getValues();
-        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
-
-        birth = new Double[totalIntervals];
-        death = new Double[totalIntervals];
-        psi = new Double[totalIntervals];
-
-
-        if (isBDSIR()) birth[0] = R[0] * b[0]; // the rest will be done in BDSIR class
-
-        for (int i = 0; i < totalIntervals; i++) {
-            if (!isBDSIR()) birth[i] = R[birthChanges>0 ? index(times[i], birthRateChangeTimes) : 0] * b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0];
-            psi[i] = p[samplingChanges>0 ? index(times[i], samplingRateChangeTimes) : 0] * b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0]/r;
-            death[i] = b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0] - r*psi[i];
-
-        }
-    }
+//    @Override
+//    protected void transformParameters() {      //TODO test the transform paramteres if everything is ok
+//
+//        Double[] R = R0.get().getValues();
+//        Double[] b = becomeUninfectiousRate.get().getValues();
+//        Double[] p = samplingProportion.get().getValues();
+//        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+//
+//        birth = new Double[totalIntervals];
+//        death = new Double[totalIntervals];
+//        psi = new Double[totalIntervals];
+//
+//
+//        if (isBDSIR()) birth[0] = R[0] * b[0]; // the rest will be done in BDSIR class
+//
+//        for (int i = 0; i < totalIntervals; i++) {
+//            if (!isBDSIR()) birth[i] = R[birthChanges>0 ? index(times[i], birthRateChangeTimes) : 0] * b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0];
+//            psi[i] = p[samplingChanges>0 ? index(times[i], samplingRateChangeTimes) : 0] * b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0]/r;
+//            death[i] = b[deathChanges>0 ? index(times[i], deathRateChangeTimes) : 0] - r*psi[i];
+//
+//        }
+//    }
 
     @Override
     public double calculateTreeLogLikelihood(TreeInterface tree) {
