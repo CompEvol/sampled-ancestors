@@ -38,10 +38,10 @@
 
             <!-- tree and its properties -->
             <taxonset id='SATaxonSet.$(n)' spec='beast.evolution.alignment.TaxonSet' alignment='@$(n)' />
-            <plugin spec='beast.evolution.tree.ZeroBranchSATree' id='Tree.t:$(n)' taxonset='@SATaxonSet.$(n)'/>
+            <plugin spec='beast.evolution.tree.ZeroBranchSATree' nodetype="beast.evolution.tree.ZeroBranchSANode" id='Tree.t:$(n)' taxonset='@SATaxonSet.$(n)'/>
 
             <!--plugin spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree.t:$(n)' estimate='false' trait='@datetrait.$(n)' initial='@Tree.t:$(n)'-->
-            <plugin spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree.t:$(n)' estimate='false' initial='@Tree.t:$(n)'>
+            <plugin spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree.t:$(n)' nodetype="beast.evolution.tree.ZeroBranchSANode" estimate='false' initial='@Tree.t:$(n)'>
                 <taxa spec='Alignment' idref='data'/>
                 <populationModel id='ConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
             		<popSize id='randomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
@@ -216,6 +216,8 @@
             <connect srcID='SAr.t:$(n)'                  targetID='SAWilsonBalding.t:$(n)'     inputName='becomeNoninfectiousAfterSamplingProbability'/>
 
             <connect srcID='SABirthDeathSampling.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n))'/>
+            <connect srcID='SACount.t:$(n)'              targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n)) and inposterior(Tree.t:$(n))'/>
+
             <plate var='p' range='SAorig_root,SAbirthRate,SAdeathRate,SAsamplingRate,SAr'>
 	            <connect srcID='$(p)Prior.t:$(n)'      targetID='prior'    inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'>prior on sampled ancestor parameter $(p).t:($(n)</connect>
                 <connect srcID='$(p).t:$(n)'           targetID='state'    inputName='stateNode' if='inposterior(SABirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'/>
@@ -223,7 +225,6 @@
             </plate>
             <connect srcID='SABirthDeathSampling.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n))'/>
 
-            <connect srcID='SACount.t:$(n)'              targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n)) and inposterior(Tree.t:$(n))'/>
         </subtemplate>
     </mergewith>
 </beast>

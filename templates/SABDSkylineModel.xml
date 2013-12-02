@@ -25,7 +25,7 @@
             <![CDATA[
     <!-- Sampled Ancestor Birth Death Skyline model-->
     <SABDSkylineModel spec="beast.evolution.speciation.SABDSkylineModel" id="SABDSkyline.t:$(n)" tree="@Tree.t:$(n)">
-		<parameter name="orig_root" id="orig_root.t:$(n)" value ="1.0" lower="0." upper="1000."/>
+		<parameter name="origin" id="orig_root.t:$(n)" value ="100.0" lower="0." upper="1000."/>
         <parameter name="birthRate" id="birthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
         <parameter name="deathRate" id="deathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
         <parameter name="samplingRate" id="samplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
