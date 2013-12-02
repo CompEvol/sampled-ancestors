@@ -541,7 +541,7 @@ public class SABDTreeSimulator {
 
         int index=0;
         do {
-            SABDTreeSimulator simulator = new SABDTreeSimulator(1, 0.2, 0.4, 0.6, 200);
+            SABDTreeSimulator simulator = new SABDTreeSimulator(2., 0.25, 0.5, 0.6, 100);
             if (simulator.simulate()>0) {
                 origins[index] = simulator.origin;
                 index++;

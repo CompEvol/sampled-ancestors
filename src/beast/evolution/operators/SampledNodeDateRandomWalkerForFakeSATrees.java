@@ -7,6 +7,7 @@ import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
@@ -82,7 +83,8 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
                 upper = fake.getParent().getHeight();
             } else upper = Double.POSITIVE_INFINITY;
         } else {
-            lower = 0.0;
+            lower = Double.NEGATIVE_INFINITY;
+            //lower = 0.0;
             upper = node.getParent().getHeight();
         }
 
@@ -99,6 +101,53 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
             fake.setHeight(newValue);
         }
         node.setHeight(newValue);
+
+        if (newValue < 0) {
+            for (int i=0; i<tree.getNodeCount(); i++){
+                double oldHeight = tree.getNode(i).getHeight();
+                tree.getNode(i).setHeight(oldHeight-newValue);
+            }
+        }  else {
+            boolean dateShiftDown = true;
+            for (int i=0; i< tree.getLeafNodeCount(); i++){
+                if (tree.getNode(i).getHeight() == 0){
+                    dateShiftDown = false;
+                    break;
+                }
+            }
+            if (dateShiftDown) {
+                ArrayList<Double> tipNodeHeights= new ArrayList<Double>();
+                for (int i=0; i<tree.getLeafNodeCount(); i++){
+                    tipNodeHeights.add(tree.getNode(i).getHeight());
+                }
+                Collections.sort(tipNodeHeights);
+                double shiftDown = tipNodeHeights.get(0);
+                for (int i=0; i<tree.getNodeCount(); i++){
+                    double oldHeight = tree.getNode(i).getHeight();
+                    tree.getNode(i).setHeight(oldHeight-shiftDown);
+                }
+            }
+        }
+
+        boolean check = true;
+        for (int i=0; i<tree.getNodeCount(); i++){
+            if (tree.getNode(i).getHeight() < 0) {
+                System.out.println("Negative height found");
+                System.exit(0);
+            }
+            if (tree.getNode(i).getHeight() == 0) {
+                check = false;
+            }
+        }
+        if (check) {
+            System.out.println("There is no 0 height node");
+            System.exit(0);
+        }
+
+
+
+
+
 
         //tree.setEverythingDirty(true);
 

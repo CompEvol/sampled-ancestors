@@ -38,13 +38,13 @@
 
             <!-- tree and its properties -->
             <taxonset id='SATaxonSet.$(n)' spec='beast.evolution.alignment.TaxonSet' alignment='@$(n)' />
-            <plugin spec='beast.evolution.tree.Tree' id='Tree.t:$(n)' taxonset='@SATaxonSet.$(n)'/>
+            <plugin spec='beast.evolution.tree.ZeroBranchSATree' id='Tree.t:$(n)' taxonset='@SATaxonSet.$(n)'/>
 
-            <!--plugin spec='beast.evolution.tree.RandomTree' id='SARandomTree.t:$(n)' estimate='false' trait='@SAdatetrait.$(n)' initial='@Tree.t:$(n)'-->
-            <plugin spec='beast.evolution.tree.RandomTree' id='RandomTree.t:$(n)' estimate='false' initial='@Tree.t:$(n)'>
-                <taxa idref='data'/>
-                <populationModel id='SAConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
-            		<popSize id='SArandomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
+            <!--plugin spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree.t:$(n)' estimate='false' trait='@datetrait.$(n)' initial='@Tree.t:$(n)'-->
+            <plugin spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree.t:$(n)' estimate='false' initial='@Tree.t:$(n)'>
+                <taxa spec='Alignment' idref='data'/>
+                <populationModel id='ConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
+            		<popSize id='randomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
 	            </populationModel>
             </plugin>
 
@@ -113,7 +113,7 @@
         <connect method="beast.app.beauti.SiteModelInputEditor.customConnector"/>
 
         <connect srcID='treelog.t:$(n)'                 targetID='mcmc' inputName='logger' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>
-        <connect srcID='RandomTree.t:$(n)'                targetID='mcmc' inputName='init'   if='inposterior(Tree.t:$(n))'/>
+        <connect srcID='SARandomTree.t:$(n)'                targetID='mcmc' inputName='init'   if='inposterior(Tree.t:$(n))'/>
 
         <connect srcID='ClockPrior.c:$(n)'                targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
         <!-- when FixMeanMutationRatesOperator, the prior is uniform due to the operator -->

@@ -32,9 +32,10 @@ public class SampledAncestorTreeAnalysis {
      * and taxa names are used otherwise
      */
     public void perform(boolean useNumbers) throws Exception {
-       countClades(true, true);
+       //countClades(true, true);
        //countSampledAncestors(true);
-        //countSAFrequencies(true, false);
+       countSAFrequencies(true, false);
+       //printTreeHeights();
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -456,6 +457,31 @@ public class SampledAncestorTreeAnalysis {
 
         Collections.sort(nodes, comp);
         return nodes.size() - nodes.indexOf(node);
+    }
+
+    public void printTreeHeights(){
+        Tree tree;
+
+        System.out.print("heights <- c(");
+        for (int i =0; i < trace.treeCount-1; i++) {
+            tree = trace.beastTrees.get(i);
+            System.out.print(tree.getRoot().getHeight() + ",");
+        }
+        tree = trace.beastTrees.get(trace.treeCount-1);
+        System.out.println(tree.getRoot().getHeight() + ")");
+
+        System.out.print("lengths <- c(");
+        for (int i =0; i < trace.treeCount-1; i++) {
+            tree = trace.beastTrees.get(i);
+            double length = 0;
+            for (int j=0; j< tree.getNodeCount(); j++){
+                length += tree.getNode(j).getLength();
+            }
+
+            System.out.print(length + ",");
+        }
+        tree = trace.beastTrees.get(trace.treeCount-1);
+        System.out.println(tree.getRoot().getHeight() + ")");
     }
 
 
