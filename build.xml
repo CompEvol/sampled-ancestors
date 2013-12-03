@@ -1,18 +1,18 @@
-<!-- Build SAP. It is also used by Hudson SAP project. JUnit test is available for this build. -->
-<project basedir="." default="build_jar_all_SAP" name="BUILD_SAP">
+<!-- Build SA. It is also used by Hudson SA project. JUnit test is available for this build. -->
+<project basedir="." default="build_jar_all_SA" name="BUILD_SA">
 	<description>
-	    Build SAP. 
-            Also used by Hudson SAP project. 
+	    Build SA. 
+            Also used by Hudson SA project. 
 	    JUnit test is available for this build.
-	    $Id: build_SAP.xml $
+	    $Id: build_SA.xml $
 	</description>
 
 	<!-- set global properties for this build -->
-	<property name="srcSAP" location="src" />
-	<property name="buildSAP" location="build" />
-	<property name="libSAP" location="lib" />
+	<property name="srcSA" location="src" />
+	<property name="buildSA" location="build" />
+	<property name="libSA" location="lib" />
 	<property name="release_dir" value="release" />
-	<property name="distSAP" location="${buildSAP}/dist" />
+	<property name="distSA" location="${buildSA}/dist" />
 	<property name="beast2path" location="../beast2" />
 	<property name="libBeast2" location="${beast2path}/lib" />
 	<property name="srcBeast2" location="${beast2path}/src" />
@@ -25,10 +25,10 @@
     <import file="${beast2path}/build.xml" />
 
 	<property name="main_class_BEAST" value="beast.app.BeastMCMC" />
-	<property name="report" value="${buildSAP}/junitreport"/>
+	<property name="report" value="${buildSA}/junitreport"/>
 
 	<path id="classpath">
-        <pathelement path="${buildSAP}"/>
+        <pathelement path="${buildSA}"/>
 		<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
 		<fileset dir="${libBeast2}" includes="fest.jar"/>
 		<fileset dir="${libBeast2}" includes="jam.jar"/>
@@ -40,32 +40,32 @@
 	</path>
 
 	<!-- start -->
-	<target name="initSAP">
+	<target name="initSA">
 		<echo message="${ant.project.name}: ${ant.file}" />
 	</target>
 
-	<target name="cleanSAP">
-    	<delete dir="${buildSAP}" />
+	<target name="cleanSA">
+    	<delete dir="${buildSA}" />
 	</target>
 
 	<!-- clean previous build, and then compile Java source code, and Juint test -->
-	<target name="build_all_SAP" depends="cleanSAP,compile-allSAP,junitSAP"
+	<target name="build_all_SA" depends="cleanSA,compile-allSA,junitSA"
         description="Clean and Build all run-time stuff">
 	</target>
 
 	<!-- clean previous build, compile Java source code, and Junit test, and make the beast.jar and beauti.jar -->
-	<target name="build_jar_all_SAP" depends="cleanSAP,compile-allSAP,junitSAP,dist_all_SAP"
+	<target name="build_jar_all_SA" depends="cleanSA,compile-allSA,junitSA,dist_all_SA"
         description="Clean and Build all run-time stuff">
 	</target>
 
 
-	<!-- No JUnit Test, clean previous build, compile Java source code, and make the SAP.jar and beauti.jar -->
-	<target name="build_jar_all_SAP_NoJUnitTest" depends="cleanSAP,compile-allSAP,dist_all_SAP"
+	<!-- No JUnit Test, clean previous build, compile Java source code, and make the SA.jar and beauti.jar -->
+	<target name="build_jar_all_SA_NoJUnitTest" depends="cleanSA,compile-allSA,dist_all_SA"
         description="Clean and Build all run-time stuff">
 	</target>
 
 	<!-- compile Java source code -->
-	<target name="compile-allSAP" depends="initSAP,compile-all">
+	<target name="compile-allSA" depends="initSA,compile-all">
 
 
 	    <!-- Capture the path as a delimited property using the refid attribute -->
@@ -73,10 +73,10 @@
 	    <!-- Emit the property to the ant console -->
 	    <echo message="Classpath = ${myclasspath}"/>
 
-		<mkdir dir="${buildSAP}" />
+		<mkdir dir="${buildSA}" />
 
-		<!-- Compile the java code from ${srcSAP} into ${buildSAP} /bin -->
-		<javac srcdir="${srcSAP}" destdir="${buildSAP}" classpathref="classpath" 
+		<!-- Compile the java code from ${srcSA} into ${buildSA} /bin -->
+		<javac srcdir="${srcSA}" destdir="${buildSA}" classpathref="classpath" 
 		       fork="true"
 		       memoryinitialsize="256m"
 		       memorymaximumsize="256m"
@@ -89,17 +89,17 @@
 	</target>
 
 	<!-- make the beast.jar and beauti.jar -->
-	<target name="dist_all_SAP" depends="compile-allSAP" description="create SAP jar">
+	<target name="dist_all_SA" depends="compile-allSA" description="create SA jar">
 		<!-- Create the distribution directory -->
-		<mkdir dir="${distSAP}" />
+		<mkdir dir="${distSA}" />
 
-		<!-- Put everything in ${buildSAP} into the beast.jar file -->
-		<jar jarfile="${distSAP}/SAP.jar">
+		<!-- Put everything in ${buildSA} into the beast.jar file -->
+		<jar jarfile="${distSA}/SA.jar">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Main-Class" value="${main_class_BEAST}" />
 			</manifest>
-			<fileset dir="${buildSAP}">
+			<fileset dir="${buildSA}">
 				<include name="beast/**/*.class" />
 			</fileset>
 			<fileset dir="${beast2classpath}">
@@ -110,18 +110,18 @@
 				<include name="org/**/*.class" />
 			</fileset>
 		</jar>
-		<jar jarfile="${distSAP}/SAP.src.jar">
-			<fileset dir="${srcSAP}">
+		<jar jarfile="${distSA}/SA.src.jar">
+			<fileset dir="${srcSA}">
 				<include name="beast/**/*.java" />
 				<include name="beast/**/*.png" />
 				<include name="beast/**/*.xsl" />
 			</fileset>
         </jar>
-		<jar jarfile="${distSAP}/SAP.addon.jar">
+		<jar jarfile="${distSA}/SA.addon.jar">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 			</manifest>
-			<fileset dir="${buildSAP}">
+			<fileset dir="${buildSA}">
 				<include name="beast/**/*.class" />
 				<include name="util/**/*.class" />
 				<include name="**/*.properties" />
@@ -130,24 +130,24 @@
 	</target>
 
 	<!-- run beast.jar -->
-	<target name="run_SAP">
-		<java jar="${distSAP}/SAP.jar" fork="true" />
+	<target name="run_SA">
+		<java jar="${distSA}/SA.jar" fork="true" />
 	</target>
 
 	
 	<!-- JUnit test -->
-	<target name="junitSAP">
+	<target name="junitSA">
 		<mkdir dir="${report}" />
 		<junit printsummary="yes"> <!--showoutput='yes'-->
 			<classpath>
 				<path refid="classpath" />
-				<path location="${buildSAP}" />
+				<path location="${buildSA}" />
 			</classpath>
 
 			<formatter type="xml" />
 
 			<batchtest fork="yes" todir="${report}">
-				<fileset dir="${srcSAP}">
+				<fileset dir="${srcSA}">
                     <include name="test/**/*Test.java"/>                                         
 				</fileset>
 				<fileset dir="${srcBeast2}">
@@ -169,7 +169,7 @@
 
 
 	<target name="addon"
-	        depends="build_jar_all_SAP_NoJUnitTest"
+	        depends="build_jar_all_SA_NoJUnitTest"
 	        description="release BEAST 2 add-on version of Sampled Ancestor project">
 
 		<delete dir="${Add_on_dir}" />
@@ -186,17 +186,16 @@
 			<fileset dir="examples" />
 		</copy>
 		<copy todir="${Add_on_dir}/lib">
-			<fileset dir="${distSAP}" includes="SAP.addon.jar" />
+			<fileset dir="${distSA}" includes="SA.addon.jar" />
 		</copy>
 		<copy todir="${Add_on_dir}">
-			<fileset dir="${distSAP}" includes="SAP.src.jar" />
+			<fileset dir="${distSA}" includes="SA.src.jar" />
 		</copy>
 		<copy todir="${Add_on_dir}/templates">
-			<fileset file="templates/SABDS.xml" />
-			<fileset file="templates/SABDSkylineModel.xml" />
+			<fileset file="templates/sampled-ancestor.xml" />
 		</copy>
 
-		<jar jarfile="${distSAP}/SAP.addon.zip">
+		<jar jarfile="${distSA}/SA.addon.zip">
 			<fileset dir="${Add_on_dir}">
 				<include name="**/*" />
 			</fileset>
