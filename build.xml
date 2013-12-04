@@ -193,6 +193,7 @@
 		</copy>
 		<copy todir="${Add_on_dir}/templates">
 			<fileset file="templates/sampled-ancestor.xml" />
+            <fileset file="templates/SABDSkylineModel.xml" />
 		</copy>
 
 		<jar jarfile="${distSA}/SA.addon.zip">

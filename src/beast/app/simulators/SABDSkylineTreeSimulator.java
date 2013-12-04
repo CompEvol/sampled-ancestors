@@ -27,7 +27,7 @@ public class SABDSkylineTreeSimulator {
     private int sampleCount; //a counter of sampled nodes that count nodes during simulation and also used for numbering
                              //internal nodes when collecting nodes that will be presented in 'sampled tree' from the
                              // full simulated tree
-    private HashSet<Node> sampledNodes; // a set where sampled nodes collected during the simulation
+    private HashSet<Node> sampledNodes; // a set where sampled nodes are collected during the simulation
     double origin = 0; //is the distance between the origin (0) and the youngest sampled node
     /**
      * construct a skyline model tree simulator with only sampling rate changing through
