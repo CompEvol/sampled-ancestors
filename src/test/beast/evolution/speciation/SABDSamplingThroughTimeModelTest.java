@@ -21,14 +21,15 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         ZeroBranchSATreeParser tree = new ZeroBranchSATreeParser("((1:1.0)2:1.0)3:0.0", true, false, 1);
 
         model.setInputValue("tree", tree);
-        model.setInputValue("orig_root", new RealParameter("8."));
+        model.setInputValue("origin", new RealParameter("10."));
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
         model.setInputValue("samplingRate", new RealParameter("0.5") );
         model.setInputValue("becomeNoninfectiousAfterSamplingProbability", new RealParameter("0.9") );
         model.initAndValidate();
 
-        assertEquals(-25.3707, model.calculateTreeLogLikelihood(tree), 1e-5);
+        //assertEquals(-25.3707, model.calculateTreeLogLikelihood(tree), 1e-5);
+        assertEquals(-24.92986729848968, model.calculateTreeLogLikelihood(tree), 1e-5);
     }
 
 
@@ -38,7 +39,7 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         Tree tree = new ZeroBranchSATreeParser("(1:1.0,2:1.0)3:0.0", true, false, 1);
 
         model.setInputValue("tree", tree);
-        model.setInputValue("orig_root", new RealParameter("1."));
+        model.setInputValue("origin", new RealParameter("1."));
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
         model.setInputValue("samplingRate", new RealParameter("0.5") );

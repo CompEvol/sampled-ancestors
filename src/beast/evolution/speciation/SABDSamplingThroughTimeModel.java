@@ -20,9 +20,8 @@ import beast.evolution.tree.ZeroBranchSANode;
         "with a constant probability r")
 public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
-    public Input<RealParameter> orig_root =
-            new Input<RealParameter>("orig_root", "The time dictance between the most recent common ancestor time" +
-                    " and the origin of infection", Input.Validate.REQUIRED);
+    public Input<RealParameter> originInput =
+            new Input<RealParameter>("origin", "The origin of infection", Input.Validate.REQUIRED);
 
     public Input<RealParameter> birthRate =
             new Input<RealParameter>("birthRate", "BirthRate", Input.Validate.REQUIRED);
@@ -44,7 +43,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     protected double psi;
     protected double c1;
     protected double c2;
-    protected double origToRootDistance;
+    protected double origin;
     protected double rho;
 
     public void initAndValidate() throws Exception {
@@ -59,7 +58,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         }
         c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
         c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-        origToRootDistance = orig_root.get().getValue();
+        origin = originInput.get().getValue();
     }
 
     private double p0s(double t, double c1, double c2) {
@@ -87,17 +86,17 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         }
         c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
         c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-        origToRootDistance = orig_root.get().getValue();
+        origin = originInput.get().getValue();
     }
 
     @Override
     public double calculateTreeLogLikelihood(TreeInterface tree) {
         int nodeCount = tree.getNodeCount();
         updateParameters();
-        double x0 = tree.getRoot().getHeight() + origToRootDistance;
-        //double x0 = origToRootDistance;
+        //double x0 = tree.getRoot().getHeight() + origToRootDistance;
+        double x0 = origin;
         if (x0 < tree.getRoot().getHeight()) {
-            System.out.println("The root height is larger than the time of origin");
+            return Double.NEGATIVE_INFINITY;
         }
 
         double logPost;
