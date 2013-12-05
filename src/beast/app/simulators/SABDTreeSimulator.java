@@ -536,12 +536,12 @@ public class SABDTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 1;
+        int treeCount = 50;
         double[] origins = new double[treeCount];
 
         int index=0;
         do {
-            SABDTreeSimulator simulator = new SABDTreeSimulator(2., 0.25, 0.5, 0.6, 100);
+            SABDTreeSimulator simulator = new SABDTreeSimulator(1.0, 0.1, 0.4, 0.5, 200);
             if (simulator.simulate()>0) {
                 origins[index] = simulator.origin;
                 index++;

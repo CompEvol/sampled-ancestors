@@ -39,7 +39,7 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         Tree tree = new ZeroBranchSATreeParser("(1:1.0,2:1.0)3:0.0", true, false, 1);
 
         model.setInputValue("tree", tree);
-        model.setInputValue("origin", new RealParameter("1."));
+        model.setInputValue("origin", new RealParameter("3."));
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
         model.setInputValue("samplingRate", new RealParameter("0.5") );

@@ -50,14 +50,14 @@
 
             <!-- default Sampled ancestor birth-death-sampling tree prior-->
             <BirthDeathSamplingModel spec="SABDSamplingThroughTimeModel" id="SABirthDeathSampling.t:$(n)" tree="@Tree.t:$(n)">
-		        <parameter name="orig_root" id="SAorig_root.t:$(n)" value ="1.0" lower="0." upper="1000."/>
+		        <parameter name="origin" id="SAorigin.t:$(n)" value ="1.0" lower="0." upper="1000."/>
                 <parameter name="birthRate" id="SAbirthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
                 <parameter name="deathRate" id="SAdeathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
                 <parameter name="samplingRate" id="SAsamplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
                 <parameter name="becomeNoninfectiousAfterSamplingProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
 	        </BirthDeathSamplingModel>
 
-	        <distribution  id='SAorig_rootPrior.t:$(n)' x="@SAorig_root.t:$(n)" spec='beast.math.distributions.Prior'>
+	        <distribution  id='SAoriginPrior.t:$(n)' x="@SAorigin.t:$(n)" spec='beast.math.distributions.Prior'>
 		        <distr spec='beast.math.distributions.Uniform' lower="0." upper="1000."/>
             </distribution>
             <distribution id='SAbirthRatePrior.t:$(n)' spec="beast.math.distributions.Prior" x="@SAbirthRate.t:$(n)">
@@ -98,7 +98,7 @@
             <operator id='mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
             <operator id='gammaShapeScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@gammaShape.s:$(n)"/>
 
-            <operator id='SAorig_rootScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@SAorig_root.t:$(n)"/>
+            <operator id='SAoriginScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@SAorigin.t:$(n)"/>
             <operator id='SAbirthScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAbirthRate.t:$(n)"/>
             <operator id='SAdeathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAdeathRate.t:$(n)"/>
 	        <operator id='SAsamplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAsamplingRate.t:$(n)"/>
@@ -154,14 +154,14 @@
             <![CDATA[
 <!-- Sampled Ancestor Birth Death Sampling model-->
     <BirthDeathSamplingModel spec="SABDSamplingThroughTimeModel" id="SABirthDeathSampling.t:$(n)" tree="@Tree.t:$(n)">
-        <parameter name="orig_root" id="SAorig_root.t:$(n)" value ="1.0" lower="0." upper="1000."/>
+        <parameter name="origin" id="SAorigin.t:$(n)" value ="1.0" lower="0." upper="1000."/>
         <parameter name="birthRate" id="SAbirthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
         <parameter name="deathRate" id="SAdeathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
         <parameter name="samplingRate" id="SAsamplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
         <parameter name="becomeNoninfectiousAfterSamplingProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
     </BirthDeathSamplingModel>
 
-    <distribution  id='SAorig_rootPrior.t:$(n)' x="@SAorig_root.t:$(n)" spec='beast.math.distributions.Prior'>
+    <distribution  id='SAoriginPrior.t:$(n)' x="@SAorigin.t:$(n)" spec='beast.math.distributions.Prior'>
         <distr spec='beast.math.distributions.Uniform' lower="0." upper="1000."/>
     </distribution>
     <distribution id='SAbirthRatePrior.t:$(n)' spec="beast.math.distributions.Prior" x="@SAbirthRate.t:$(n)">
@@ -185,7 +185,7 @@
     <operator id='SArootScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)" rootOnly='true'/>
     <operator id='SAtreeScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
 
-	<operator id='SAorig_rootScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@SAorig_root.t:$(n)"/>
+	<operator id='SAoriginScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@SAorigin.t:$(n)"/>
     <operator id='SAbirthScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAbirthRate.t:$(n)"/>
     <operator id='SAdeathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAdeathRate.t:$(n)"/>
 	<operator id='SAsamplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAsamplingRate.t:$(n)"/>
@@ -205,7 +205,7 @@
 		    <connect srcID='SAWilsonBalding.t:$(n)'      targetID='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and Tree.t:$(n)/estimate=true'>Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
 		    <connect srcID='SATreeDimensionJump.t:$(n)'  targetID='mcmc' inputName='operator' if='inposterior(SABirthDeathSampling.t:$(n)) and Tree.t:$(n)/estimate=true'>Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
 
-            <connect srcID='SAorig_rootScaler.t:$(n)'    targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAorig_root.t:$(n)/estimate=true'/>
+            <connect srcID='SAoriginScaler.t:$(n)'    targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAorigin.t:$(n)/estimate=true'/>
             <connect srcID='SAbirthScaler.t:$(n)'        targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAbirthRate.t:$(n)/estimate=true'/>
             <connect srcID='SAdeathScaler.t:$(n)'        targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAdeathRate.t:$(n)/estimate=true'/>
             <connect srcID='SAsamplingScaler.t:$(n)'     targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAsamplingRate.t:$(n)/estimate=true'/>
@@ -218,7 +218,7 @@
             <connect srcID='SABirthDeathSampling.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n))'/>
             <connect srcID='SACount.t:$(n)'              targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n)) and inposterior(Tree.t:$(n))'/>
 
-            <plate var='p' range='SAorig_root,SAbirthRate,SAdeathRate,SAsamplingRate,SAr'>
+            <plate var='p' range='SAorigin,SAbirthRate,SAdeathRate,SAsamplingRate,SAr'>
 	            <connect srcID='$(p)Prior.t:$(n)'      targetID='prior'    inputName='distribution' if='inposterior(SABirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'>prior on sampled ancestor parameter $(p).t:($(n)</connect>
                 <connect srcID='$(p).t:$(n)'           targetID='state'    inputName='stateNode' if='inposterior(SABirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'/>
                 <connect srcID='$(p).t:$(n)'           targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n)) and $(p).t:$(n)/estimate=true'/>
