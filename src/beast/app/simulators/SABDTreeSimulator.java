@@ -150,12 +150,12 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
         //System.out.println("tree");
-        System.out.println(root.toShortNewick(false) + ";");
+        System.out.println(root.toShortNewick(false));// + ";");
         //System.out.println(origin);
         return 1;
     }
 
-    public int simulateWithRho1() {
+    public int simulateWithRho() {
         Node initial = new ZeroBranchSANode();
         initial.setNr(-1);
         initial.setHeight(0.0);
@@ -257,135 +257,6 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
         System.out.println(root.toShortNewick(false)); // + ";");
-        //System.out.println(root.getLeafNodeCount());
-        return 1;
-    }
-
-    /**
-     * Simulate a tree under the model with rho parameter. The simulation is stopped when the number
-     * of sampled nodes reaches finalSampleCount or if the process dies out.
-     * Note that nodes in the tree have negative heights (the origin node has height 0)
-     * @return 1 if simulated tree has finalSampleCount sampled nodes and -1 if the process stopped
-     * (all the individuals died out) before the necessary number of samples had been reached.
-     */
-    public int simulateWithRho() {
-        //create an initial node (origin of tree)
-        Node initial = new ZeroBranchSANode();
-        initial.setNr(-1);
-        initial.setHeight(0.0);
-        ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
-        tipNodes.add(initial);
-        int ancestorCount;
-        double time;
-        //At each stage, for each node in TipNodes array simulate the next event and
-        //collect children nodes resulting from this event to newTipNodes array.
-        //After each stage, tipNodes represents tip nodes of the simulated tree that haven't died till this point
-        do {
-            Node node = tipNodes.get(0);
-            int typeOfEvent;
-            double[] timeIntervals = new double[3];
-            double[] sortedTimeIntervals = new double[3];
-            timeIntervals[0] = Randomizer.nextExponential(lambda);
-            timeIntervals[1] = Randomizer.nextExponential(mu);
-            timeIntervals[2] = Randomizer.nextExponential(psi);
-            System.arraycopy(timeIntervals, 0, sortedTimeIntervals, 0, 3);
-            Arrays.sort(sortedTimeIntervals);
-            double timeInterval = sortedTimeIntervals[0];
-            if (timeInterval == timeIntervals[0]) {
-                typeOfEvent=BIRTH;
-            } else {
-                if (timeInterval == timeIntervals[1]) {
-                    typeOfEvent=DEATH;
-                } else typeOfEvent=SAMPLING;
-            }
-            tipNodes.remove(0);
-            for (Node child: getNewNodes(node, typeOfEvent, timeInterval))  {
-                int insPoint = -Collections.binarySearch(tipNodes, child, nodeComparator) - 1;
-                tipNodes.add(insPoint, child);
-            }
-
-            if (tipNodes.isEmpty()){
-                return -1;
-            }
-
-            Node node1 = tipNodes.get(0);
-            //count the number of lineages at time of node1
-            HashSet<Node> parents = new HashSet<Node>();
-            for (Node child:tipNodes) {
-                parents.add(child.getParent());
-            }
-            ancestorCount = parents.size();
-
-            //if the other child of node parent is in tipNodes then decrease lineage number by one
-            Node parent = node1.getParent();
-            Node otherChild;
-            if (node1.equals(parent.getLeft())){
-                otherChild = parent.getRight();
-            } else {
-                otherChild = parent.getLeft();
-            }
-            if (parents.contains(otherChild)){
-                ancestorCount--;
-            }
-
-            time = tipNodes.get(0).getHeight();
-            for (Node extNode:extinctNodes){
-                if (extNode.getHeight() < time){
-                    ancestorCount++;
-                }
-            }
-
-            ancestorCount += sampledNodes.size();
-
-        }  while (ancestorCount<finalSampleCount);
-
-        if (ancestorCount != finalSampleCount) {
-            System.out.println("Something is wrong");
-        }
-
-        //Cut the process at the last node time and remove children added at
-        // the last stage because the process has stopped and we don't need to know
-        //what happens after this point
-        for (Node node1:tipNodes) {
-            Node parent = node1.getParent();
-            if (parent != null){
-                parent.setHeight(time);
-                parent.setNr(sampleCount);
-                sampledNodes.add(parent);
-                sampleCount++;
-                parent.removeAllChildren(false);
-            }
-        }
-
-        for (Node extNode:extinctNodes) {
-            if (extNode.getHeight() < time) {
-                extNode.setHeight(time);
-                extNode.setNr(sampleCount);
-                sampledNodes.add(extNode);
-            }
-        }
-
-
-        HashSet<Node> parents;
-        HashSet<Node> children = sampledNodes;
-        while (children.size() > 1 ) {
-            parents = collectParents(children);
-            children = parents;
-        }
-
-        //the unique node remained in the array is the root of the sampled tree
-        Node root = new ZeroBranchSANode();
-        for (Node node:children) {
-            root=node;
-        }
-
-        removeSingleChildNodes(root);
-
-        if (root.getChildCount()==1) {
-            Node newRoot = root.getLeft();
-            root=newRoot;
-        }
-        System.out.println(root.toShortNewick(false) + ";");
         //System.out.println(root.getLeafNodeCount());
         return 1;
     }
@@ -536,17 +407,31 @@ public class SABDTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 50;
+        int treeCount = 100;
         double[] origins = new double[treeCount];
 
         int index=0;
+        int count=0;
         do {
-            SABDTreeSimulator simulator = new SABDTreeSimulator(1.0, 0.1, 0.4, 0.5, 200);
-            if (simulator.simulate()>0) {
-                origins[index] = simulator.origin;
+            //double[] rates = simulateParameters(1.0, 0.2, 0.4, 0.5);
+            double [] rates = {1.5, 0.5, 0.2, 0};
+            SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200);
+            if (simulator.simulateWithRho()>0) {
+                //System.out.println(rates[2]);
+                //origins[index] = simulator.origin;
                 index++;
+            } else {
+                count++;
             }
         } while (index<treeCount);
+
+        System.out.println(count);
+//
+//        for (int i=0; i<100; i++){
+//            double[] rates = simulateParameters(1.0, 0.1, 0.4, 0.5);
+//            System.out.print(rates[1] + ",");
+//
+//        }
 
 //        for (int i=0; i<treeCount; i++) {
 //            System.out.println(origins[i]);
@@ -678,4 +563,12 @@ public class SABDTreeSimulator {
 //        }
 //    }
 
+    private static double[] simulateParameters(double lambdaMean, double muMean, double psiMean, double rMean){
+        double[] rates = new double[4];
+        rates[0] = Randomizer.nextExponential(1/lambdaMean);
+        rates[1] = Randomizer.nextExponential(1/muMean);
+        rates[2] = Randomizer.nextExponential(1/psiMean);
+        rates[3] = rMean;
+        return rates;
+    }
 }

@@ -252,7 +252,7 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 50;
+        int treeCount = 100;
         double[] origins = new double[treeCount];
         int[] epidemicSizes = new int[treeCount];
         int index=0;
