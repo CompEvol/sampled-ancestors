@@ -28,26 +28,28 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         model.setInputValue("becomeNoninfectiousAfterSamplingProbability", new RealParameter("0.9") );
         model.initAndValidate();
 
-        //assertEquals(-25.3707, model.calculateTreeLogLikelihood(tree), 1e-5);
-        assertEquals(-24.92986729848968, model.calculateTreeLogLikelihood(tree), 1e-5);
+        // these values ate calculated with Mathematica
+        //assertEquals(-25.3707, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning only on parameters and origin time
+        assertEquals(-24.92987, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning on at least one sampled individual
+
     }
 
 
     @Test
     public void testLikelihoodCalculation2() throws Exception {        //TODO make this test actually test something
         SABDSamplingThroughTimeModel model = new SABDSamplingThroughTimeModel();
-        Tree tree = new ZeroBranchSATreeParser("(1:1.0,2:1.0)3:0.0", true, false, 1);
+        Tree tree = new ZeroBranchSATreeParser("((1:1.5,2:0.5):0.5)3:0.0", true, false, 1);
 
         model.setInputValue("tree", tree);
-        model.setInputValue("origin", new RealParameter("3."));
+        model.setInputValue("origin", new RealParameter("10."));
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
         model.setInputValue("samplingRate", new RealParameter("0.5") );
-        model.setInputValue("becomeNoninfectiousAfterSamplingProbability", new RealParameter("0.0") );
-
+        model.setInputValue("becomeNoninfectiousAfterSamplingProbability", new RealParameter("0.9") );
         model.initAndValidate();
 
-        System.out.println(model.calculateTreeLogLikelihood(tree));
+        // this value is calculated with Mathematica
+        assertEquals(-22.77647, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning on at least one sampled individual
 
     }
 }
