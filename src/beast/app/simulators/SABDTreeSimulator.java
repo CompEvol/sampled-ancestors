@@ -413,11 +413,13 @@ public class SABDTreeSimulator {
         int index=0;
         int count=0;
         do {
-            //double[] rates = simulateParameters(1.0, 0.2, 0.4, 0.5);
-            double [] rates = {1.5, 0.5, 0.2, 0};
+            double[] rates = simulateParameters(1.0, 0.2, 0.4, 0.5);
+            //double [] rates = {1.5, 0.5, 0.2, 0};
             SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200);
-            if (simulator.simulateWithRho()>0) {
-                //System.out.println(rates[2]);
+            if (simulator.simulate()>0) {
+                System.out.println(rates[0]);
+                System.out.println(rates[1]);
+                System.out.println(rates[2]);
                 //origins[index] = simulator.origin;
                 index++;
             } else {
@@ -565,9 +567,9 @@ public class SABDTreeSimulator {
 
     private static double[] simulateParameters(double lambdaMean, double muMean, double psiMean, double rMean){
         double[] rates = new double[4];
-        rates[0] = Randomizer.nextExponential(1/lambdaMean);
-        rates[1] = Randomizer.nextExponential(1/muMean);
-        rates[2] = Randomizer.nextExponential(1/psiMean);
+        rates[0] = Math.exp(Randomizer.nextGaussian() - 0.5)*lambdaMean;
+        rates[1] = Math.exp(Randomizer.nextGaussian() - 0.5)*muMean;
+        rates[2] = Math.exp(Randomizer.nextGaussian() - 0.5)*psiMean;
         rates[3] = rMean;
         return rates;
     }
