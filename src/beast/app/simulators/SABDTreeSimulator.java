@@ -413,7 +413,7 @@ public class SABDTreeSimulator {
         int index=0;
         int count=0;
         do {
-            double[] rates = simulateParameters(1.0, 0.2, 0.4, 0.5);
+            double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
             //double [] rates = {1.5, 0.5, 0.2, 0};
             SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200);
             if (simulator.simulate()>0) {
