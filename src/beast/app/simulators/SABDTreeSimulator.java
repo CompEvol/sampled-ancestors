@@ -150,8 +150,14 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
         //System.out.println("tree");
+        System.out.println("tree");
         System.out.println(root.toShortNewick(false));// + ";");
-        //System.out.println(origin);
+        System.out.println("traits");
+        printTraits(root);
+        System.out.println("parameters");
+        System.out.println(origin);
+        System.out.println(origin + root.getHeight());
+        System.out.println(countSA(root));
         return 1;
     }
 
@@ -407,7 +413,7 @@ public class SABDTreeSimulator {
 
     public static void main (String[] args) {
 
-        int treeCount = 100;
+        int treeCount = 10;
         double[] origins = new double[treeCount];
 
         int index=0;
@@ -415,7 +421,7 @@ public class SABDTreeSimulator {
         do {
             double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
             //double [] rates = {1.5, 0.5, 0.2, 0};
-            SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200);
+            SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 50);
             if (simulator.simulate()>0) {
                 System.out.println(rates[0]);
                 System.out.println(rates[1]);
@@ -427,7 +433,8 @@ public class SABDTreeSimulator {
             }
         } while (index<treeCount);
 
-        System.out.println(count);
+        System.out.println();
+        System.out.println("Number of trees rejected " + count);
 //
 //        for (int i=0; i<100; i++){
 //            double[] rates = simulateParameters(1.0, 0.1, 0.4, 0.5);
@@ -572,5 +579,24 @@ public class SABDTreeSimulator {
         rates[2] = Math.exp(Randomizer.nextGaussian() - 0.5)*psiMean;
         rates[3] = rMean;
         return rates;
+    }
+
+    private int countSA(Node node){
+        if (!node.isLeaf()) {
+            return countSA(node.getLeft()) + countSA(node.getRight());
+        } else {
+            if (node.isDirectAncestor()) {
+                return 1;
+            } else return 0;
+        }
+    }
+
+    private void printTraits(Node node){
+        if (node.isLeaf()){
+            System.out.println(node.getNr()+ "=" + (origin + node.getHeight()) + ',');
+        } else {
+            printTraits(node.getLeft());
+            printTraits(node.getRight());
+        }
     }
 }
