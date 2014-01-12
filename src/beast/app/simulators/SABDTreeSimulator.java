@@ -4,6 +4,7 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -68,7 +69,7 @@ public class SABDTreeSimulator {
      * @return 1 if simulated tree has finalSampleCount sampled nodes and -1 if the process stopped
      * (all the individuals died out) before the necessary number of samples had been reached.
      */
-    public int simulate() {
+    public int simulate(PrintStream writer) {
         //create an initial node (origin of tree)
         Node initial = new ZeroBranchSANode();
         initial.setNr(-1);
@@ -150,14 +151,14 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
         //System.out.println("tree");
-        System.out.println("tree");
-        System.out.println(root.toShortNewick(false));// + ";");
-        System.out.println("traits");
-        printTraits(root);
-        System.out.println("parameters");
-        System.out.println(origin);
-        System.out.println(origin + root.getHeight());
-        System.out.println(countSA(root));
+        writer.println("tree");
+        writer.println(root.toShortNewick(false));// + ";");
+        writer.println("traits");
+        printTraits(root, writer);
+        writer.println("parameters");
+        writer.println(origin);
+        writer.println(origin + root.getHeight());
+        writer.println(countSA(root));
         return 1;
     }
 
@@ -413,28 +414,34 @@ public class SABDTreeSimulator {
 
     public static void main (String[] args) {
 
+        PrintStream writer = null;
+
         int treeCount = 10;
         double[] origins = new double[treeCount];
 
         int index=0;
         int count=0;
-        do {
-            double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
-            //double [] rates = {1.5, 0.5, 0.2, 0};
-            SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 50);
-            if (simulator.simulate()>0) {
-                System.out.println(rates[0]);
-                System.out.println(rates[1]);
-                System.out.println(rates[2]);
-                //origins[index] = simulator.origin;
-                index++;
-            } else {
-                count++;
-            }
-        } while (index<treeCount);
 
-        System.out.println();
-        System.out.println("Number of trees rejected " + count);
+
+        try {
+            writer = new PrintStream(new File("trees.txt"));
+            do {
+                //double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
+                double [] rates = {1.0, 0.2, 0.4, 0.7};
+                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200);
+                if (simulator.simulate(writer)>0) {
+                    writer.println(rates[0]);
+                    writer.println(rates[1]);
+                    writer.println(rates[2]);
+                    //origins[index] = simulator.origin;
+                    index++;
+                } else {
+                    count++;
+                }
+            } while (index<treeCount);
+
+            System.out.println();
+            System.out.println("Number of trees rejected " + count);
 //
 //        for (int i=0; i<100; i++){
 //            double[] rates = simulateParameters(1.0, 0.1, 0.4, 0.5);
@@ -442,9 +449,18 @@ public class SABDTreeSimulator {
 //
 //        }
 
-//        for (int i=0; i<treeCount; i++) {
+            //        for (int i=0; i<treeCount; i++) {
 //            System.out.println(origins[i]);
 //        }
+
+        } catch (IOException e) {
+            //
+        }
+        finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
 
 
     }
@@ -591,12 +607,12 @@ public class SABDTreeSimulator {
         }
     }
 
-    private void printTraits(Node node){
+    private void printTraits(Node node, PrintStream writer){
         if (node.isLeaf()){
-            System.out.println(node.getNr()+ "=" + (origin + node.getHeight()) + ',');
+            writer.println(node.getNr() + "=" + (origin + node.getHeight()) + ',');
         } else {
-            printTraits(node.getLeft());
-            printTraits(node.getRight());
+            printTraits(node.getLeft(), writer);
+            printTraits(node.getRight(), writer);
         }
     }
 }

@@ -6,6 +6,9 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -55,7 +58,7 @@ public class SABDSkylineTreeSimulator {
      * either the number of tips reaches the finalSampleCount or the population dies out.
      * Note that nodes in the tree have negative heights (the origin node has height 0)
      */
-    public int simulate() {
+    public int simulate(PrintStream writer) {
 
         //create an initial node (origin of tree)
         Node initial = new ZeroBranchSANode();
@@ -172,9 +175,16 @@ public class SABDSkylineTreeSimulator {
 
         root.setParent(null);
 
-        //System.out.println("tree");
-        System.out.println(root.toShortNewick(false));
-        System.out.println(origin - samplingStartTime);
+        writer.println("tree");
+        writer.println(root.toShortNewick(false));// + ";");
+        writer.println("traits");
+        printTraits(root, writer);
+        writer.println("parameters");
+        writer.println(origin);
+        writer.println(origin + root.getHeight());
+        writer.println(countSA(root));
+
+        writer.println(origin - samplingStartTime);
         return 1;
 //        for (Node node:sampledNodes) {
 //            System.out.println(node.getNr() + " = " + (origin+node.getHeight()) + ",");
@@ -252,25 +262,46 @@ public class SABDSkylineTreeSimulator {
 
     public static void main (String[] args) {
 
+        PrintStream writer = null;
+
         int treeCount = 100;
         double[] origins = new double[treeCount];
         int[] epidemicSizes = new int[treeCount];
         int index=0;
-        do {
-            SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(0.8, 0.4, 0.2, 0.8, 200, 10.0);
-            if (simulator.simulate()>0) {
-                origins[index] = simulator.origin;
-                epidemicSizes[index]=simulator.epidemicSizeAtStartSampling;
-                index++;
-            }
-        } while (index<treeCount);
 
-        int sum1 = 0;
-        for (int i=0; i<treeCount; i++) {
-            System.out.println("Origin " + origins[i]);
-            sum1 += epidemicSizes[i];
+        try {
+            writer = new PrintStream(new File("trees.txt"));
+            //writer = System.out;
+            do {
+                double [] rates = {0.8, 0.4, 0.2, 0.8};
+                SABDSkylineTreeSimulator simulator = new SABDSkylineTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200, 10.0);
+                //double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
+
+                if (simulator.simulate(writer)>0) {
+                    writer.println(rates[0]);
+                    writer.println(rates[1]);
+                    writer.println(rates[2]);
+                    writer.println(rates[3]);
+                    //origins[index] = simulator.origin;
+                    //epidemicSizes[index]=simulator.epidemicSizeAtStartSampling;
+                    index++;
+                }
+            } while (index<treeCount);
+        } catch (IOException e) {
+            //
         }
-        System.out.println("mean epidemic size = " +(double)sum1/treeCount);
+        finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+
+//        int sum1 = 0;
+//        for (int i=0; i<treeCount; i++) {
+//            System.out.println("Origin " + origins[i]);
+//            sum1 += epidemicSizes[i];
+//        }
+//        System.out.println("mean epidemic size = " +(double)sum1/treeCount);
 
     }
 
@@ -390,6 +421,25 @@ public class SABDSkylineTreeSimulator {
             return (node2.getHeight() - node1.getHeight() < 0)?-1:1;
         }
     };
+
+    private void printTraits(Node node, PrintStream writer){
+        if (node.isLeaf()){
+            writer.println(node.getNr() + "=" + (origin + node.getHeight()) + ',');
+        } else {
+            printTraits(node.getLeft(), writer);
+            printTraits(node.getRight(), writer);
+        }
+    }
+
+    private int countSA(Node node){
+        if (!node.isLeaf()) {
+            return countSA(node.getLeft()) + countSA(node.getRight());
+        } else {
+            if (node.isDirectAncestor()) {
+                return 1;
+            } else return 0;
+        }
+    }
 
 
 }
