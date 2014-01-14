@@ -435,7 +435,7 @@ public class SABDSkylineTreeSimulator {
         if (!node.isLeaf()) {
             return countSA(node.getLeft()) + countSA(node.getRight());
         } else {
-            if (node.isDirectAncestor()) {
+            if (((ZeroBranchSANode)node).isDirectAncestor()) {
                 return 1;
             } else return 0;
         }
