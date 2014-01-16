@@ -101,6 +101,7 @@ public class ZeroBranchSATree extends Tree {
         return directAncestorNodeCount;
     }
 
+    @Override
     public void log(int nSample, PrintStream out) {
         ZeroBranchSATree tree = (ZeroBranchSATree) getCurrent();
         out.print("tree STATE_" + nSample + " = ");

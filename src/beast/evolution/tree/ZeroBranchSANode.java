@@ -136,10 +136,10 @@ public class ZeroBranchSANode extends Node {
         StringBuilder buf = new StringBuilder();
         if (getLeft() != null) {
             buf.append("(");
-            String sChild1 = getLeft().toSortedNewick(iMaxNodeInClade);
+            String sChild1 = ((ZeroBranchSANode)getLeft()).toSortedNewickWithZeroBranches(iMaxNodeInClade);
             int iChild1 = iMaxNodeInClade[0];
             if (getRight() != null) {
-                String sChild2 = getRight().toSortedNewick(iMaxNodeInClade);
+                String sChild2 = ((ZeroBranchSANode)getRight()).toSortedNewickWithZeroBranches(iMaxNodeInClade);
                 int iChild2 = iMaxNodeInClade[0];
                 if (iChild1 > iChild2) {
                     buf.append(sChild2);
