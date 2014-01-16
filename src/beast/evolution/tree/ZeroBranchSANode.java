@@ -132,6 +132,41 @@ public class ZeroBranchSANode extends Node {
         return buf.toString();
     }
 
+    public String toSortedNewickWithZeroBranches(int[] iMaxNodeInClade) {
+        StringBuilder buf = new StringBuilder();
+        if (getLeft() != null) {
+            buf.append("(");
+            String sChild1 = getLeft().toSortedNewick(iMaxNodeInClade);
+            int iChild1 = iMaxNodeInClade[0];
+            if (getRight() != null) {
+                String sChild2 = getRight().toSortedNewick(iMaxNodeInClade);
+                int iChild2 = iMaxNodeInClade[0];
+                if (iChild1 > iChild2) {
+                    buf.append(sChild2);
+                    buf.append(",");
+                    buf.append(sChild1);
+                } else {
+                    buf.append(sChild1);
+                    buf.append(",");
+                    buf.append(sChild2);
+                    iMaxNodeInClade[0] = iChild1;
+                }
+            } else {
+                buf.append(sChild1);
+            }
+            buf.append(")");
+            if (getID() != null) {
+                buf.append(labelNr+1);
+            }
+        } else {
+            iMaxNodeInClade[0] = labelNr;
+            buf.append(labelNr + 1);
+        }
+
+        buf.append(":").append(getLength());
+        return buf.toString();
+    }
+
 
     /**                                        //TODO make this method work for ZeroBranchSATree
      * @return beast.tree in Newick format with taxon labels for labelled tip nodes

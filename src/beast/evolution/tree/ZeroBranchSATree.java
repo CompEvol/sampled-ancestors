@@ -2,12 +2,15 @@ package beast.evolution.tree;
 
 import beast.core.StateNodeInitialiser;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
  *@author Alexandra Gavryushkina
  */
 public class ZeroBranchSATree extends Tree {
+
+    public boolean logWithZeroBranches=false;
 
     @Override
     public void initAndValidate() throws Exception {
@@ -96,6 +99,20 @@ public class ZeroBranchSATree extends Tree {
             }
         }
         return directAncestorNodeCount;
+    }
+
+    public void log(int nSample, PrintStream out) {
+        ZeroBranchSATree tree = (ZeroBranchSATree) getCurrent();
+        out.print("tree STATE_" + nSample + " = ");
+        final int[] dummy = new int[1];
+        final String sNewick;
+        if (logWithZeroBranches) {
+           sNewick = ((ZeroBranchSANode)tree.getRoot()).toSortedNewickWithZeroBranches(dummy);
+        }  else {
+           sNewick = tree.getRoot().toSortedNewick(dummy);
+        }
+        out.print(sNewick);
+        out.print(";");
     }
 
 }
