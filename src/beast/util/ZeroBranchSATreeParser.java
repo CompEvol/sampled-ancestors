@@ -22,7 +22,7 @@ import java.util.Vector;
 @Description("Create beast.tree by parsing from a specification of a beast.tree (which is a fake SA tree) in Newick" +
         " format (includes parsing of any meta data in the Newick string).")
 
-public class ZeroBranchSATreeParser extends ZeroBranchSATree {
+public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNodeInitialiser {
 
     /**
      * default beast.tree branch length, used when that info is not in the Newick beast.tree
