@@ -3,9 +3,6 @@ package beast.evolution.tree;
 import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.State;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
 
 import java.util.*;
@@ -15,42 +12,44 @@ import java.util.*;
  */
 public class CladeConstraint  extends Distribution {
     public Input<Tree> treeInput = new Input<Tree>("tree","tree to apply the constraint on", Input.Validate.REQUIRED);
-    public final Input<TaxonSet> taxonsetInInput = new Input<TaxonSet>("taxonsetIn", "set of taxa inside the clade", Input.Validate.REQUIRED);
+    public final Input<TaxonSet> taxonsetInInput = new Input<TaxonSet>("taxonsetIn", "set of taxa inside the clade, in-ta", Input.Validate.REQUIRED);
     public final Input<TaxonSet> taxonsetOutInput = new Input<TaxonSet>("taxonsetOut", "set of taxa outside the clade");
     public final Input<Boolean> isStronglyMonophyleticInput = new Input<Boolean>("stronglyMonophyletic",
             "whether the taxon set is monophyletic (forms a clade without other taxa) or nor. Default is false.", false);
 
-    public Input<Alignment> taxaInput = new Input<Alignment>("taxa","set taxa to choose from", Input.Validate.REQUIRED);
-
     private List<String>[] nodeTipDescendats;
     private Tree tree;
+    private int nodeCount;
 
-    private List<String> taxaNamesByNodeNr;
     private List<String> taxaNamesInClade;
     private List<String> taxaNamesOutClade;
+    private boolean outCladeExist=false;
     private int holds=0;
 
 
     @SuppressWarnings("unchecked")
     @Override
     public void initAndValidate() throws Exception {
-        nodeTipDescendats = new ArrayList[treeInput.get().getNodeCount()];
-        collectNodeTipDescendants(treeInput.get().getRoot());
         tree = treeInput.get();
-        tree.collectTaxaNames(tree.getRoot());
-        taxaNamesByNodeNr = new ArrayList<String>(Arrays.asList(tree.m_sTaxaNames));
+        nodeCount=tree.getNodeCount();
         taxaNamesInClade = taxonsetInInput.get().asStringList();
-        taxaNamesOutClade = taxonsetOutInput.get().asStringList();
-
-
+        if (taxonsetOutInput.get() != null) {
+            taxaNamesOutClade = taxonsetOutInput.get().asStringList();
+            outCladeExist = true;
+        }
+        nodeTipDescendats = new ArrayList[nodeCount];
+        collectNodeTipDescendants(tree.getRoot());
 
     } // initAndValidate
 
     @Override
     public double calculateLogP() throws Exception {
         holds = 0;
-        nodeTipDescendats = new ArrayList[treeInput.get().getNodeCount()];
-        collectNodeTipDescendants(treeInput.get().getRoot());
+        nodeTipDescendats = new ArrayList[nodeCount];
+        collectNodeTipDescendants(tree.getRoot());
+        if (holds == 0) {
+            throw new Exception("the most recent common ancestor of a clade is not found.");
+        }
         if (holds == 1) {
             logP = 0.0;
             return 0.0;
@@ -60,41 +59,47 @@ public class CladeConstraint  extends Distribution {
     }
 
     private void collectNodeTipDescendants(Node node){
-        if (holds != 0) {
-            return;
-        }
         int iNode=node.getNr();
+        nodeTipDescendats[iNode] = new ArrayList<String>();
+        // if holds isn't equal to 0 then the most recent common ancestor have already been found
+
+
         if (node.isLeaf()){
             nodeTipDescendats[iNode].add(node.getID());
         } else {
             collectNodeTipDescendants(node.getLeft());
             collectNodeTipDescendants(node.getRight());
+            nodeTipDescendats[iNode].addAll(nodeTipDescendats[node.getLeft().getNr()]);
+            if (holds != 0) {
+                return;
+            }
             nodeTipDescendats[iNode].addAll(nodeTipDescendats[node.getRight().getNr()]);
-            nodeTipDescendats[iNode].addAll(nodeTipDescendats[node.getRight().getNr()]);
-            // check if this node is a common ancestor for the in taxa and if so check if it is not an ancestor for
-            // out taxa.
-            boolean isCA = true;
+            if (holds != 0) {
+                return;
+            }
+            // check if this node is a common ancestor for the in-taxa and if so check if it is not an ancestor for
+            // out-taxa. Note that the node which is first found as a common ancestor is the most recent common
+            // ancestor due to the way the tree is traversed - from tip nodes towards the root. 
+            boolean isCommonAncestor = true;   
             for (String taxaName:taxaNamesInClade){
                 if (!nodeTipDescendats[iNode].contains(taxaName)){
-                    isCA = false;
+                    isCommonAncestor = false;
                     break;
                 }
             }
-            if (isCA){
+            if (isCommonAncestor){
                 boolean contain = false;
-                for (String taxaName:taxaNamesOutClade){
-                    if (nodeTipDescendats[iNode].contains(taxaName)){
-                        contain = true;
-                        break;
+                if (outCladeExist) {
+                    for (String taxaName:taxaNamesOutClade){
+                        if (nodeTipDescendats[iNode].contains(taxaName)){
+                            contain = true;
+                            break;
+                        }
                     }
                 }
                 if (!contain) {
                     if (isStronglyMonophyleticInput.get()) {
-                        if (hasExtantDescendant(node.getLeft()) && hasExtantDescendant(node.getRight())){
-                            holds = 1;
-                        } else {
-                            holds = 2;
-                        }
+                        holds = (hasExtantDescendant(node.getLeft()) && hasExtantDescendant(node.getRight()))?1:2; 
                     } else {
                         holds = 1;
                     }
