@@ -17,7 +17,6 @@ public class CladeConstraint  extends Distribution {
     public final Input<Boolean> isStronglyMonophyleticInput = new Input<Boolean>("stronglyMonophyletic",
             "whether the taxon set is monophyletic (forms a clade without other taxa) or nor. Default is false.", false);
 
-    private List<String>[] nodeTipDescendats;
     private Tree tree;
     private int nodeCount;
 
@@ -37,7 +36,6 @@ public class CladeConstraint  extends Distribution {
             taxaNamesOutClade = taxonsetOutInput.get().asStringList();
             outCladeExist = true;
         }
-        nodeTipDescendats = new ArrayList[nodeCount];
         collectNodeTipDescendants(tree.getRoot());
 
     } // initAndValidate
@@ -45,7 +43,6 @@ public class CladeConstraint  extends Distribution {
     @Override
     public double calculateLogP() throws Exception {
         holds = 0;
-        nodeTipDescendats = new ArrayList[nodeCount];
         collectNodeTipDescendants(tree.getRoot());
         if (holds == 0) {
             throw new Exception("the most recent common ancestor of a clade is not found.");
@@ -58,31 +55,27 @@ public class CladeConstraint  extends Distribution {
         return Double.NEGATIVE_INFINITY;
     }
 
-    private void collectNodeTipDescendants(Node node){
-        int iNode=node.getNr();
-        nodeTipDescendats[iNode] = new ArrayList<String>();
+    private ArrayList<String> collectNodeTipDescendants(Node node){
+        ArrayList<String> tipDescendant = new ArrayList<String>();
         // if holds isn't equal to 0 then the most recent common ancestor have already been found
-
-
         if (node.isLeaf()){
-            nodeTipDescendats[iNode].add(node.getID());
+            tipDescendant.add(node.getID());
         } else {
-            collectNodeTipDescendants(node.getLeft());
-            collectNodeTipDescendants(node.getRight());
-            nodeTipDescendats[iNode].addAll(nodeTipDescendats[node.getLeft().getNr()]);
+            tipDescendant.addAll(collectNodeTipDescendants(node.getLeft()));
             if (holds != 0) {
-                return;
+                return tipDescendant;
             }
-            nodeTipDescendats[iNode].addAll(nodeTipDescendats[node.getRight().getNr()]);
+            tipDescendant.addAll(collectNodeTipDescendants(node.getRight()));
             if (holds != 0) {
-                return;
+                return tipDescendant;
             }
+
             // check if this node is a common ancestor for the in-taxa and if so check if it is not an ancestor for
             // out-taxa. Note that the node which is first found as a common ancestor is the most recent common
             // ancestor due to the way the tree is traversed - from tip nodes towards the root. 
             boolean isCommonAncestor = true;   
             for (String taxaName:taxaNamesInClade){
-                if (!nodeTipDescendats[iNode].contains(taxaName)){
+                if (!tipDescendant.contains(taxaName)){
                     isCommonAncestor = false;
                     break;
                 }
@@ -91,7 +84,7 @@ public class CladeConstraint  extends Distribution {
                 boolean contain = false;
                 if (outCladeExist) {
                     for (String taxaName:taxaNamesOutClade){
-                        if (nodeTipDescendats[iNode].contains(taxaName)){
+                        if (tipDescendant.contains(taxaName)){
                             contain = true;
                             break;
                         }
@@ -108,6 +101,7 @@ public class CladeConstraint  extends Distribution {
                 }
             }
         }
+        return tipDescendant;
     }
 
     private boolean hasExtantDescendant(Node node){
