@@ -1,5 +1,6 @@
 package beast.evolution.operators;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.BooleanParameter;
 import beast.evolution.tree.Node;
@@ -10,6 +11,7 @@ import beast.evolution.tree.ZeroBranchSATree;
 /**
  * @author Alexandra Gavryushkina
  */
+@Description("")
 public class ScaleOperatorForFakeSATrees extends ScaleOperator {
 
     public Input<Boolean> m_pScaleSNodes = new Input<Boolean>("scaleSampledNodes", "If it is true then sampled node dates are scaled (default false).", false);
