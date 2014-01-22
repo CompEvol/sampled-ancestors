@@ -34,8 +34,9 @@ public class SampledAncestorTreeAnalysis {
     public void perform(boolean useNumbers) throws Exception {
        //countClades(true, true);
        //countSampledAncestors(true);
-       countSAFrequencies(true, false);
+       //countSAFrequencies(true, false);
        //printTreeHeights();
+        removeFossils();
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -482,6 +483,30 @@ public class SampledAncestorTreeAnalysis {
         }
         tree = trace.beastTrees.get(trace.treeCount-1);
         System.out.println(tree.getRoot().getHeight() + ")");
+    }
+
+    public void removeFossils(){
+        Tree tree;
+
+        for (int i =0; i < trace.treeCount-1; i++) {
+            tree = trace.beastTrees.get(i);
+            for (int j=0; j<tree.getNodeCount(); j++) {
+                Node fake = tree.getNode(j);
+                if (((ZeroBranchSANode)fake).isFake()) {
+                    Node parent = fake.getParent();
+                    Node otherChild = ((ZeroBranchSANode)fake.getLeft()).isDirectAncestor()?fake.getRight():fake.getLeft();
+                    parent.removeChild(fake);
+                    parent.addChild(otherChild);
+                } else if (!fake.isLeaf() && ((fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005) || (fake.getRight().isLeaf() && fake.getRight().getHeight() > 0.0000000005))) {
+                    Node parent = fake.getParent();
+                    Node otherChild= (fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005)?fake.getRight():fake.getLeft();
+                    parent.removeChild(fake);
+                    parent.addChild(otherChild);
+                }
+            }
+            System.out.println("tree STATE_"+ i*1000 + " = "+tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
+        }
+
     }
 
 
