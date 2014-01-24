@@ -23,12 +23,22 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     public Input<RealParameter> originInput =
             new Input<RealParameter>("origin", "The origin of infection", Input.Validate.REQUIRED);
 
-    public Input<RealParameter> birthRate =
-            new Input<RealParameter>("birthRate", "BirthRate", Input.Validate.REQUIRED);
-    public Input<RealParameter> deathRate =
-            new Input<RealParameter>("deathRate", "DeathRate", Input.Validate.REQUIRED);
-    public Input<RealParameter> samplingRate =
-            new Input<RealParameter>("samplingRate", "The sampling rate per individual", Input.Validate.REQUIRED);
+    //'direct' parameters
+    public Input<RealParameter> birthRateInput =
+            new Input<RealParameter>("birthRate", "Birth rate");
+    public Input<RealParameter> deathRateInput =
+            new Input<RealParameter>("deathRate", "Death rate");
+    public Input<RealParameter> samplingRateInput =
+            new Input<RealParameter>("samplingRate", "Sampling rate per individual");
+
+    //transformed parameters:
+    public Input<RealParameter> diversificationRateInput =
+            new Input<RealParameter>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.XOR, birthRateInput);
+    public Input<RealParameter> turnoverInput =
+            new Input<RealParameter>("turnover", "Turnover. Death rate/birth rate", Input.Validate.XOR, deathRateInput);
+    public Input<RealParameter> samplingProportionInput =
+            new Input<RealParameter>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.XOR, samplingRateInput);
+
 
     // r parameter
     public Input<RealParameter> becomeNoninfectiousAfterSamplingProbability =
@@ -45,20 +55,35 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     protected double c2;
     protected double origin;
     protected double rho;
+    protected boolean transform; //is true if the model is parametrised through transformed parameters
 
     public void initAndValidate() throws Exception {
-        mu = deathRate.get().getValue();
-        psi = samplingRate.get().getValue();
-        lambda = birthRate.get().getValue();
-        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
-        if (rhoProbability.get() != null ) {
-            rho = rhoProbability.get().getValue();
+
+        if (birthRateInput.get() != null && deathRateInput.get() != null && samplingRateInput.get() != null) {
+
+            transform = false;
+            //mu = deathRateInput.get().getValue();
+            //psi = samplingRateInput.get().getValue();
+            //lambda = birthRateInput.get().getValue();
+
+        } else if (diversificationRateInput.get() != null && turnoverInput.get() != null && samplingProportionInput.get() != null) {
+
+            transform = true;
+
         } else {
-            rho = 0.;
+            throw new RuntimeException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
-        c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
-        c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-        origin = originInput.get().getValue();
+
+
+//        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+//        if (rhoProbability.get() != null ) {
+//            rho = rhoProbability.get().getValue();
+//        } else {
+//            rho = 0.;
+//        }
+//        c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
+//        c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
+//        origin = originInput.get().getValue();
     }
 
     private double p0s(double t, double c1, double c2) {
@@ -74,10 +99,25 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         return Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2);
     }
 
+    private void transformParameters() {
+        double d = diversificationRateInput.get().getValue();
+        double r_turnover = turnoverInput.get().getValue();
+        double s = samplingProportionInput.get().getValue();
+        lambda = d/(1-r_turnover);
+        mu = r_turnover*lambda;
+        psi = mu*s/(1-s);
+    }
+
     private void updateParameters() {
-        mu = deathRate.get().getValue();
-        psi = samplingRate.get().getValue();
-        lambda = birthRate.get().getValue();
+
+        if (transform) {
+            transformParameters();
+        } else {
+            lambda = birthRateInput.get().getValue();
+            mu = deathRateInput.get().getValue();
+            psi = samplingRateInput.get().getValue();
+        }
+
         r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
         if (rhoProbability.get() != null ) {
             rho = rhoProbability.get().getValue();
