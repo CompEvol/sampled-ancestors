@@ -3,10 +3,7 @@ package beast.evolution.speciation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
-import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.*;
 
 /**
  * @author Alexandra Gavryushkina
@@ -160,6 +157,11 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         if (conditionOnRhoSamplingInput.get()) {
             logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
         }
+
+        int internalNodeCount = tree.getNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() -1;
+
+        logPost += Math.log(Math.pow(2, internalNodeCount));
+
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
                 if  (!((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor())  {
