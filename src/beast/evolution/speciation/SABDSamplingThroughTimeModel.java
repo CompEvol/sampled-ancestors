@@ -47,6 +47,12 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     public Input<RealParameter> rhoProbability =
             new Input<RealParameter>("rho", "Probability of an individual to be sampled at present", (RealParameter)null);
 
+    // if the tree likelihood is condition on sampling at least one individual then set to true one of the inputs:
+    public Input<Boolean> conditionOnSamplingInput = new Input<Boolean>("conditionOnSampling", "the tree " +
+            "likelihood is conditioned on sampling at least one individual", false);
+    public Input<Boolean> conditionOnRhoSamplingInput = new Input<Boolean>("conditionOnRhoSampling", "the tree " +
+            "likelihood is conditioned on sampling at least one individual in present", false);
+
     protected double r;
     protected double lambda;
     protected double mu;
@@ -58,6 +64,10 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     protected boolean transform; //is true if the model is parametrised through transformed parameters
 
     public void initAndValidate() throws Exception {
+
+        if (conditionOnSamplingInput.get() && conditionOnRhoSamplingInput.get()){
+            throw new RuntimeException("Either set to \"true\" only one of conditionOnSampling and conditionOnRhoSampling inputs or don't specify both!");
+        }
 
         if (birthRateInput.get() != null && deathRateInput.get() != null && samplingRateInput.get() != null) {
 
@@ -93,6 +103,10 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
     private double oneMinusP0(double t, double c1, double c2) {
         return 1 - (lambda + mu + psi - c1 * ((1 + c2) - Math.exp(-c1 * t) * (1 - c2)) / ((1 + c2) + Math.exp(-c1 * t) * (1 - c2))) / (2 * lambda);
+    }
+
+    private double oneMinusP0Hat(double t, double c1, double c2) {
+        return rho*(lambda-mu)/(lambda*rho + (lambda*(1-rho) - mu)* Math.exp((mu-lambda) * t)) ;
     }
 
     private double q(double t, double c1, double c2) {
@@ -139,8 +153,13 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             return Double.NEGATIVE_INFINITY;
         }
 
-        double logPost;
-        logPost = -Math.log(q(x0, c1, c2)) - Math.log(oneMinusP0(x0, c1, c2));
+        double logPost = -Math.log(q(x0, c1, c2));
+        if (conditionOnSamplingInput.get()) {
+            logPost -= Math.log(oneMinusP0(x0, c1, c2));
+        }
+        if (conditionOnRhoSamplingInput.get()) {
+            logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+        }
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
                 if  (!((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor())  {
