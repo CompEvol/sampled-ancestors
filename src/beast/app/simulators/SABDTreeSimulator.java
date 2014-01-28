@@ -162,7 +162,7 @@ public class SABDTreeSimulator {
         return 1;
     }
 
-    public int simulateWithRho() {
+    public int simulateWithRho(PrintStream writer) {
         Node initial = new ZeroBranchSANode();
         initial.setNr(-1);
         initial.setHeight(0.0);
@@ -263,7 +263,15 @@ public class SABDTreeSimulator {
             Node newRoot = root.getLeft();
             root=newRoot;
         }
-        System.out.println(root.toShortNewick(false)); // + ";");
+
+        writer.println("tree");
+        writer.println(root.toShortNewick(false));// + ";");
+        writer.println("traits");
+        printTraits(root, writer);
+        writer.println("parameters");
+        writer.println(origin);
+        writer.println(origin + root.getHeight());
+        writer.println(countSA(root));
         //System.out.println(root.getLeafNodeCount());
         return 1;
     }
@@ -416,8 +424,7 @@ public class SABDTreeSimulator {
 
         PrintStream writer = null;
 
-        int treeCount = 10;
-        double[] origins = new double[treeCount];
+        int treeCount = 100;
 
         int index=0;
         int count=0;
@@ -427,13 +434,21 @@ public class SABDTreeSimulator {
             writer = new PrintStream(new File("trees.txt"));
             do {
                 //double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
-                double [] rates = {1.0, 0.2, 0.4, 0.7};
-                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 200);
+                //double [] rates = {1.0, 0.2, 0.4, 0.7};
+                double[] rates = simulateTransClock(1.0);
+
+                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 100);
                 if (simulator.simulate(writer)>0) {
                     writer.println(rates[0]);
                     writer.println(rates[1]);
                     writer.println(rates[2]);
-                    //origins[index] = simulator.origin;
+                    writer.println(rates[3]);
+                    writer.println(rates[4]);
+                    if (rates[4] < 0.0001) {
+                        System.out.println("stopp");
+                        System.exit(0);
+                    }
+                    System.out.println(rates[4]);
                     index++;
                 } else {
                     count++;
@@ -594,6 +609,20 @@ public class SABDTreeSimulator {
         rates[1] = Math.exp(Randomizer.nextGaussian() - 0.5)*muMean;
         rates[2] = Math.exp(Randomizer.nextGaussian() - 0.5)*psiMean;
         rates[3] = rMean;
+        return rates;
+    }
+
+    private static double[] simulateTransClock(double diversUpper){
+        double[] rates = new double[5];
+        double d = Randomizer.nextDouble()*diversUpper; //diversificationRate
+        double r_turnover = Randomizer.nextDouble(); // turnover
+        double s = 1 - Randomizer.nextDouble()*0.5; // sampling proportion
+        double clock = Randomizer.nextExponential(10.0);
+        rates[0] = d/(1-r_turnover); // lambda
+        rates[1] = r_turnover*rates[0]; //mu
+        rates[2] = rates[1]*s/(1-s);// psi
+        rates[3] = 0.7;//Randomizer.nextDouble();
+        rates[4] = clock;
         return rates;
     }
 
