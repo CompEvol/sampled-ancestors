@@ -141,7 +141,8 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     }
 
     @Override
-    public double calculateTreeLogLikelihood(TreeInterface tree) {
+    public double calculateTreeLogLikelihood(TreeInterface tree)
+    {
         int nodeCount = tree.getNodeCount();
         updateParameters();
         //double x0 = tree.getRoot().getHeight() + origToRootDistance;
@@ -158,7 +159,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
         }
 
-        int internalNodeCount = tree.getNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() -1;
+        int internalNodeCount = tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
 
         logPost += Math.log(Math.pow(2, internalNodeCount));
 
@@ -183,6 +184,8 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
                 }
             }
         }
+
+        //System.out.println("logpost = " + logPost + " 2 to the power = " + Math.pow(2, internalNodeCount));
 
         return logPost;
     }
