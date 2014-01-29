@@ -5,6 +5,7 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import beast.evolution.tree.ZeroBranchSANode;
+import beast.evolution.tree.ZeroBranchSATree;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -151,6 +152,10 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 }
             }
         }
+
+        int internalNodeCount = tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
+
+        logP +=  Math.log(Math.pow(2, internalNodeCount));
 
         return logP;
     }

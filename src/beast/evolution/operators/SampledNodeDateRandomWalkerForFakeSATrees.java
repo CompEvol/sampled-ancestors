@@ -83,8 +83,8 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
                 upper = fake.getParent().getHeight();
             } else upper = Double.POSITIVE_INFINITY;
         } else {
-            lower = Double.NEGATIVE_INFINITY;
-            //lower = 0.0;
+            //lower = Double.NEGATIVE_INFINITY;
+            lower = 0.0;
             upper = node.getParent().getHeight();
         }
 

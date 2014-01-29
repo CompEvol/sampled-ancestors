@@ -7,7 +7,7 @@ import beast.evolution.tree.ZeroBranchSANode;
 import beast.evolution.tree.ZeroBranchSATree;
 
 /**
- * Created by Gavra on 28/01/14.
+ * Alexandra Gavryushkina
  */
 public class FBDModel extends SpeciesTreeDistribution {
 
