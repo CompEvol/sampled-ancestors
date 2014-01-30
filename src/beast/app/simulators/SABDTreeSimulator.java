@@ -1,11 +1,14 @@
 package beast.app.simulators;
 
+import beast.core.Distribution;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.ZeroBranchSANode;
+import beast.math.distributions.LogNormalDistributionModel;
 import beast.util.Randomizer;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -420,7 +423,7 @@ public class SABDTreeSimulator {
         return newNodes;
     }
 
-    public static void main (String[] args) {
+    public static void main (String[] args) throws Exception {
 
         PrintStream writer = null;
 
@@ -429,6 +432,10 @@ public class SABDTreeSimulator {
         int index=0;
         int count=0;
 
+        String lambdaSt = "lambda <- c(";
+        String muSt= "mu <- c(";
+        String psiSt = "psi <- c(";
+        String clockSt = "clock <-c(";
 
         try {
             writer = new PrintStream(new File("trees.txt"));
@@ -439,21 +446,25 @@ public class SABDTreeSimulator {
 
                 SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 100);
                 if (simulator.simulate(writer)>0) {
-                    writer.println(rates[0]);
-                    writer.println(rates[1]);
-                    writer.println(rates[2]);
+                    writer.println(rates[5]);
+                    writer.println(rates[6]);
+                    writer.println(rates[7]);
                     writer.println(rates[3]);
                     writer.println(rates[4]);
-                    if (rates[4] < 0.0001) {
-                        System.out.println("stopp");
-                        System.exit(0);
-                    }
-                    System.out.println(rates[4]);
+                    lambdaSt += Double.toString(rates[0]) + ", ";
+                    muSt += Double.toString(rates[1]) + ", ";
+                    psiSt += Double.toString(rates[2]) + ", ";
+                    clockSt += Double.toString(rates[4]) + ", ";
                     index++;
                 } else {
                     count++;
                 }
             } while (index<treeCount);
+
+            System.out.println(lambdaSt);
+            System.out.println(muSt);
+            System.out.println(psiSt);
+            System.out.println(clockSt);
 
             System.out.println();
             System.out.println("Number of trees rejected " + count);
@@ -603,7 +614,7 @@ public class SABDTreeSimulator {
 //        }
 //    }
 
-    private static double[] simulateParameters(double lambdaMean, double muMean, double psiMean, double rMean){
+    private static double[] simulateParameters (double lambdaMean, double muMean, double psiMean, double rMean){
         double[] rates = new double[4];
         rates[0] = Math.exp(Randomizer.nextGaussian() - 0.5)*lambdaMean;
         rates[1] = Math.exp(Randomizer.nextGaussian() - 0.5)*muMean;
@@ -612,17 +623,24 @@ public class SABDTreeSimulator {
         return rates;
     }
 
-    private static double[] simulateTransClock(double diversUpper){
-        double[] rates = new double[5];
+    private static double[] simulateTransClock(double diversUpper) throws Exception {
+        double[] rates = new double[8];
         double d = Randomizer.nextDouble()*diversUpper; //diversificationRate
         double r_turnover = Randomizer.nextDouble(); // turnover
         double s = 1 - Randomizer.nextDouble()*0.5; // sampling proportion
-        double clock = Randomizer.nextExponential(10.0);
+        LogNormalDistributionModel logNorm = new LogNormalDistributionModel();
+        logNorm.initByName("M", "-4.6");
+        logNorm.initByName("S", "1.25");
+        logNorm.initAndValidate();
+        double clock = ((LogNormalDistributionModel.LogNormalImpl)logNorm.getDistribution()).inverseCumulativeProbability(Randomizer.nextDouble());
         rates[0] = d/(1-r_turnover); // lambda
         rates[1] = r_turnover*rates[0]; //mu
         rates[2] = rates[1]*s/(1-s);// psi
         rates[3] = 0.7;//Randomizer.nextDouble();
         rates[4] = clock;
+        rates[5] = d;
+        rates[6] = r_turnover;
+        rates[7] = s;
         return rates;
     }
 
