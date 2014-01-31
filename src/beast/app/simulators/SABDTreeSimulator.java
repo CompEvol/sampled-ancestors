@@ -165,7 +165,7 @@ public class SABDTreeSimulator {
         return 1;
     }
 
-    public int simulateWithRho(PrintStream writer) {
+    public int simulateWithRho(PrintStream writer, double[] rootHeight) {
         Node initial = new ZeroBranchSANode();
         initial.setNr(-1);
         initial.setHeight(0.0);
@@ -210,6 +210,8 @@ public class SABDTreeSimulator {
             }
 
         } while (lineage_sampleCount < finalSampleCount);
+
+        origin = - tipNodes.get(0).getHeight();
 
         if (typeOfEvent == BIRTH) {
             Node child1 = tipNodes.get(tipNodes.size()-2);
@@ -268,14 +270,14 @@ public class SABDTreeSimulator {
         }
 
         writer.println("tree");
-        writer.println(root.toShortNewick(false));// + ";");
+        writer.println(root.toShortNewick(false) + ";");
         writer.println("traits");
         printTraits(root, writer);
         writer.println("parameters");
         writer.println(origin);
-        writer.println(origin + root.getHeight());
+        writer.println(origin+root.getHeight());
         writer.println(countSA(root));
-        //System.out.println(root.getLeafNodeCount());
+        rootHeight[0] = origin+root.getHeight();
         return 1;
     }
 
@@ -435,49 +437,52 @@ public class SABDTreeSimulator {
         String lambdaSt = "lambda <- c(";
         String muSt= "mu <- c(";
         String psiSt = "psi <- c(";
-        String clockSt = "clock <-c(";
+//        String clockSt = "clock <-c(";
+        String heightSt = "height <- c(";
 
         try {
             writer = new PrintStream(new File("trees.txt"));
             do {
                 //double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
                 //double [] rates = {1.0, 0.2, 0.4, 0.7};
-                double[] rates = simulateTransClock(1.0);
+                //double d = 0.03033;
+                //double r_turnover = 0.835;
+                //double s = 0.26;
 
-                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 100);
-                if (simulator.simulate(writer)>0) {
+                //rates[0] = d/(1-r_turnover); // lambda
+                //rates[1] = r_turnover*rates[0]; //mu
+                //rates[2] = rates[1]*s/(1-s);// psi
+                //rates[3] = 0.0;//Randomizer.nextDouble();
+
+                double[] rates = simulateTransClock(1.0, false, 0.02, 0.0);
+
+                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 34);
+                double[] height = new double[1];
+                if (simulator.simulateWithRho(writer,height)>0) {
                     writer.println(rates[5]);
                     writer.println(rates[6]);
                     writer.println(rates[7]);
-                    writer.println(rates[3]);
+                    //writer.println(rates[3]);
                     writer.println(rates[4]);
                     lambdaSt += Double.toString(rates[0]) + ", ";
                     muSt += Double.toString(rates[1]) + ", ";
                     psiSt += Double.toString(rates[2]) + ", ";
-                    clockSt += Double.toString(rates[4]) + ", ";
+//                    clockSt += Double.toString(rates[4]) + ", ";
+                    heightSt += Double.toString(height[0])+", ";
                     index++;
                 } else {
                     count++;
                 }
             } while (index<treeCount);
 
-            System.out.println(lambdaSt);
-            System.out.println(muSt);
-            System.out.println(psiSt);
-            System.out.println(clockSt);
+            System.out.println(lambdaSt.substring(0,lambdaSt.length()-2) + ")");
+            System.out.println(muSt.substring(0,muSt.length()-2) + ")");
+            System.out.println(psiSt.substring(0,psiSt.length()-2) + ")");
+//            System.out.println(clockSt);
+            System.out.println(heightSt.substring(0,heightSt.length()-2) + ")");
 
             System.out.println();
             System.out.println("Number of trees rejected " + count);
-//
-//        for (int i=0; i<100; i++){
-//            double[] rates = simulateParameters(1.0, 0.1, 0.4, 0.5);
-//            System.out.print(rates[1] + ",");
-//
-//        }
-
-            //        for (int i=0; i<treeCount; i++) {
-//            System.out.println(origins[i]);
-//        }
 
         } catch (IOException e) {
             //
@@ -623,20 +628,23 @@ public class SABDTreeSimulator {
         return rates;
     }
 
-    private static double[] simulateTransClock(double diversUpper) throws Exception {
+    private static double[] simulateTransClock(double diversUpper, boolean simClock, double clock, double r) throws Exception {
         double[] rates = new double[8];
         double d = Randomizer.nextDouble()*diversUpper; //diversificationRate
         double r_turnover = Randomizer.nextDouble(); // turnover
-        double s = 1 - Randomizer.nextDouble()*0.5; // sampling proportion
-        LogNormalDistributionModel logNorm = new LogNormalDistributionModel();
-        logNorm.initByName("M", "-4.6");
-        logNorm.initByName("S", "1.25");
-        logNorm.initAndValidate();
-        double clock = ((LogNormalDistributionModel.LogNormalImpl)logNorm.getDistribution()).inverseCumulativeProbability(Randomizer.nextDouble());
+        double s = Randomizer.nextDouble(); // sampling proportion
+        if (simClock) {
+            LogNormalDistributionModel logNorm = new LogNormalDistributionModel();
+            logNorm.initByName("M", "-4.6");
+            logNorm.initByName("S", "1.25");
+            logNorm.initAndValidate();
+            clock = ((LogNormalDistributionModel.LogNormalImpl)logNorm.getDistribution()).inverseCumulativeProbability(Randomizer.nextDouble());
+        }
+
         rates[0] = d/(1-r_turnover); // lambda
         rates[1] = r_turnover*rates[0]; //mu
         rates[2] = rates[1]*s/(1-s);// psi
-        rates[3] = 0.7;//Randomizer.nextDouble();
+        rates[3] = r;//Randomizer.nextDouble();
         rates[4] = clock;
         rates[5] = d;
         rates[6] = r_turnover;
@@ -662,4 +670,5 @@ public class SABDTreeSimulator {
             printTraits(node.getRight(), writer);
         }
     }
+
 }
