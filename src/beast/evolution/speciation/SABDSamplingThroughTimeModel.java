@@ -18,7 +18,7 @@ import beast.evolution.tree.*;
 public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
     public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The origin of infection", Input.Validate.REQUIRED);
+            new Input<RealParameter>("origin", "The origin of infection",(RealParameter)null);
 
     //'direct' parameters
     public Input<RealParameter> birthRateInput =
@@ -49,6 +49,9 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             "likelihood is conditioned on sampling at least one individual", false);
     public Input<Boolean> conditionOnRhoSamplingInput = new Input<Boolean>("conditionOnRhoSampling", "the tree " +
             "likelihood is conditioned on sampling at least one individual in present", false);
+    public Input<Boolean> conditionOnRootInput = new Input<Boolean>("conditionOnRoot", "the tree " +
+            "likelihood is conditioned on the root height otherwis on the time of origin", false);
+
 
     protected double r;
     protected double lambda;
@@ -61,6 +64,15 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     protected boolean transform; //is true if the model is parametrised through transformed parameters
 
     public void initAndValidate() throws Exception {
+
+        if (originInput.get() == null && !conditionOnRootInput.get()) {
+            throw new RuntimeException("Either specify origin input or set conditionOnRoot input to \"true\"");
+        }
+
+        if (originInput.get() != null && conditionOnRootInput.get()){
+            throw new RuntimeException("Either don't specify origin input or set conditionOnRoot input to \"false\"");
+        }
+
 
         if (conditionOnSamplingInput.get() && conditionOnRhoSamplingInput.get()){
             throw new RuntimeException("Either set to \"true\" only one of conditionOnSampling and conditionOnRhoSampling inputs or don't specify both!");
