@@ -5,6 +5,7 @@ import beast.core.Input;
 import beast.core.State;
 import beast.evolution.alignment.TaxonSet;
 
+import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -24,6 +25,7 @@ public class CladeConstraint  extends Distribution {
     private List<String> taxaNamesOutClade;
     private boolean outCladeExist=false;
     private int holds=0;
+    private double mrcaHeight;
 
 
     @SuppressWarnings("unchecked")
@@ -81,6 +83,7 @@ public class CladeConstraint  extends Distribution {
                 }
             }
             if (isCommonAncestor){
+                mrcaHeight = node.getHeight();
                 boolean contain = false;
                 if (outCladeExist) {
                     for (String taxaName:taxaNamesOutClade){
@@ -110,6 +113,12 @@ public class CladeConstraint  extends Distribution {
         }
         return hasExtantDescendant(node.getLeft()) || hasExtantDescendant(node.getRight());
     }
+
+    @Override
+    public void log(final int nSample, final PrintStream out) {
+        out.print(mrcaHeight + "\t");
+    }
+
 
     @Override public List<String> getArguments() {return null;}
     @Override public List<String> getConditions() {return null;}
