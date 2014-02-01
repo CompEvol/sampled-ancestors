@@ -173,7 +173,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
         int internalNodeCount = tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
 
-        logPost += Math.log(Math.pow(2, internalNodeCount));
+        logPost += internalNodeCount*Math.log(2);
 
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
