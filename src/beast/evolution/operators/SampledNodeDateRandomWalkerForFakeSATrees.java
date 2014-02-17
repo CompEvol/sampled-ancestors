@@ -66,6 +66,10 @@ public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWal
         }
 
         double value = node.getHeight();
+
+        if (value == 0.0) {
+            return Double.NEGATIVE_INFINITY;
+        }
         double newValue = value;
         if (useGaussian) {
             newValue += Randomizer.nextGaussian() * windowSize;

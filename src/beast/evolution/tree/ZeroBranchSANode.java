@@ -1,5 +1,7 @@
 package beast.evolution.tree;
 
+import beast.util.Randomizer;
+
 import java.util.List;
 
 /**
@@ -251,6 +253,106 @@ public class ZeroBranchSANode extends Node {
         }
     }
 
+    public void scaleAndSlide(double fScale, int[] splitCount) throws Exception {
+        startEditing();
+        isDirty |= Tree.IS_DIRTY;
+        if (!isLeaf() && !isFake()) {
+            height *= fScale;
+        }
+        if (!isLeaf()) {
+            ((ZeroBranchSANode)getLeft()).scaleAndSlide(fScale, splitCount);
+            if (getRight() != null) {
+                ((ZeroBranchSANode)getRight()).scaleAndSlide(fScale, splitCount);
+            }
+            if (height < getLeft().height || height < getRight().height) {
+                if (isFake()){   // this can only be the case if we scale up
+
+                    if (fScale < 1.0) {
+                        throw new Exception("Scale and slide doesn't work properly");
+                    }
+
+                    Node child = this.getNonDirectAncestorChild();  //child is the node that has been scaled up causing
+                    //this parent sampled ancestor node to be lower than its child
+
+                    //this parent sampled ancestor node that has to be lowered down
+                    Node sampledAncestor = this;
+                    double saHeight = sampledAncestor.getHeight();
+
+                    //apart from the direct parent of child there can be other sampled ancestor nodes lying on
+                    //the branch going from child up to the first non-fake node
+                    //search for such nodes and lower them down
+                    do {
+                        Node newChild = child;
+
+                        //search for the right place to put the sampled ancestor node
+                        do {
+                            if (((ZeroBranchSANode)newChild).isFake()) {
+                                newChild = ((ZeroBranchSANode) newChild).getNonDirectAncestorChild();
+                            } else {
+                                newChild = (Randomizer.nextInt(2) == 1)?newChild.getLeft():newChild.getRight();
+                                splitCount[0]++;    //count how many levels the sa node goes down
+                            }
+                        } while (saHeight < newChild.getHeight());
+
+                        //first remember the sampled ancestor node parent
+                        Node newSampledAncestor = sampledAncestor.getParent();
+
+                        //place the node above its newChild
+                        placeSampledAncestorAboveItsNewChild(sampledAncestor, newChild);
+
+                        //update sampled ancestor node
+                        sampledAncestor = newSampledAncestor;
+                        if (sampledAncestor != null) {
+                            saHeight = sampledAncestor.getHeight();
+                        }
+
+                        //continue until you find all closely ancestral sampled ancestor nodes (those are nodes
+                        //that lies on the branch going from this node up to the fist non-fake node).
+
+                    } while (sampledAncestor != null && ((ZeroBranchSANode)sampledAncestor).isFake() && saHeight < child.getHeight());
+
+                } else {  // this can only be the case if we scale down
+
+                    if (fScale > 1.0) {
+                        throw new Exception("Scale and slide doesn't work properly");
+                    }
+
+                    Node sampledAncestor = getFakeChild();
+                    double saHeight = sampledAncestor.getHeight();
+
+                    do {
+                        Node newParent = this;
+                        Node newChild;   //newChild remembers on which branch to place the sampled ancestor node
+                                          //it will be a child of the sampled ancestor node
+                        do {
+                            newChild = newParent;
+                            newParent = newParent.getParent();
+                            if (newParent!= null && !((ZeroBranchSANode)newParent).isFake()) {
+                                splitCount[0]++;
+                            }
+                        } while (newParent != null && saHeight > newParent.getHeight());
+
+
+                        //first remember the sampled ancestor node child
+                        Node newSampledAncestor = ((ZeroBranchSANode)sampledAncestor).getNonDirectAncestorChild();
+
+
+                        //place the node above its newChild
+                        placeSampledAncestorAboveItsNewChild(sampledAncestor, newChild);
+
+                        //update sampled ancestor node
+                        sampledAncestor = newSampledAncestor;
+                        saHeight = sampledAncestor.getHeight();
+
+
+                        //continue until you find all closely descendant sampled ancestor nodes (those are nodes
+                        //that lies on the branch going from this node down to the first non-fake node).
+                    } while (((ZeroBranchSANode)sampledAncestor).isFake() && saHeight > this.getHeight());
+                }
+            }
+        }
+    }
+
 
     /**
      * @return true if this leaf actually represent a direct ancestor
@@ -267,5 +369,65 @@ public class ZeroBranchSANode extends Node {
         if (this.isLeaf())
             return false;
         return (((ZeroBranchSANode)this.getLeft()).isDirectAncestor() || (this.getRight() != null && ((ZeroBranchSANode)this.getRight()).isDirectAncestor()));
+    }
+
+    public Node getNonDirectAncestorChild(){
+        if (this.getLeft().isDirectAncestor()){
+            return getRight();
+        }
+        if  (this.getRight().isDirectAncestor()){
+            return getLeft();
+        }
+        return null;
+    }
+
+    public Node getFakeChild(){
+
+        if (((ZeroBranchSANode)this.getLeft()).isFake()){
+            return getLeft();
+        }
+        if (((ZeroBranchSANode)this.getRight()).isFake()){
+            return getRight();
+        }
+        return null;
+    }
+
+    public void placeSampledAncestorAboveItsNewChild(Node node, Node newChild){
+
+        //reattach node from the branch it belongs to
+        Node nodeChild = ((ZeroBranchSANode)node).getNonDirectAncestorChild();
+        Node nodeParent = node.getParent();
+        if (nodeParent != null) {
+            int nodePosition = nodeParent.getChildren().indexOf(node);
+            nodeParent.setChild(nodePosition, nodeChild);
+            nodeChild.setParent(nodeParent);
+        }  else {
+            nodeChild.setParent(null);
+        }
+        node.removeChild(nodeChild); //you also need to set nodeChild as a new root but do this at the end
+
+        //attach node to the branch above newChild
+        Node newParent = newChild.getParent();
+        if (newParent != null){
+            int newChildPosition = newParent.getChildren().indexOf(newChild);
+            newParent.setChild(newChildPosition, node);
+            node.setParent(newParent);
+
+        } else {
+            node.setParent(null);
+        }
+        node.addChild(newChild);
+        if (newParent == null){
+            this.m_tree.setRoot(node);
+        }
+
+        //set the new root here because setting root automatically assigns the number of nodes below a new root
+        // to tree.nodeCount field and if you were to set it early the nodeCount would not be correct
+        if (nodeParent == null){
+            this.m_tree.setRoot(nodeChild);
+        }
+
+
+
     }
 }

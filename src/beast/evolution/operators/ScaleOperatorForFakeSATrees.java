@@ -17,6 +17,8 @@ public class ScaleOperatorForFakeSATrees extends ScaleOperator {
     public Input<Boolean> m_pScaleSNodes = new Input<Boolean>("scaleSampledNodes", "If it is true then sampled node dates are scaled (default false).", false);
 
     @Override   //WARNING works with bifurcating (exactly 2 children) trees only
+                // sampled ancestors are assumed to be on zero branches
+
     public double proposal() {
 
         final double scale = getScaler();

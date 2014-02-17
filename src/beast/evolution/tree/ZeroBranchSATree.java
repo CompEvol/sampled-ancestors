@@ -116,4 +116,16 @@ public class ZeroBranchSATree extends Tree {
         out.print(";");
     }
 
+    public double scaleAndSlide(double scale) throws Exception {
+        int[] splitCount = new int[]{0};
+        ((ZeroBranchSANode)root).scaleAndSlide(scale, splitCount);
+        System.out.println("tree becomes " + root.toShortNewick(false));
+        double scaleContribution = (getInternalNodeCount() - getDirectAncestorNodeCount())* Math.log(scale);
+        if (scale > 1.0) {
+            return scaleContribution - splitCount[0]*Math.log(2.0);
+        } else {
+            return scaleContribution + splitCount[0]*Math.log(2.0);
+        }
+    }
+
 }
