@@ -82,6 +82,11 @@ public class ZeroBranchSATree extends Tree {
 
     }
 
+    @Override
+    public int scale(double fScale) throws Exception {
+        return scale(fScale,false);
+    }
+
     public int scale(double fScale, boolean scaleSNodes) throws Exception {
         ((ZeroBranchSANode)root).scale(fScale, scaleSNodes);
         if (scaleSNodes) {

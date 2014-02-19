@@ -149,7 +149,11 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         }
         c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
         c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-        origin = originInput.get().getValue();
+        if (originInput.get() != null){
+            origin = originInput.get().getValue();
+        }  else {
+            origin = Double.POSITIVE_INFINITY;
+        }
     }
 
     @Override
@@ -163,12 +167,28 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             return Double.NEGATIVE_INFINITY;
         }
 
-        double logPost = -Math.log(q(x0, c1, c2));
+        //double logPost = -Math.log(q(x0, c1, c2));
+
+        double logPost=0.0;
+        if (!conditionOnRootInput.get()){
+            logPost = -Math.log(q(x0, c1, c2));
+        } else {
+            logPost = -Math.log(q(tree.getRoot().getHeight(), c1, c2));
+        }
+
         if (conditionOnSamplingInput.get()) {
             logPost -= Math.log(oneMinusP0(x0, c1, c2));
         }
+//        if (conditionOnRhoSamplingInput.get()) {
+//            logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+//        }
+
         if (conditionOnRhoSamplingInput.get()) {
-            logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+            if (conditionOnRootInput.get()) {
+                logPost -= Math.log(lambda*oneMinusP0Hat(tree.getRoot().getHeight(), c1, c2)* oneMinusP0Hat(tree.getRoot().getHeight(), c1, c2));
+            }  else {
+                logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+            }
         }
 
         int internalNodeCount = tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
@@ -196,8 +216,6 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
                 }
             }
         }
-
-        //System.out.println("logpost = " + logPost + " 2 to the power = " + Math.pow(2, internalNodeCount));
 
         return logPost;
     }
