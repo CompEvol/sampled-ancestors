@@ -93,6 +93,10 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             throw new RuntimeException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
 
+        if (originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
+            throw new RuntimeException("Initial value of origin should be greater than initial root height");
+        }
+
 
 //        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
 //        if (rhoProbability.get() != null ) {

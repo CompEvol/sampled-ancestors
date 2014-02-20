@@ -25,7 +25,9 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     public void initAndValidate() throws Exception {
         super.initAndValidate();
         r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
-        //printTempResults = true;
+        if (origin.get() != null && origin.get().getValue() < treeInput.get().getRoot().getHeight()){
+            throw new RuntimeException("Initial value of origin should be greater than initial root height");
+        }
     }
 
 //    @Override
