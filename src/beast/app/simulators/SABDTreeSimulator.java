@@ -15,10 +15,12 @@ import java.util.concurrent.ExecutionException;
  */
 public class SABDTreeSimulator {
 
-    double psi, mu, lambda, r, rhoSamplingTime;    // these are model parameters
+    double psi, mu, lambda, r, rho, rhoSamplingTime;    // these are model parameters
     final static int BIRTH = 0;
     final static int DEATH = 1;
     final static int SAMPLING = 2;
+
+    int lowCount=0, highCount =0;
 
     int finalSampleCount;  // the number of sampled nodes in the simulated tree
     private int sampleCount; //a counter of sampled nodes that count nodes during simulation and also used for numbering
@@ -42,6 +44,7 @@ public class SABDTreeSimulator {
         mu = newMu;
         lambda = newLambda;
         r= newR;
+        rho = 0.0;
         sampleCount = 0;
         sampledNodes = new HashSet<Node>();
         finalSampleCount = newFSCount;
@@ -53,13 +56,15 @@ public class SABDTreeSimulator {
      * @param newMu
      * @param newPsi
      * @param newR
+     * @param newRho
      * @param newRSTime  rho sampling time
      */
-    public SABDTreeSimulator(double newLambda, double newMu, double newPsi, double newR, double newRSTime) {
+    public SABDTreeSimulator(double newLambda, double newMu, double newPsi, double newR, double newRho, double newRSTime) {
         psi = newPsi;
         mu = newMu;
         lambda = newLambda;
         r= newR;
+        rho = newRho;
         sampleCount = 0;
         sampledNodes = new HashSet<Node>();
         rhoSamplingTime = newRSTime;
@@ -153,15 +158,15 @@ public class SABDTreeSimulator {
             Node newRoot = root.getLeft();
             root=newRoot;
         }
-        //System.out.println("tree");
-        writer.println("tree");
+        //writer.println("tree");
         writer.println(root.toShortNewick(false));// + ";");
-        writer.println("traits");
-        printTraits(root, writer);
-        writer.println("parameters");
-        writer.println(origin);
-        writer.println(origin + root.getHeight());
-        writer.println(countSA(root));
+//        writer.println("traits");
+//        printTraits(root, writer);
+//        writer.println("parameters");
+//        writer.println(origin);
+//        writer.println(origin + root.getHeight());
+//        writer.println(countSA(root));
+        System.out.println(origin + root.getHeight());
         return 1;
     }
 
@@ -269,14 +274,14 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
 
-        writer.println("tree");
+//        writer.println("tree");
         writer.println(root.toShortNewick(false) + ";");
-        writer.println("traits");
-        printTraits(root, writer);
-        writer.println("parameters");
-        writer.println(origin);
-        writer.println(origin+root.getHeight());
-        writer.println(countSA(root));
+//        writer.println("traits");
+//        printTraits(root, writer);
+//        writer.println("parameters");
+//        writer.println(origin);
+//        writer.println(origin+root.getHeight());
+//        writer.println(countSA(root));
         rootHeight[0] = origin+root.getHeight();
         return 1;
     }
@@ -353,8 +358,13 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
 
-        if (root.getLeafNodeCount() > 200 || root.getLeafNodeCount() < 10){
+        if (root.getLeafNodeCount() > 200){
+            highCount++;
             return -1;
+        }
+        if (root.getLeafNodeCount() < 10){
+            lowCount++;
+            return -3;
         }
 
         writer.println("tree");
@@ -389,11 +399,14 @@ public class SABDTreeSimulator {
         ArrayList<Node> newNodes = new ArrayList<Node>();
         double height = node.getHeight() - timeInterval;
         if (rhoSamplingTime != 0 && height + rhoSamplingTime <= 0) {
-            node.setHeight(-rhoSamplingTime);
-            node.setNr(sampleCount);
-            sampledNodes.add(node);
-            sampleCount++;
-            rhoSamplingTimeReached = true;
+            double randomFrom01 = Randomizer.nextDouble();
+            if (randomFrom01 <= rho){
+                node.setHeight(-rhoSamplingTime);
+                node.setNr(sampleCount);
+                sampledNodes.add(node);
+                sampleCount++;
+                rhoSamplingTimeReached = true;
+            }
             return newNodes;
         }
         node.setHeight(height);
@@ -447,20 +460,20 @@ public class SABDTreeSimulator {
         int index=0;
         int count=0;
 
-        String lambdaSt = "lambda <- c(";
-        String muSt= "mu <- c(";
-        String psiSt = "psi <- c(";
+//        String lambdaSt = "lambda <- c(";
+//        String muSt= "mu <- c(";
+//        String psiSt = "psi <- c(";
 //        String clockSt = "clock <-c(";
-        String heightSt = "height <- c(";
+//        String heightSt = "height <- c(";
 
         try {
             writer = new PrintStream(new File("trees.txt"));
             int meanLeafCount = 0;
-            int lowCount=0;
-            int upCount=0;
+            int low=0;
+            int high=0;
             do {
-                //double[] rates = simulateParameters(3.0, 1.0, 0.8, 0.7);
-                double [] rates = {1.5, 0.5, 0.2, 0.0};
+                double[] rates = simulateParameters(0.0, 0.0, 0.0, 0.0);
+                //double [] rates = {1.5, 0.5, 0.2, 0.0, 0.7};
 //                double d = 0.03033;
 //                double r_turnover = 0.835;
 //                double s = 0.26;
@@ -472,11 +485,16 @@ public class SABDTreeSimulator {
 
                 //double[] rates = simulateTransClock(1.0, false, 0.02, 0.0);
 
-                //SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 34);
-                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 3.5);
+                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 100);
+                //SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], rates[4], 3.5);
                 //double[] height = new double[1];
                 int[] leafCount = new int[1];
-                if (simulator.simulateWithRhoSamplingTime(writer,leafCount)>0) {
+                if (simulator.simulate(writer)>0) {
+                    writer.println(rates[0]);
+                    writer.println(rates[1]);
+                    writer.println(rates[2]);
+                    writer.println(rates[3]);
+                   // writer.println(rates[4]);
 //                    writer.println(rates[5]);
 //                    writer.println(rates[6]);
 //                    writer.println(rates[7]);
@@ -487,15 +505,11 @@ public class SABDTreeSimulator {
                     //psiSt += Double.toString(rates[2]) + ", ";
 //                    clockSt += Double.toString(rates[4]) + ", ";
                     //heightSt += Double.toString(height[0])+", ";
-                    if (leafCount[0] < 5){
-                        lowCount++;
-                    }
-                    if (leafCount[0] >200){
-                        upCount++;
-                    }
-                    meanLeafCount += leafCount[0];
+                   // meanLeafCount += leafCount[0];
                     index++;
                 } else {
+//                    low += simulator.lowCount;
+//                    high +=simulator.highCount;
                     count++;
                 }
             } while (index<treeCount);
@@ -505,11 +519,11 @@ public class SABDTreeSimulator {
 //            System.out.println(psiSt.substring(0,psiSt.length()-2) + ")");
 //            System.out.println(clockSt);
 //            System.out.println(heightSt.substring(0,heightSt.length()-2) + ")");
-            System.out.println("Number of trees with less than 5 sampled nodes: " + lowCount);
-            System.out.println("Number of trees with more than 200 sampled nodes: " + upCount);
-            System.out.println("Average sampled node count: " + meanLeafCount/treeCount);
+//            System.out.println("Number of trees with less than 5 sampled nodes: " + low);
+//            System.out.println("Number of trees with more than 200 sampled nodes: " + high);
+//            System.out.println("Average sampled node count: " + meanLeafCount/treeCount);
             System.out.println();
-            System.out.println("Number of trees rejected " + count);
+            System.out.println("Number of trees rejected due to process died out: " + count);
 
         } catch (IOException e) {
             //
@@ -648,10 +662,15 @@ public class SABDTreeSimulator {
 
     private static double[] simulateParameters (double lambdaMean, double muMean, double psiMean, double rMean){
         double[] rates = new double[4];
-        rates[0] = Math.exp(Randomizer.nextGaussian() - 0.5)*lambdaMean;
-        rates[1] = Math.exp(Randomizer.nextGaussian() - 0.5)*muMean;
-        rates[2] = Math.exp(Randomizer.nextGaussian() - 0.5)*psiMean;
-        rates[3] = rMean;
+        //rates[0] = Math.exp(Randomizer.nextGaussian() - 0.5)*lambdaMean;
+        //rates[1] = Math.exp(Randomizer.nextGaussian() - 0.5)*muMean;
+        //rates[2] = Math.exp(Randomizer.nextGaussian() - 0.5)*psiMean;
+        //rates[3] = rMean;
+        rates[0] = 1.0 + Randomizer.nextDouble()*0.5;
+        rates[1] = 0.5 + Randomizer.nextDouble()*0.5;
+        rates[2] = 4 + Randomizer.nextDouble();
+        rates[3] = Randomizer.nextDouble();
+        //rates[4] = Randomizer.nextDouble();
         return rates;
     }
 

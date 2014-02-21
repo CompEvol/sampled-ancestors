@@ -172,12 +172,19 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         }
 
         //double logPost = -Math.log(q(x0, c1, c2));
-
+        Node firstBranchingEvent= tree.getRoot();;
+        double firstBranchingEventHeight=0.0;
         double logPost=0.0;
         if (!conditionOnRootInput.get()){
             logPost = -Math.log(q(x0, c1, c2));
         } else {
-            logPost = -Math.log(q(tree.getRoot().getHeight(), c1, c2));
+            while (((ZeroBranchSANode)firstBranchingEvent).isFake()) {
+                firstBranchingEvent = ((ZeroBranchSANode) firstBranchingEvent).getNonDirectAncestorChild();
+            }
+            if (!firstBranchingEvent.isLeaf()){
+                firstBranchingEventHeight = firstBranchingEvent.getHeight();
+                logPost = -Math.log(q(firstBranchingEventHeight, c1, c2));
+            }
         }
 
         if (conditionOnSamplingInput.get()) {
@@ -188,8 +195,8 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 //        }
 
         if (conditionOnRhoSamplingInput.get()) {
-            if (conditionOnRootInput.get()) {
-                logPost -= Math.log(lambda*oneMinusP0Hat(tree.getRoot().getHeight(), c1, c2)* oneMinusP0Hat(tree.getRoot().getHeight(), c1, c2));
+            if (conditionOnRootInput.get() && !firstBranchingEvent.isLeaf()) {
+                logPost -= Math.log(lambda*oneMinusP0Hat(firstBranchingEventHeight, c1, c2)* oneMinusP0Hat(firstBranchingEventHeight, c1, c2));
             }  else {
                 logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
             }
