@@ -26,6 +26,7 @@ public class CladeConstraint  extends Distribution {
     private boolean outCladeExist=false;
     private int holds=0;
     private double mrcaHeight;
+    private double storedMrcaHeight;
 
 
     @SuppressWarnings("unchecked")
@@ -41,6 +42,10 @@ public class CladeConstraint  extends Distribution {
         collectNodeTipDescendants(tree.getRoot());
 
     } // initAndValidate
+
+    public double getMRCAHeight(){
+        return mrcaHeight;
+    }
 
     @Override
     public double calculateLogP() throws Exception {
@@ -112,6 +117,21 @@ public class CladeConstraint  extends Distribution {
             return node.getHeight() == 0;
         }
         return hasExtantDescendant(node.getLeft()) || hasExtantDescendant(node.getRight());
+    }
+
+    /**
+     * CalculationNode methods *
+     */
+    @Override
+    public void store() {
+        storedMrcaHeight = mrcaHeight;
+        super.store();
+    }
+
+    @Override
+    public void restore() {
+        mrcaHeight = storedMrcaHeight;
+        super.restore();
     }
 
     @Override
