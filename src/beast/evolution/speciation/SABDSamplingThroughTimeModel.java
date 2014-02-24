@@ -167,23 +167,23 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         updateParameters();
         //double x0 = tree.getRoot().getHeight() + origToRootDistance;
         double x0 = origin;
-        if (x0 < tree.getRoot().getHeight()) {
+        double x1=tree.getRoot().getHeight();
+        if (x0 < x1) {
             return Double.NEGATIVE_INFINITY;
         }
 
         //double logPost = -Math.log(q(x0, c1, c2));
-        Node firstBranchingEvent= tree.getRoot();;
-        double firstBranchingEventHeight=0.0;
+
         double logPost=0.0;
         if (!conditionOnRootInput.get()){
             logPost = -Math.log(q(x0, c1, c2));
         } else {
-            while (((ZeroBranchSANode)firstBranchingEvent).isFake()) {
-                firstBranchingEvent = ((ZeroBranchSANode) firstBranchingEvent).getNonDirectAncestorChild();
-            }
-            if (!firstBranchingEvent.isLeaf()){
-                firstBranchingEventHeight = firstBranchingEvent.getHeight();
-                logPost = -Math.log(q(firstBranchingEventHeight, c1, c2));
+            if (((ZeroBranchSANode)tree.getRoot()).isFake()){   //when conditioning on the root we assume the process
+                                                                //starts at the time of the first branching event and
+                                                               //that means that the root can not be a sampled ancestor
+                return Double.NEGATIVE_INFINITY;
+            } else {
+                logPost = -Math.log(q(x1, c1, c2));
             }
         }
 
@@ -195,8 +195,8 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 //        }
 
         if (conditionOnRhoSamplingInput.get()) {
-            if (conditionOnRootInput.get() && !firstBranchingEvent.isLeaf()) {
-                logPost -= Math.log(lambda*oneMinusP0Hat(firstBranchingEventHeight, c1, c2)* oneMinusP0Hat(firstBranchingEventHeight, c1, c2));
+            if (conditionOnRootInput.get()) {
+               logPost -= Math.log(lambda*oneMinusP0Hat(x1, c1, c2)* oneMinusP0Hat(x1, c1, c2));
             }  else {
                 logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
             }
