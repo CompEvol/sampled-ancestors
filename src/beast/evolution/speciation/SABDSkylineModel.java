@@ -1,5 +1,6 @@
 package beast.evolution.speciation;
 
+import beast.app.beauti.BeautiDoc;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Tree;
@@ -19,15 +20,33 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     public Input<RealParameter> becomeNoninfectiousAfterSamplingProbability =
             new Input<RealParameter>("becomeNoninfectiousAfterSamplingProbability", "The probability of an individual to become noninfectious immediately after the sampling", Input.Validate.REQUIRED);
 
-    protected double r;
+    protected Double[] r;
 
     @Override
     public void initAndValidate() throws Exception {
         super.initAndValidate();
-        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+        r = becomeNoninfectiousAfterSamplingProbability.get().getValues();
         if (origin.get() != null && origin.get().getValue() < treeInput.get().getRoot().getHeight()){
             throw new RuntimeException("Initial value of origin should be greater than initial root height");
         }
+    }
+
+    protected Double updateRatesAndTimes(TreeInterface tree) {
+
+        double returnFromSuper = super.updateRatesAndTimes(tree);
+
+        if (returnFromSuper != Double.NEGATIVE_INFINITY){
+
+            r = becomeNoninfectiousAfterSamplingProbability.get().getValues();
+
+//            rs = becomeNoninfectiousAfterSamplingProbability.get().getValues();
+
+//            for (int i = 0; i < totalIntervals; i++) {
+//                r[i] = rs[index(times[i], birthRateChangeTimes)];
+//            }
+        }
+
+        return returnFromSuper;
     }
 
 //    @Override
@@ -56,7 +75,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     @Override
     public double calculateTreeLogLikelihood(TreeInterface tree) {
 
-        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+        //r = becomeNoninfectiousAfterSamplingProbability.get().getValues();
 
         int nTips = tree.getLeafNodeCount();
 
@@ -101,8 +120,8 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                     return logP;
                 }
             } else {
-                if (r != 1) {
-                    logP += Math.log((1 - r)*psi[index]);
+                if (r[index] != 1) {
+                    logP += Math.log((1 - r[index])*psi[index]);
                     if (Double.isInfinite(logP)) {
                         return logP;
                     }
@@ -120,7 +139,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 double y = times[totalIntervals - 1] - tree.getNode(i).getHeight();
                 index = index(y);
                 double t = 0;
-                temp = Math.log(psi[index] * (r + (1-r)*p0(index, times[index], y))) - Math.log(g(index, times[index], y));
+                temp = Math.log(psi[index] * (r[index] + (1-r[index])*p0(index, times[index], y))) - Math.log(g(index, times[index], y));
                 logP += temp;
                 if (printTempResults) System.out.println("2nd PI = " + temp);
                 if (Double.isInfinite(logP)){
