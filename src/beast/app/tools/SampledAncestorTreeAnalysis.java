@@ -36,7 +36,8 @@ public class SampledAncestorTreeAnalysis {
        //countSampledAncestors(true);
        //countSAFrequencies(true, false);
        //printTreeHeights();
-        removeFossils();
+       //removeFossils();
+        countTopologies(true);
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -235,7 +236,7 @@ public class SampledAncestorTreeAnalysis {
         for (i =0; i < topologies.size(); i++)
             if (sumPercentage < percentCredSet) {
                 double percent = (double) (topologies.getFrequency(i) * 100)/(trees.length);
-                System.out.format("%-10d %-10.2f", topologies.getFrequency(i), percent);
+                System.out.format("%-10d %-10f ", topologies.getFrequency(i), percent);
                 System.out.println(topologies.get(i));
                 sumPercentage += percent;
             } else {

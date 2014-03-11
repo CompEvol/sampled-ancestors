@@ -359,11 +359,11 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
 
-        if (root.getLeafNodeCount() > 200){
+        if (root.getLeafNodeCount() > 250){
             highCount++;
             return -1;
         }
-        if (root.getLeafNodeCount() < 10){
+        if (root.getLeafNodeCount() < 2){
             lowCount++;
             return -3;
         }
@@ -378,8 +378,7 @@ public class SABDTreeSimulator {
         //rootHeight[0] = origin+root.getHeight();
         //System.out.println(origin);
         leafCount[0] = root.getLeafNodeCount();
-        //System.out.println(leafCount[0]);
-        System.out.println(root.toShortNewick(false));// + ";");
+        System.out.println(leafCount[0]);
         return 1;
     }
 
@@ -474,7 +473,7 @@ public class SABDTreeSimulator {
             int high=0;
             do {
                 //double[] rates = simulateParameters(0.0, 0.0, 0.0, 0.0);
-                double [] rates = {1.5, 0.5, 0.2, 0.0, 0.8};
+                double [] rates = {1.5, 0.5, 0.4, 0.0, 0.7};
 //                double d = 0.03033;
 //                double r_turnover = 0.835;
 //                double s = 0.26;
@@ -487,7 +486,7 @@ public class SABDTreeSimulator {
                 //double[] rates = simulateTransClock(1.0, false, 0.02, 0.0);
 
                 //SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 100);
-                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], rates[4], 5.0);
+                SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], rates[4], 3.5);
                 //double[] height = new double[1];
                 int[] leafCount = new int[1];
                 if (simulator.simulateWithRhoSamplingTime(writer, leafCount)>0) {
@@ -520,8 +519,8 @@ public class SABDTreeSimulator {
 //            System.out.println(psiSt.substring(0,psiSt.length()-2) + ")");
 //            System.out.println(clockSt);
 //            System.out.println(heightSt.substring(0,heightSt.length()-2) + ")");
-            System.out.println("Number of trees with less than 5 sampled nodes: " + low);
-            System.out.println("Number of trees with more than 200 sampled nodes: " + high);
+            System.out.println("Number of trees with less than 2 sampled nodes: " + low);
+            System.out.println("Number of trees with more than 250 sampled nodes: " + high);
             System.out.println("Average sampled node count: " + meanLeafCount/treeCount);
             System.out.println();
             System.out.println("Number of trees rejected due to process died out: " + count);
