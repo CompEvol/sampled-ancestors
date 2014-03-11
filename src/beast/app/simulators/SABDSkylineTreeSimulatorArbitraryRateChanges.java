@@ -122,6 +122,12 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
 
         origin = -tipNodes.get(tipNodes.size()-1).getHeight();
 
+        for (int i=0; i<rateChangeTimes.length; i++) {
+            if (origin - rateChangeTimes[i] < 0) {
+                return -1;
+            }
+        }
+
         if (typeOfEvent == BIRTH) {
             Node child1 = tipNodes.get(tipNodes.size()-2);
             Node child2 = tipNodes.get(tipNodes.size()-1);
@@ -179,6 +185,7 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
         }
         System.out.println(root.toShortNewick(false)); // + ";");
         System.out.println(origin - rateChangeTimes[0]);
+        System.out.println(origin - rateChangeTimes[1]);
         //System.out.println(root.getLeafNodeCount());
         return 1;
 
@@ -310,11 +317,11 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
 
         int treeCount = 50;
         double[] origins = new double[treeCount];
-        double[] newLambda = {1.5, 1.2};
-        double[] newMu = {0.5, 0.6};
-        double[] newPsi = {0.4, 0.5};
-        double[] newR = {0.7, 0.7};
-        double[] newRateChangeTimes = {5.};
+        double[] newLambda = {1.5, 1.2, 0.5};
+        double[] newMu = {0.5, 0.6, 0.2};
+        double[] newPsi = {0.4, 0.5, 0.1};
+        double[] newR = {0.1, 0.5, 0.9};
+        double[] newRateChangeTimes = {3., 6.};
 
 
         int index=0;
