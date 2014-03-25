@@ -164,10 +164,8 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
 
         timesSet.clear();
 
-        if (isBDSIR() && intervalNumber.get() != null) {
+        if (isBDSIR()) {
             birthChanges = getSIRdimension() - 1;
-//            deathChanges = birthChanges;
-//            samplingChanges = birthChanges;
         }
 
         getChangeTimes(birthRateChangeTimes,
