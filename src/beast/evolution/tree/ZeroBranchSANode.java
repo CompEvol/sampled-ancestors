@@ -238,9 +238,9 @@ public class ZeroBranchSANode extends Node {
      */
     public void scale(double fScale, boolean scaleSNodes) throws Exception {
         startEditing();
-        isDirty |= Tree.IS_DIRTY;
         if (scaleSNodes || (!isLeaf() && !isFake())) {
             height *= fScale;
+            isDirty |= Tree.IS_DIRTY;
         }
         if (!isLeaf()) {
             ((ZeroBranchSANode)getLeft()).scale(fScale, scaleSNodes);
@@ -255,9 +255,9 @@ public class ZeroBranchSANode extends Node {
 
     public void scaleAndSlide(double fScale, int[] splitCount) throws Exception {
         startEditing();
-        isDirty |= Tree.IS_DIRTY;
         if (!isLeaf() && !isFake()) {
             height *= fScale;
+            isDirty |= Tree.IS_DIRTY;
         }
         if (!isLeaf()) {
             ((ZeroBranchSANode)getLeft()).scaleAndSlide(fScale, splitCount);
@@ -372,10 +372,10 @@ public class ZeroBranchSANode extends Node {
     }
 
     public Node getNonDirectAncestorChild(){
-        if (this.getLeft().isDirectAncestor()){
+        if (((ZeroBranchSANode)this.getLeft()).isDirectAncestor()){
             return getRight();
         }
-        if  (this.getRight().isDirectAncestor()){
+        if  (((ZeroBranchSANode)this.getRight()).isDirectAncestor()){
             return getLeft();
         }
         return null;
