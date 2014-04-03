@@ -95,6 +95,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
         if (originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
             throw new RuntimeException("Initial value of origin should be greater than initial root height");
+
         }
 
 
