@@ -12,10 +12,11 @@ import java.util.*;
  */
 public class SANexusParser extends NexusParser {
 
-    private List<NexusParserListener> listenersSA = new ArrayList<NexusParserListener>();
+    //private List<NexusParserListener> listenersSA = new ArrayList<NexusParserListener>();
 
     /**
-     * try to reconstruct Beast II objects from the given reader
+     * try to reconstruct Beast II objects from the given reader or just read newicks
+     * if  parseAsNewicks = true.
      *
      * @param id     a name to give to the parsed results
      * @param reader a reader to parse from
@@ -83,6 +84,7 @@ public class SANexusParser extends NexusParser {
                 if (i > 0) {
                     sStr = sStr.substring(i);
                 }
+
                 ZeroBranchSATreeParser ZeroBranchSATreeParser = null;
 
                 if (origin != -1) {
@@ -98,13 +100,13 @@ public class SANexusParser extends NexusParser {
 //                    ZeroBranchSATreeParser = new ZeroBranchSATreeParser (m_taxa, sStr, 1);
 //                }
 
-                for (NexusParserListener listener : listenersSA) {
-                    listener.treeParsed(trees.size(), ZeroBranchSATreeParser );
-                }
+//                for (NexusParserListener listener : listenersSA) {
+//                    listener.treeParsed(trees.size(), ZeroBranchSATreeParser );
+//                }
 
-                if (translationMap != null) ZeroBranchSATreeParser .translateLeafIds(translationMap);
+                //if (translationMap != null) ZeroBranchSATreeParser .translateLeafIds(translationMap);
 
-                trees.add(ZeroBranchSATreeParser );
+                trees.add(ZeroBranchSATreeParser);
 
 //				Node tree = ZeroBranchSATreeParser .getRoot();
 //				tree.sort();
