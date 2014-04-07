@@ -12,41 +12,6 @@ import java.io.*;
 
 public class SampledAncestorTreeAnalyser {
 
-//    public static String convertTreetoRankedRepresentation (String strIn) {
-//
-//        Tree tree = new Tree();
-//
-//        StringBuilder buf = new StringBuilder();
-//        boolean skipping = false;
-//
-//        for (int i=0; i < strIn.length(); i++) {
-//            if (!skipping) {
-//                if (strIn.charAt(i) != ':') {
-//                    buf.append(strIn.charAt(i));
-//                } else {
-//                    if (strIn.charAt(i+1) != '(') {
-//                        skipping = true;
-//                        i++;
-//                    } else {
-//                        buf.append(strIn.charAt(i+1));
-//                        i++;
-//                    }
-//                }
-//            } else {
-//                if (strIn.charAt(i) == ',' || strIn.charAt(i) == ')') {
-//                    buf.append(strIn.charAt(i));
-//                    skipping = false;
-//                }
-//            }
-//        }
-//
-//        return buf.toString();
-//
-//    }
-
-
-
-
     public static void main(String[] args) throws IOException, Exception {
 
         int percentCredSet = 100;
