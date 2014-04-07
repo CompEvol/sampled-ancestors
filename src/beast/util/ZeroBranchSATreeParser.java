@@ -293,13 +293,18 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
                 System.out.println(e.getClass().getName() + " " + e.getMessage() + ". Perhaps taxa or taxonset is not specified?");
             }
         }
-        // look it up in list of taxa
-        for (int nIndex = 0; nIndex < labels.size(); nIndex++) {
-            if (sStr.equals(labels.get(nIndex))) {
-                checkTaxaIsAvailable(sStr, nIndex);
-                return nIndex;
+        // look it up in list of taxa but first check if sStr is an integer representing the taxon id
+        try {
+            Integer.parseInt(sStr);
+        } catch (Exception e) {
+            for (int nIndex = 0; nIndex < labels.size(); nIndex++) {
+                if (sStr.equals(labels.get(nIndex))) {
+                    checkTaxaIsAvailable(sStr, nIndex);
+                    return nIndex;
+                }
             }
         }
+
 
         // if createUnrecognizedTaxa==true, then do it now, otherwise labels will not be populated and
         // out of bounds error will occur in m_sLabels later.

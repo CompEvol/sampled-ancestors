@@ -18,6 +18,7 @@ public class SampledAncestorTreeAnalysis {
 
     SampledAncestorTreeTrace trace;
     int percentCredSet;
+    int count;
 
     FrequencySet<String> pairs = new FrequencySet<String>();
 
@@ -34,10 +35,10 @@ public class SampledAncestorTreeAnalysis {
     public void perform(boolean useNumbers) throws Exception {
        //countClades(true, true);
        //countSampledAncestors(true);
-       //countSAFrequencies(true, false);
+       countSAFrequencies(true, false);
        //printTreeHeights();
        //removeFossils();
-        countTopologies(true);
+       // countTopologies(true);
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -176,7 +177,7 @@ public class SampledAncestorTreeAnalysis {
         }
 
         if (print) {
-            System.out.println("Sampled ancestors frequencies");
+            System.out.println("Among " + trace.treeCount + " trees sampled ancestors found");
             System.out.println();
             System.out.println("Count \t Percent \t SA");
             System.out.println();
@@ -441,12 +442,16 @@ public class SampledAncestorTreeAnalysis {
      */
     public ArrayList<String> listSA(Tree tree, boolean useRanking){
         ArrayList<String> sampledAncestors = new ArrayList<String>();
+        count = 0;
         for (int i=0; i<tree.getLeafNodeCount(); i++){
             if (((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
                 if (useRanking) {
                     sampledAncestors.add(Integer.toString(getRank(tree, tree.getNode(i))));
                 } else {
                     sampledAncestors.add(tree.getNode(i).getID());
+                    if (tree.getNode(i).getID().equals("0")) {
+                        count++;
+                    }
                 }
             }
         }
