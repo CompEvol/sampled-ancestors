@@ -180,13 +180,13 @@ public class SampledAncestorTreeAnalysis {
             System.out.println("Among " + trace.treeCount + " trees sampled ancestors found");
             System.out.println();
             System.out.println("Count \t Percent \t SA");
-            System.out.println();
+            System.out.println("flag1");
             for (int i =0; i < sampledAncestors.size(); i++) {
                 double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(trace.treeCount);
                 System.out.format("%-10d %-10.2f", sampledAncestors.getFrequency(i), percent);
                 System.out.println(sampledAncestors.get(i));
             }
-            System.out.println();
+            System.out.println("flag2");
         }
 
         return sampledAncestors;
