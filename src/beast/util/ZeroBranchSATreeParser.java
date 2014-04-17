@@ -284,7 +284,7 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
      * If that does not work, look in list of labels to see whether it is there.
      */
     private int getLabelIndex(String sStr) throws Exception {
-        if (!isLabelledNewickInput.get() && labels == null) {
+        if (!isLabelledNewickInput.get()){ // && labels == null) {
             try {
                 int nIndex = Integer.parseInt(sStr) - offsetInput.get();
                 checkTaxaIsAvailable(sStr, nIndex);
@@ -294,16 +294,16 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
             }
         }
         // look it up in list of taxa but first check if sStr is an integer representing the taxon id
-        try {
-            Integer.parseInt(sStr);
-        } catch (Exception e) {
+//        try {
+//            Integer.parseInt(sStr);
+//        } catch (Exception e) {
             for (int nIndex = 0; nIndex < labels.size(); nIndex++) {
                 if (sStr.equals(labels.get(nIndex))) {
                     checkTaxaIsAvailable(sStr, nIndex);
                     return nIndex;
                 }
             }
-        }
+//        }
 
 
         // if createUnrecognizedTaxa==true, then do it now, otherwise labels will not be populated and
@@ -316,13 +316,13 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
         }
 
         // finally, check if its an integer number indicating the taxon id
-        try {
-            int nIndex = Integer.parseInt(sStr) - offsetInput.get();
-            checkTaxaIsAvailable(sStr, nIndex);
-            return nIndex;
-        } catch (NumberFormatException e) {
-            // apparently not a number
-        }
+//        try {
+//            int nIndex = Integer.parseInt(sStr) - offsetInput.get();
+//            checkTaxaIsAvailable(sStr, nIndex);
+//            return nIndex;
+//        } catch (NumberFormatException e) {
+//            // apparently not a number
+//        }
         throw new Exception("Label '" + sStr + "' in Newick beast.tree could not be identified. Perhaps taxa or taxonset is not specified?");
     }
 

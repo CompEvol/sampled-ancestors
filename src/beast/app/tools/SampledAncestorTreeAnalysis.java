@@ -35,10 +35,10 @@ public class SampledAncestorTreeAnalysis {
     public void perform(boolean useNumbers) throws Exception {
        //countClades(true, true);
        //countSampledAncestors(true);
-       countSAFrequencies(true, false);
+       countSAFrequencies(true, false, 0.445);
        //printTreeHeights();
        //removeFossils();
-       // countTopologies(true);
+       //countTopologies(true);
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -163,9 +163,10 @@ public class SampledAncestorTreeAnalysis {
      *                   if is false, labels are used
      * @return a set of sampled nodes with assigned frequencies
      */
-    public FrequencySet<String> countSAFrequencies(boolean print, boolean useRanking) {
+    public FrequencySet<String> countSAFrequencies(boolean print, boolean useRanking, double cutoff) {
         FrequencySet<String> sampledAncestors = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
+        ArrayList<String> predictedSA = new ArrayList<String>();
 
         for (int i=0; i < trace.treeCount; i++) {
             Tree tree = trace.beastTrees.get(i);
@@ -183,11 +184,39 @@ public class SampledAncestorTreeAnalysis {
             System.out.println("flag1");
             for (int i =0; i < sampledAncestors.size(); i++) {
                 double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(trace.treeCount);
+                if (percent >= cutoff*100) {
+                    predictedSA.add(sampledAncestors.get(i));
+                }
                 System.out.format("%-10d %-10.2f", sampledAncestors.getFrequency(i), percent);
                 System.out.println(sampledAncestors.get(i));
             }
             System.out.println("flag2");
         }
+
+        int trueSACount;
+        boolean falseSADetected;
+        Tree randomTree;
+        int randomIndex;
+        do {
+            randomIndex = Randomizer.nextInt(trace.beastTrees.size());
+            randomTree = trace.beastTrees.get(randomIndex);
+            trueSACount=0;
+            falseSADetected = false;
+            for (int i=0; i<randomTree.getExternalNodes().size(); i++){
+                if (((ZeroBranchSANode)randomTree.getNode(i)).isDirectAncestor()) {
+                    if (predictedSA.contains(randomTree.getNode(i).getID())){
+                        trueSACount++;
+                    }  else {
+                        falseSADetected = true;
+                        break;
+                    }
+                }
+            }
+        } while (falseSADetected || trueSACount != predictedSA.size());
+
+        System.out.println("Random tree with all the predicted sampled ancestors and no other sampled ancestors ");
+        System.out.println(randomTree.getRoot().toShortNewick(false));
+        System.out.println("Random tree index " + randomIndex);
 
         return sampledAncestors;
     }

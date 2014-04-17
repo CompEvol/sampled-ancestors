@@ -123,6 +123,10 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         return rho*(lambda-mu)/(lambda*rho + (lambda*(1-rho) - mu)* Math.exp((mu-lambda) * t)) ;
     }
 
+    private double pS(double t) {
+        return psi*Math.exp((lambda - mu - psi*r) * t);
+    }
+
     private double q(double t, double c1, double c2) {
         return Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2);
     }
