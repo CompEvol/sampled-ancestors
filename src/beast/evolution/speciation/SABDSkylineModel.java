@@ -226,6 +226,26 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     }
 
     @Override
+    protected void transformParameters() {
+
+        Double[] R = R0.get().getValues();
+        Double[] b = becomeUninfectiousRate.get().getValues();
+        Double[] p = samplingProportion.get().getValues();
+        Double[] r = removalProbability.get().getValues();
+
+        birth = new Double[totalIntervals];
+        death = new Double[totalIntervals];
+        psi = new Double[totalIntervals];
+
+        for (int i = 0; i < totalIntervals; i++) {
+            birth[i] = R[birthChanges > 0 ? index(times[i], birthRateChangeTimes) : 0] * b[deathChanges > 0 ? index(times[i], deathRateChangeTimes) : 0];
+            psi[i] = (p[samplingChanges > 0 ? index(times[i], samplingRateChangeTimes) : 0] * b[deathChanges > 0 ? index(times[i], deathRateChangeTimes) : 0])/r[rChanges > 0 ? index(times[i], rChangeTimes) : 0];
+            death[i] = b[deathChanges > 0 ? index(times[i], deathRateChangeTimes) : 0] - p[samplingChanges > 0 ? index(times[i], samplingRateChangeTimes) : 0] * b[deathChanges > 0 ? index(times[i], deathRateChangeTimes) : 0];
+        }
+    }
+
+
+    @Override
     protected Double updateRatesAndTimes(TreeInterface tree) {
 
         collectTimes();
