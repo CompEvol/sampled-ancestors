@@ -16,7 +16,7 @@ import beast.util.Randomizer;
         "Narrow move chooses a random internal node (not a fake node) with two non-leaf children." +
         "Then it takes the older child of this node and exchange one of its children (or just a child" +
         "if there is only one) with the younger child. Wide remains the same as for regular trees.")
-public class ExchangeForFakeSampledAncestorTrees extends Exchange {
+public class ExchangeForZeroBranchSampledAncestorTrees extends Exchange {
 
     public double narrow(final Tree tree) {
 
@@ -51,8 +51,7 @@ public class ExchangeForFakeSampledAncestorTrees extends Exchange {
             return Double.NEGATIVE_INFINITY;
         }
 
-
-//        final int nInternalNodes = tree.getInternalNodeCount();
+//        final int nInternalNodes = tree.getInternalNodeCount();  //TODO look if I can implement this more efficient code for SA trees
 //        final int leafNodeCount = tree.getLeafNodeCount();
 //        // make sure that the tree has at least two internal nodes
 //        if (nInternalNodes <= 1 ) {

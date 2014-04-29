@@ -12,7 +12,7 @@ import beast.util.Randomizer;
  */
 @Description("Randomly selects true internal node (i.e. not the root and not a fake node) and move node height uniformly in interval " +
         "restricted by the node's parent and children.")
-public class UniformForFakeSATrees extends TreeOperator {
+public class UniformForZeroBranchSATrees extends TreeOperator {
 
     @Override
     public void initAndValidate() {

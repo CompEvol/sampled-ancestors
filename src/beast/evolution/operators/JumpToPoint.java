@@ -12,7 +12,7 @@ import beast.util.Randomizer;
  */
 public class JumpToPoint extends Operator {
 
-    public final Input<RealParameter> rInput = new Input<RealParameter>("becomeNoninfectiousAfterSamplingProbability", "parameter r", Input.Validate.REQUIRED);
+    public final Input<RealParameter> rInput = new Input<RealParameter>("removalProbability", "parameter r", Input.Validate.REQUIRED);
 
     public final Input<Tree> treeInput = new Input<Tree>("tree", "tree", Input.Validate.REQUIRED);
 

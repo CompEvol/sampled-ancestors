@@ -187,7 +187,7 @@
 		<taxa spec='beast.evolution.alignment.TaxonSet' alignment='@alignment'/>
 	</trait>
 
-    
+    <!-- initil tree is constructed using UPGMA method -->
     <tree spec="beast.util.ClusterZBSATree" id="tree" nodetype="beast.evolution.tree.ZeroBranchSANode" clusterType="upgma" trait="@tipDates">
 		<taxa idref="alignment"/>
 	</tree>
@@ -196,15 +196,15 @@
         <parameter name="origin" id="origin" value ="100.0" lower="0."/>
         <parameter name="birthRate" id="birthRate" value ="1.0"/>
         <parameter name="deathRate" id="deathRate" value ="0.5" lower="0."/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="r" value="0.5" lower="0." upper="1."/>
+        <parameter name="removalProbability" id="r" value="0.5" lower="0." upper="1."/>
         <parameter name="samplingRate" id="samplingRate" value="0. 0.5" lower="0."/>
-		<reverseTimeArrays spec="BooleanParameter" id="reverseTimeArrays" value="false false true false"/>
+		<reverseTimeArrays spec="BooleanParameter" id="reverseTimeArrays" value="false false true false false"/>
         <!-- no sampling before 4.730396924374965: -->
         <parameter name="samplingRateChangeTimes" id="samplingRateChangeTimes" value="4.730396924374965 0."/>
 	</BirthDeathSkylineModel>
 
     <!-- site + branchmodels -->
-	<siteModel gammaCategoryCount="4" id="SiteModel" proportionInvariant="@proportionInvariant" spec="SiteModel">
+	<siteModel gammaCategoryCount="4" id="SiteModel" spec="SiteModel">
 		<parameter dimension="1"  id="mutationRate" name="mutationRate" value="1.0"/>
 		<parameter dimension="1" id="gammaShape" name="shape" value="0.5" lower="0.0" upper="1000.0"/>
 		<substModel id="gtr" rateAC="@rateAC" rateGT="@rateGT" rateAT="@rateAT" rateCG="@rateCG" rateCT="@rateCT" spec="GTR">
@@ -267,7 +267,6 @@
 			<parameter dimension="1"  id="rateAT" lower="0.0" upper="100.0" name="stateNode" value="1.0"/>
 			<parameter dimension="1"  id="rateCG" lower="0.0" upper="100.0" name="stateNode" value="1.0"/>
 			<parameter dimension="1"  id="rateCT" lower="0.0" upper="100.0" name="stateNode" value="1.0"/>
-			<parameter dimension="1"  id="proportionInvariant" name="stateNode" value="0.1"/>	
 		</state>
 	
 		<operator id='origOperator' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@origin"/>
@@ -276,22 +275,22 @@
 		<!-- <operator id='samplingRateOperator' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingRate"/> -->
         <operator id='rOperator' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@r"/>
 
-        <operator spec='TreeDimensionJump' weight="10" tree="@tree" becomeNoninfectiousAfterSamplingProbability ="@r"/> 
-        <operator spec='WilsonBaldingForFakeSampledAncestorTrees' weight="10" tree="@tree" becomeNoninfectiousAfterSamplingProbability ="@r"/>
-        <operator spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="10" tree="@tree"/>
-        <operator spec='ExchangeForFakeSampledAncestorTrees' weight="10" tree="@tree"/>
-        <operator spec='UniformForFakeSATrees' weight="20" tree="@tree"/>
-        <operator id='rootScaler' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="1" tree="@tree" rootOnly='true'/>
-        <operator id='treeScaler' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@tree"/>
-		  
-		<operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="1.0"/>
+        <operator spec='TreeDimensionJump' weight="10" tree="@tree"/>
+        <operator spec='WilsonBaldingForZeroBranchSampledAncestorTrees' weight="10" tree="@tree"/>
+        <operator spec='ExchangeForZeroBranchSampledAncestorTrees' isNarrow="false" weight="10" tree="@tree"/>
+        <operator spec='ExchangeForZeroBranchSampledAncestorTrees' weight="10" tree="@tree"/>
+        <operator spec='UniformForZeroBranchSATrees' weight="20" tree="@tree"/>
+        <operator id='rootScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="1" tree="@tree" rootOnly='true'/>
+        <operator id='treeScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="3" tree="@tree"/>
+        <operator id="updownTree" spec="UpDownOperator" scaleFactor=".95" weight="20" up="@clock.rate" down="@tree"/>
+
+        <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="1.0"/>
         
 		<operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateAC"/>
 		<operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateAT"/>
 		<operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateCG"/>
 		<operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateCT"/>
 		<operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateGT"/>
-		<operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@proportionInvariant"/>
 		<operator id='gammaShapeScaler' spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@gammaShape"/>
 		<operator autoOptimize="true" delta="0.2" id="FrequenciesExchanger" integer="false" spec="DeltaExchangeOperator" weight="0.1" parameter="@freqParameter"/>
 			
@@ -318,7 +317,6 @@
 			<log idref="rateCG"/>
 			<log idref="rateCT"/>
 			<log idref="rateGT"/>
-			<log idref="proportionInvariant"/>
 		</logger>
 	
 		<logger id="screenlog" logEvery="5000000" mode="autodetect">

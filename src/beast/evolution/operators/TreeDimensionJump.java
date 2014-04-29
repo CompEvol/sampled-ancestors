@@ -22,7 +22,7 @@ import beast.util.Randomizer;
 public class TreeDimensionJump extends TreeOperator {
 
     public Input<RealParameter> rInput =
-            new Input<RealParameter>("becomeNoninfectiousAfterSamplingProbability", "The probability of an individual to become noninfectious immediately after the sampling");
+            new Input<RealParameter>("removalProbability", "The probability of an individual to be removed from the process immediately after the sampling");
 
     @Override
     public void initAndValidate() {

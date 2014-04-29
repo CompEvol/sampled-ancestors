@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
-public class SampledNodeDateRandomWalkerForFakeSATrees extends TipDatesRandomWalker {
+public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRandomWalker {
 
 
     boolean useNodeNumbers;

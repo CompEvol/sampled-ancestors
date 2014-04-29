@@ -38,8 +38,8 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
 
     // r parameter
-    public Input<RealParameter> becomeNoninfectiousAfterSamplingProbability =
-            new Input<RealParameter>("becomeNoninfectiousAfterSamplingProbability", "The probability of an individual to become noninfectious immediately after the sampling", Input.Validate.REQUIRED);
+    public Input<RealParameter> removalProbability =
+            new Input<RealParameter>("removalProbability", "The probability that an individual is removed from the process after the sampling", Input.Validate.REQUIRED);
 
     public Input<RealParameter> rhoProbability =
             new Input<RealParameter>("rho", "Probability of an individual to be sampled at present", (RealParameter)null);
@@ -150,7 +150,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             psi = samplingRateInput.get().getValue();
         }
 
-        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
+        r = removalProbability.get().getValue();
         if (rhoProbability.get() != null ) {
             rho = rhoProbability.get().getValue();
         } else {
@@ -173,13 +173,12 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         //double x0 = tree.getRoot().getHeight() + origToRootDistance;
         double x0 = origin;
         double x1=tree.getRoot().getHeight();
-        if (x0 < x1) {
+
+        if (x0 < x1 || r==1 && ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() > 0) {
             return Double.NEGATIVE_INFINITY;
         }
 
-        //double logPost = -Math.log(q(x0, c1, c2));
-
-        double logPost=0.0;
+        double logPost;
         if (!conditionOnRootInput.get()){
             logPost = -Math.log(q(x0, c1, c2));
         } else {
@@ -195,9 +194,6 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         if (conditionOnSamplingInput.get()) {
             logPost -= Math.log(oneMinusP0(x0, c1, c2));
         }
-//        if (conditionOnRhoSamplingInput.get()) {
-//            logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
-//        }
 
         if (conditionOnRhoSamplingInput.get()) {
             if (conditionOnRootInput.get()) {

@@ -1,6 +1,6 @@
 package test.beast.evolution.operators;
 
-import beast.evolution.operators.ScaleOperatorForFakeSATrees;
+import beast.evolution.operators.ScaleOperatorForZeroBranchSATrees;
 import beast.util.ZeroBranchSATreeParser;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class ZeroBranchSATreeScalerTest  extends TestCase {
         double oldTreeHeight = tree.getRoot().getHeight();
         double oldLeftLeftHeight = tree.getRoot().getLeft().getLeft().getHeight();
 
-        ScaleOperatorForFakeSATrees operator = new ScaleOperatorForFakeSATrees();
+        ScaleOperatorForZeroBranchSATrees operator = new ScaleOperatorForZeroBranchSATrees();
         operator.initByName("tree", tree);
         operator.initByName("scaleFactor", 0.95);
         operator.initAndValidate();
