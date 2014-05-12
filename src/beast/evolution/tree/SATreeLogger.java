@@ -14,9 +14,6 @@ public class SATreeLogger extends Logger {
     @Override
     public void initAndValidate() throws Exception {
         super.initAndValidate();
-        if (mode != TREE_LOGGER) {
-            throw new Exception("SA tree logger may only be used to log trees.");
-        }
         ZeroBranchSATree tree = (ZeroBranchSATree)loggersInput.get().get(0);
         tree.logWithZeroBranches = logWithZeroBranchesInput.get();
     }
