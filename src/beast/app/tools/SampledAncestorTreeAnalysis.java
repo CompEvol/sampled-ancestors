@@ -14,7 +14,7 @@ import java.util.*;
  * @author Alexandra Gavryushkina
  */
 
-public class SampledAncestorTreeAnalysis {
+public class SampledAncestorTreeAnalysis {        //TODO implement burn in
 
     SampledAncestorTreeTrace trace;
     int percentCredSet;
@@ -27,7 +27,6 @@ public class SampledAncestorTreeAnalysis {
         percentCredSet = percent;
     }
 
-
     /**
      * @parameter useNumbers is true if the indices of sampled nodes should be use as labels
      * and taxa names are used otherwise
@@ -35,10 +34,18 @@ public class SampledAncestorTreeAnalysis {
     public void perform(boolean useNumbers) throws Exception {
        //countClades(true, true);
        //countSampledAncestors(true);
-       countSAFrequencies(true, false, 0.445);
+       //countSAFrequencies(true, false, 0.445);
+        printTrees();
        //printTreeHeights();
        //removeFossils();
        //countTopologies(true);
+    }
+
+    public void printTrees(){
+        System.out.println("tree number 819:" + trace.beastTrees.get(819).getRoot().toSortedNewick(new int[] {0}, false));
+        System.out.println("tree number 1190:" + trace.beastTrees.get(1190).getRoot().toSortedNewick(new int[] {0}, false));
+        System.out.println("tree number 899:" + trace.beastTrees.get(899).getRoot().toSortedNewick(new int[] {0}, false));
+        System.out.println("tree number 264:" + trace.beastTrees.get(264).getRoot().toSortedNewick(new int[] {0}, false));
     }
 
     public void countTreesWithDClades() throws Exception {
@@ -168,7 +175,9 @@ public class SampledAncestorTreeAnalysis {
         ArrayList<String> tmp = new ArrayList<String>();
         ArrayList<String> predictedSA = new ArrayList<String>();
 
-        for (int i=0; i < trace.treeCount; i++) {
+        int burnIn = trace.treeCount/10;
+
+        for (int i=burnIn; i < trace.treeCount; i++) {
             Tree tree = trace.beastTrees.get(i);
             tmp.addAll(listSA(tree, useRanking));
         }
@@ -178,12 +187,13 @@ public class SampledAncestorTreeAnalysis {
         }
 
         if (print) {
-            System.out.println("Among " + trace.treeCount + " trees sampled ancestors found");
+            System.out.println("There are " + trace.treeCount + " trees in the file. The first " + burnIn + " are removed as a burn-in. " +
+                    "Then sampled ancestors are counted");
             System.out.println();
             System.out.println("Count \t Percent \t SA");
             System.out.println("flag1");
             for (int i =0; i < sampledAncestors.size(); i++) {
-                double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(trace.treeCount);
+                double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(trace.treeCount - burnIn);
                 if (percent >= cutoff*100) {
                     predictedSA.add(sampledAncestors.get(i));
                 }
