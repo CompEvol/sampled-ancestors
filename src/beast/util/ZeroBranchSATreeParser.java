@@ -46,8 +46,7 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
      */
     public Input<Boolean> isLabelledNewickInput = new Input<Boolean>(
             "IsLabelledNewick",
-            "Is the newick tree labelled? Default=false.", false);
-
+            "Is the newick tree labelled? Default=false.", false); // labeled means that the node names are numbers not taxa names
     public Input<Alignment> dataInput = new Input<Alignment>("taxa",
             "Specifies the list of taxa represented by leaves in the beast.tree");
     public Input<String> newickInput = new Input<String>("newick",

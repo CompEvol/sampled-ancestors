@@ -1,6 +1,7 @@
 package beast.evolution.speciation;
 
 import beast.app.beauti.BeautiDoc;
+import beast.core.Citation;
 import beast.core.Input;
 import beast.core.parameter.BooleanParameter;
 import beast.core.parameter.RealParameter;
@@ -17,6 +18,8 @@ import java.util.List;
 /**
  * @author Alexandra Gavryushkina
  */
+@Citation("Gavryushkina, A., Welch, D., Stadler, T., and Drummond, A. J. (2014). " +
+        "“Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration”")
 public class SABDSkylineModel extends BirthDeathSkylineModel {
 
     public Input<RealParameter> removalProbabilityChangeTimesInput =
@@ -25,21 +28,14 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
     Input<Boolean> removalProbabilityChangeTimesRelativeInput =
             new Input<Boolean>("removalProbabilityTimesRelative", "True if removal probability change times specified relative to tree height? Default false", false);
 
-    BooleanParameter bpForSA = new BooleanParameter();
-    {
-        try {
-            bpForSA.initByName("value", "false false false false false");
-        } catch (Exception e) { //ignore
-        }
-    }
 
-    public Input<BooleanParameter> reverseTimeArrays =
+    public Input<BooleanParameter> reverseTimeArraysInput =
             new Input<BooleanParameter>("reverseTimeArrays", "True if the time arrays are given in backwards time (from the present back to root). Order: 1) birth 2) death 3) sampling 4) rho 5) r. Default false." +
-                    "Careful, rate array must still be given in FORWARD time (root to tips). If rhosamplingTimes given, they should be backwards and this should be true.",
-                    bpForSA);
+                    "Careful, rate array must still be given in FORWARD time (root to tips). If rhosamplingTimes given, they should be backwards and this should be true.");
 
     public Input<RealParameter> removalProbability =
             new Input<RealParameter>("removalProbability", "The probability of an individual to become noninfectious immediately after the sampling", Input.Validate.REQUIRED);
+
 
     protected Double[] r;
 
@@ -71,6 +67,12 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         deathRateTimesRelative = deathRateChangeTimesRelativeInput.get();
         samplingRateTimesRelative = samplingRateChangeTimesRelativeInput.get();
         rTimesRelative = removalProbabilityChangeTimesRelativeInput.get();
+
+        if (reverseTimeArraysInput.get()!= null ) {
+            reverseTimeArrays = reverseTimeArraysInput.get().getValues();
+        } else {
+            reverseTimeArrays = new Boolean[]{false, false, false, false, false};
+        }
 
         contempData = contemp.get();
         rhoSamplingCount = 0;
@@ -136,19 +138,20 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 }
             } else {
 
-                rho = new Double[totalIntervals];
+                rho = new Double[totalIntervals+1];
 
                 RealParameter rhoSampling = rhoSamplingTimes.get();
                 if (rhoSampling != null) {
                     for (int i = 0; i < rhoSampling.getDimension(); i++) {
-                        rho[index(reverseTimeArrays.get().getValue(3) ? (times[totalIntervals - 1] - rhoSampling.getValue(rhoSampling.getDimension() - i - 1)) : rhoSampling.getValue(i))]
+                        rho[index(reverseTimeArrays[3] ? (times[totalIntervals - 1] -
+                                rhoSampling.getValue(rhoSampling.getDimension() - i - 1)) : rhoSampling.getValue(i))]
                                 = m_rho.get().getValue(constantRho ? 0 : i);
                     }
                     rhoSamplingCount = rho.length;
                 }
             }
         } else {
-            rho = new Double[totalIntervals];
+            rho = new Double[totalIntervals+1];
             Arrays.fill(rho, 0.);
         }
         isRhoTip = new boolean[treeInput.get().getLeafNodeCount()];
@@ -170,33 +173,37 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
 
         getChangeTimes(birthRateChangeTimes,
                 birthRateChangeTimesInput.get() != null && !isSeasonalBDSIR() ? birthRateChangeTimesInput.get() : intervalTimes.get(),
-                birthChanges, birthRateTimesRelative, reverseTimeArrays.get().getValue(0));
+                birthChanges, birthRateTimesRelative, reverseTimeArrays[0]);
 
         getChangeTimes(deathRateChangeTimes,
                 deathRateChangeTimesInput.get() != null ? deathRateChangeTimesInput.get() : intervalTimes.get(),
-                deathChanges, deathRateTimesRelative, reverseTimeArrays.get().getValue(1));
+                deathChanges, deathRateTimesRelative, reverseTimeArrays[1]);
 
         getChangeTimes(samplingRateChangeTimes,
                 samplingRateChangeTimesInput.get() != null ? samplingRateChangeTimesInput.get() : intervalTimes.get(),
-                samplingChanges, samplingRateTimesRelative, reverseTimeArrays.get().getValue(2));
+                samplingChanges, samplingRateTimesRelative, reverseTimeArrays[2]);
+
+        getChangeTimes(rhoSamplingChangeTimes,
+                rhoSamplingTimes.get()!=null ? rhoSamplingTimes.get() : intervalTimes.get(),
+                rhoChanges, false, reverseTimeArrays[3]);
 
         getChangeTimes(rChangeTimes,
                 removalProbabilityChangeTimesInput.get() != null ? removalProbabilityChangeTimesInput.get() : intervalTimes.get(),
-                rChanges, rTimesRelative, reverseTimeArrays.get().getValue(4));
+                rChanges, rTimesRelative, reverseTimeArrays[4]);
 
-
-        //eventsSet.clear();
         for (Double time : birthRateChangeTimes) {
-            //eventsSet.add(new BDSEvent(BDSEvent.Type.birth,time));
             timesSet.add(time);
         }
-        for (Double time : deathRateChangeTimes) {
-            //eventsSet.add(new BDSEvent(BDSEvent.Type.death,time));
-            timesSet.add(time);
 
+        for (Double time : deathRateChangeTimes) {
+            timesSet.add(time);
         }
+
         for (Double time : samplingRateChangeTimes) {
-            //eventsSet.add(new BDSEvent(BDSEvent.Type.sampling,time));
+            timesSet.add(time);
+        }
+
+        for (Double time : rhoSamplingChangeTimes) {
             timesSet.add(time);
         }
 
@@ -204,17 +211,17 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
             timesSet.add(time);
         }
 
-        RealParameter rhoSampling = rhoSamplingTimes.get();
-        if (rhoSampling != null) {
-
-            double maxTime = origin.get().getValue();
-            int dim = rhoSampling.getDimension();
-
-            for (int i = 0; i < dim; i++) {
-                //eventsSet.add(new BDSEvent(BDSEvent.Type.rhoSampling, rhoSampling.getValue(i)));
-                timesSet.add(reverseTimeArrays.get().getValue(3) ? (maxTime - rhoSampling.getValue(dim - i - 1)) : rhoSampling.getValue(i));
-            }
-        }
+//        RealParameter rhoSampling = rhoSamplingTimes.get();
+//        if (rhoSampling != null) {
+//
+//            double maxTime = origin.get().getValue();
+//            int dim = rhoSampling.getDimension();
+//
+//            for (int i = 0; i < dim; i++) {
+//                //eventsSet.add(new BDSEvent(BDSEvent.Type.rhoSampling, rhoSampling.getValue(i)));
+//                timesSet.add(reverseTimeArrays[3] ? (maxTime - rhoSampling.getValue(dim - i - 1)) : rhoSampling.getValue(i));
+//            }
+//        }
 
         if (printTempResults) System.out.println("times = " + timesSet);
 
@@ -296,14 +303,16 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         if (m_rho.get() != null && rhoSamplingTimes.get() != null) {
 
             Double[] rhos = m_rho.get().getValues();
-            RealParameter rhoSampling = rhoSamplingTimes.get();
+            rho = new Double[totalIntervals+1];
 
-            for (int i = 0; i < totalIntervals; i++) {
+            rho[0]= constantRho? rhos[0] : 0.;
+            rho[totalIntervals]=rhos[rhos.length-1];
+            for (int i = 0; i < totalIntervals-1; i++) {
 
-                for (int j = 0; i < rhos.length; i++) {
-                    if (times[i].equals(reverseTimeArrays.get().getValue(3) ? (origin.get().getValue() - rhoSampling.getValue(rhoSampling.getDimension() - j - 1)) : rhoSampling.getValue(j)))
-                        rho[i] = rhos[j];
-                }
+                rho[i+1]= rhoChanges>0?
+                        rhoSamplingChangeTimes.contains(times[i]) ? rhos[rhoSamplingChangeTimes.indexOf(times[i])+1] : 0.
+                        : rhos[0];
+
             }
         }
 
@@ -334,10 +343,10 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         if (!conditionOnSurvival.get())
             temp = Math.log(g(index, times[index], x0));  // NOT conditioned on at least one sampled individual
         else {
-            temp = p0(index, times[index], x0);
-            if (temp == 1)
+            double tempP0 = p0(index, times[index], x0);
+            if (tempP0 == 1)
                 return Double.NEGATIVE_INFINITY;
-            temp = Math.log(g(index, times[index], x0) / (1 - temp));   // DEFAULT: conditioned on at least one sampled individual
+            temp = Math.log(g(index, times[index], x0) / (1 - tempP0));   // DEFAULT: conditioned on at least one sampled individual
         }
 
         logP = temp;
@@ -358,53 +367,57 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 if (Double.isInfinite(logP)) {
                     return logP;
                 }
-            } else {
-                if (r[index] != 1) {
-                    logP += Math.log((1 - r[index])*psi[index]);
-                    if (Double.isInfinite(logP)) {
-                        return logP;
-                    }
-                } else {
-                    //throw new Exception("There is a sampled ancestor in the tree while r parameter is 1");
-                    System.out.println("There is a sampled ancestor in the tree while r parameter is 1");
-                    System.exit(0);
-                }
             }
         }
 
         // middle product term in f[T]
         for (int i = 0; i < nTips; i++) {
-            if ((!isRhoTip[i] || m_rho.get() == null) && !((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
+            if (!isRhoTip[i] || m_rho.get() == null) {
                 double y = times[totalIntervals - 1] - tree.getNode(i).getHeight();
                 index = index(y);
-                double t = 0;
-                temp = Math.log(psi[index] * (r[index] + (1-r[index])*p0(index, times[index], y))) - Math.log(g(index, times[index], y));
-                logP += temp;
-                if (printTempResults) System.out.println("2nd PI = " + temp);
-                if (Double.isInfinite(logP)){
-                    return logP;
+                if (!((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
+                    temp = Math.log(psi[index] * (r[index] + (1 - r[index]) * p0(index, times[index], y))) - Math.log(g(index, times[index], y));
+                    logP += temp;
+                    if (printTempResults) System.out.println("2nd PI = " + temp);
+                    if (Double.isInfinite(logP)) {
+                        return logP;
+                    }
+                } else {
+                    if (r[index] != 1) {
+                        logP += Math.log((1 - r[index])*psi[index]);
+                        if (Double.isInfinite(logP)) {
+                            return logP;
+                        }
+                    } else {
+                        //throw new Exception("There is a sampled ancestor in the tree while r parameter is 1");
+                        System.out.println("There is a sampled ancestor in the tree while r parameter is 1");
+                        System.exit(0);
+                    }
                 }
             }
         }
 
-        // last product term in f[T], factorizing from 1 to m
+        // last product term in f[T], factorizing from 1 to totalIntervals   //TODO test the implementation when there is rho sampling
         double time;
         for (int j = 0; j < totalIntervals; j++) {
             time = j < 1 ? 0 : times[j - 1];
-            n[j] = ((j == 0) ? 0 : lineageCountAtTime(times[totalIntervals - 1] - time, (Tree)tree));
+            int[] k = {0};
+            n[j] = ((j == 0) ? 0 : lineageCountAtTime(times[totalIntervals - 1] - time, tree, k));
 
-            if (n[j] > 0) {
-                temp = n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j]));
-                logP += temp;
+            if (n[j] > 0 || k[0] > 0) {
+                temp = n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j])) + //here g(j,..) corresponds to q_{i+1},
+                       k[0] * (Math.log(g(j, times[j], time)) + Math.log(1-r[j])) + // \rho[j] to \rho_i, r[j] to r_{i+1}
+                       (N[j-1]-k[0])*(Math.log(r[j]+ (1-r[j])*p0(j, times[j], time))); // N[j-1] to N_i, k[0] to K_i,
+                logP += temp;                                                          //and thus N[j-1]-k[0] to M_i
                 if (printTempResults)
-                    System.out.println("3rd factor (nj loop) = " + temp + "; interval = " + j + "; n[j] = " + n[j]);//+ "; Math.log(g(j, times[j], time)) = " + Math.log(g(j, times[j], time)));
+                    System.out.println("3rd factor (nj loop) = " + temp + "; interval = " + j + "; n[j] = " + n[j]);
                 if (Double.isInfinite(logP)) {
                     return logP;
                 }
             }
-            if (rho[j] > 0 && N[j] > 0) {
-                temp = N[j] * Math.log(rho[j]);    // term for contemporaneous sampling
-                logP += temp;
+
+            if (rho[j+1] > 0 && N[j] > 0) {          // here N[j] corresponds to N_i and rho[j+1] to rho_i
+                logP += N[j] * Math.log(rho[j+1]);
                 if (printTempResults)
                     System.out.println("3rd factor (Nj loop) = " + temp + "; interval = " + j + "; N[j] = " + N[j]);
                 if (Double.isInfinite(logP)){
@@ -418,6 +431,35 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
         logP +=  Math.log(Math.pow(2, internalNodeCount));
 
         return logP;
+    }
+
+    /**
+     * @param time the time
+     * @param tree the tree
+     * @param k count the number of sampled ancestors at the given time
+     * @return the number of lineages that exist at the given time in the given tree.
+     */
+    public int lineageCountAtTime(double time, TreeInterface tree, int[] k) {
+
+        int count = 1;
+        k[0]=0;
+        int tipCount = tree.getLeafNodeCount();
+        for (int i = tipCount; i < tipCount + tree.getInternalNodeCount(); i++) {
+            if (tree.getNode(i).getHeight() >= time) count += 1;
+
+        }
+        for (int i = 0; i < tipCount; i++) {
+            if (tree.getNode(i).getHeight() > time) count -= 1;
+            if (Math.abs(tree.getNode(i).getHeight() - time) < 1e-10) {
+                count -= 1;
+                if (tree.getNode(i).isDirectAncestor()) {
+                    count -= 1;
+                    k[0]++;
+                }
+
+            }
+        }
+        return count;
     }
     
     

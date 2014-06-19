@@ -32,7 +32,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
-import beast.core.BEASTObject;
+import beast.core.BEASTInterface;
 import beast.core.Input.Validate;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.TaxonSet;
@@ -162,13 +162,13 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
 //
 //	}
         // pick up constraints in m_initial tree
-        for (final BEASTObject plugin : outputs) {
+        for (final Object plugin : getOutputs()) {
             if (plugin instanceof MRCAPrior && !calibrations.contains(plugin) ) {
                 calibrations.add((MRCAPrior) plugin);
             }
         }
         if (m_initial.get() != null) {
-            for (final BEASTObject plugin : m_initial.get().outputs) {
+            for (final Object plugin : m_initial.get().getOutputs()) {
                 if (plugin instanceof MRCAPrior && !calibrations.contains(plugin) ) {
                     calibrations.add((MRCAPrior) plugin);
                 }
@@ -193,7 +193,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
                 final ParametricDistribution distr = prior.distInput.get();
                 final Bound bounds = new Bound();
                 if (distr != null) {
-                    List<BEASTObject> plugins = new ArrayList<BEASTObject>();
+                    List<BEASTInterface> plugins = new ArrayList<BEASTInterface>();
                     distr.getPredecessors(plugins);
                     for (int i = plugins.size() - 1; i >= 0 ; i--) {
                         plugins.get(i).initAndValidate();
