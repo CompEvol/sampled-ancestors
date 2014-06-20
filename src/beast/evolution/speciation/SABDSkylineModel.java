@@ -404,11 +404,8 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
             int[] k = {0};
             n[j] = ((j == 0) ? 0 : lineageCountAtTime(times[totalIntervals - 1] - time, tree, k));
 
-            if (n[j] > 0 || k[0] > 0) {
-                temp = n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j])) + //here g(j,..) corresponds to q_{i+1},
-                       k[0] * (Math.log(g(j, times[j], time)) + Math.log(1-r[j])) + // \rho[j] to \rho_i, r[j] to r_{i+1}
-                       (N[j-1]-k[0])*(Math.log(r[j]+ (1-r[j])*p0(j, times[j], time))); // N[j-1] to N_i, k[0] to K_i,
-                logP += temp;                                                          //and thus N[j-1]-k[0] to M_i
+            if (n[j] > 0) { //term for non-sampled lineages at time t_i
+                logP += n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j])); //here g(j,..) corresponds to q_{i+1} and \rho[j] to \rho_i
                 if (printTempResults)
                     System.out.println("3rd factor (nj loop) = " + temp + "; interval = " + j + "; n[j] = " + n[j]);
                 if (Double.isInfinite(logP)) {
@@ -416,8 +413,16 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                 }
             }
 
-            if (rho[j+1] > 0 && N[j] > 0) {          // here N[j] corresponds to N_i and rho[j+1] to rho_i
-                logP += N[j] * Math.log(rho[j+1]);
+            if (j>0 && N != null) { // term for sampled leaves and two-degree nodes at time t_i
+                logP += k[0] * (Math.log(g(j, times[j], time)) + Math.log(1-r[j])) + //here g(j,..) corresponds to q_{i+1}, r[j] to r_{i+1},
+                        (N[j-1]-k[0])*(Math.log(r[j]+ (1-r[j])*p0(j, times[j], time))); //N[j-1] to N_i, k[0] to K_i,and thus N[j-1]-k[0] to M_i
+                if (Double.isInfinite(logP)) {
+                    return logP;
+                }
+            }
+
+            if (rho[j+1] > 0 && N[j] > 0) {  //joint term for sampled nodes at time t_i
+                logP += N[j] * Math.log(rho[j+1]); // here N[j] corresponds to N_i and rho[j+1] to rho_i
                 if (printTempResults)
                     System.out.println("3rd factor (Nj loop) = " + temp + "; interval = " + j + "; N[j] = " + N[j]);
                 if (Double.isInfinite(logP)){
