@@ -111,13 +111,17 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
 
         rChanges = removalProbability.get().getDimension() -1;
 
+        if (m_rho.get()!=null){
+            rhoChanges = m_rho.get().getDimension() - 1;
+        }
+
         collectTimes();
 
         if (m_rho.get() != null) {
 
             constantRho = !(m_rho.get().getDimension() > 1);
 
-            if (m_rho.get().getDimension() == 1) {
+            if (m_rho.get().getDimension() == 1 && rhoSamplingTimes.get()==null || rhoSamplingTimes.get().getDimension() < 2) {
                 if (!contempData && ((samplingProportion.get() != null && samplingProportion.get().getDimension() == 1 && samplingProportion.get().getValue() == 0.) ||
                         (samplingRate.get() != null && samplingRate.get().getDimension() == 1 && samplingRate.get().getValue() == 0.))) {
                     contempData = true;
@@ -131,24 +135,24 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
                     throw new RuntimeException("when contemp=true, rho must have dimension 1");
 
                 else {
-                    rho = new Double[totalIntervals];
+                    rho = new Double[totalIntervals+1];
                     Arrays.fill(rho, 0.);
-                    rho[totalIntervals - 1] = m_rho.get().getValue();
+                    rho[totalIntervals] = m_rho.get().getValue();
                     rhoSamplingCount = 1;
                 }
             } else {
 
-                rho = new Double[totalIntervals+1];
-
-                RealParameter rhoSampling = rhoSamplingTimes.get();
-                if (rhoSampling != null) {
-                    for (int i = 0; i < rhoSampling.getDimension(); i++) {
-                        rho[index(reverseTimeArrays[3] ? (times[totalIntervals - 1] -
-                                rhoSampling.getValue(rhoSampling.getDimension() - i - 1)) : rhoSampling.getValue(i))]
-                                = m_rho.get().getValue(constantRho ? 0 : i);
-                    }
-                    rhoSamplingCount = rho.length;
-                }
+//                rho = new Double[totalIntervals+1];
+//
+//                RealParameter rhoSampling = rhoSamplingTimes.get();
+//                if (rhoSampling != null) {
+//                    for (int i = 0; i < rhoSampling.getDimension(); i++) {
+//                        rho[index(reverseTimeArrays[3] ? (times[totalIntervals - 1] -
+//                                rhoSampling.getValue(rhoSampling.getDimension() - i - 1)) : rhoSampling.getValue(i))]
+//                                = m_rho.get().getValue(constantRho ? 0 : i);
+//                    }
+//                    rhoSamplingCount = rho.length;
+//                }
             }
         } else {
             rho = new Double[totalIntervals+1];
@@ -309,9 +313,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
             rho[totalIntervals]=rhos[rhos.length-1];
             for (int i = 0; i < totalIntervals-1; i++) {
 
-                rho[i+1]= rhoChanges>0?
-                        rhoSamplingChangeTimes.contains(times[i]) ? rhos[rhoSamplingChangeTimes.indexOf(times[i])+1] : 0.
-                        : rhos[0];
+                rho[i+1]= rhoChanges>0? (rhoSamplingChangeTimes.contains(times[i]) ? rhos[rhoSamplingChangeTimes.indexOf(times[i])] : 0) : rhos[0];
 
             }
         }
@@ -322,8 +324,6 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
 
     @Override
     public double calculateTreeLogLikelihood(TreeInterface tree) {
-
-        //r = removalProbability.get().getValues();
 
         int nTips = tree.getLeafNodeCount();
 
@@ -397,7 +397,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
             }
         }
 
-        // last product term in f[T], factorizing from 1 to totalIntervals   //TODO test the implementation when there is rho sampling
+        // last product term in f[T], factorizing from 1 to totalIntervals   //TODO test the implementation on simulated data when there is rho sampling
         double time;
         for (int j = 0; j < totalIntervals; j++) {
             time = j < 1 ? 0 : times[j - 1];
