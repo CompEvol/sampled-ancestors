@@ -1,5 +1,6 @@
 package beast.evolution.speciation;
 
+import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
@@ -15,6 +16,8 @@ import beast.evolution.tree.*;
         "that is the BDM where an individual is sampled at a time with a constant rate psi" +
         " and where an individual becomes noninfectious immediately after the sampling" +
         "with a constant probability r")
+@Citation("Gavryushkina, A., Welch, D., Stadler, T., and Drummond, A. J. (2014) " +
+        "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration")
 public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
     public Input<RealParameter> originInput =
@@ -49,6 +52,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             "likelihood is conditioned on sampling at least one individual", false);
     public Input<Boolean> conditionOnRhoSamplingInput = new Input<Boolean>("conditionOnRhoSampling", "the tree " +
             "likelihood is conditioned on sampling at least one individual in present", false);
+
     public Input<Boolean> conditionOnRootInput = new Input<Boolean>("conditionOnRoot", "the tree " +
             "likelihood is conditioned on the root height otherwis on the time of origin", false);
 

@@ -25,7 +25,8 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
         model.setInputValue("samplingRate", new RealParameter("0.5") );
-        model.setInputValue("becomeNoninfectiousAfterSamplingProbability", new RealParameter("0.9") );
+        model.setInputValue("removalProbability", new RealParameter("0.9") );
+        model.setInputValue("conditionOnSampling", true);
         model.initAndValidate();
 
         // these values ate calculated with Mathematica
@@ -36,7 +37,7 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
 
 
     @Test
-    public void testLikelihoodCalculation2() throws Exception {        //TODO make this test actually test something
+    public void testLikelihoodCalculation2() throws Exception {
         SABDSamplingThroughTimeModel model = new SABDSamplingThroughTimeModel();
         Tree tree = new ZeroBranchSATreeParser("((1:1.5,2:0.5):0.5)3:0.0", true, false, 1);
 
@@ -45,11 +46,12 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
         model.setInputValue("samplingRate", new RealParameter("0.5") );
-        model.setInputValue("becomeNoninfectiousAfterSamplingProbability", new RealParameter("0.9") );
+        model.setInputValue("removalProbability", new RealParameter("0.9") );
+        model.setInputValue("conditionOnSampling", true);
         model.initAndValidate();
 
         // this value is calculated with Mathematica
-        assertEquals(-22.77647, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning on at least one sampled individual
+        assertEquals(-22.08332, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning on at least one sampled individual
 
     }
 }

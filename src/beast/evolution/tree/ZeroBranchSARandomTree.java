@@ -27,6 +27,7 @@ package beast.evolution.tree;
 
 
 import java.util.*;
+import java.util.function.BooleanSupplier;
 
 import beast.core.Description;
 import beast.core.Input;
@@ -51,33 +52,24 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     public Input<Alignment> taxaInput = new Input<Alignment>("taxa", "set of taxa to initialise tree specified by alignment");
     public Input<TaxonSet> m_taxonset = new Input<TaxonSet>("taxonset","set of taxa to initialise tree with specified by a taxonset", Validate.REQUIRED);
     public Input<PopulationFunction> populationFunctionInput = new Input<PopulationFunction>("populationModel", "population function for generating coalescent???", Validate.REQUIRED);
-    public Input<List<MRCAPrior>> calibrationsInput = new Input<List<MRCAPrior>>("constraint", "specifies (monophyletic or height distribution) constraints on internal nodes", new ArrayList<MRCAPrior>());
+    public Input<List<CladeConstraint>> cladeConstraintsInput = new Input<List<CladeConstraint>>("cladeConstraint", "specifies monophyletic clades", new ArrayList<CladeConstraint>());
     public Input<Double> rootHeightInput = new Input<Double>("rootHeight", "If specified the tree will be scaled to match the root height, if constraints allow this");
 
     // total nr of taxa
     int nrOfTaxa;
     // list of bitset representation of the taxon sets
     List<BitSet> taxonSets;
+    // strongMonophyletic inputs for clade constraints
+    List<Boolean> strongMonophyletic;
     // the first m_nIsMonophyletic of the m_bTaxonSets are monophyletic, while the remainder are not
+
     int isMonophyletic;
-    // list of parametric distribution constraining the MRCA of taxon sets, null if not present
-    List<ParametricDistribution> distributions;
 
-    class Bound {
-        Double upper = Double.POSITIVE_INFINITY;
-        Double lower = Double.NEGATIVE_INFINITY;
-
-        public String toString() {
-            return "[" + lower + "," + upper + "]";
-        }
-    }
-
-    List<Bound> m_bounds;
     List<String> taxonSetIDs;
 
     List<Integer>[] children;
 
-    // number of the next internal node, used when creating new internal nodes
+    // number of the next internal node, us ed when creating new internal nodes
     int nextNodeNr;
 
     // used to indicate one of the MRCA constraints could not be met
@@ -129,8 +121,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     public void initStateNodes() throws Exception {
         // find taxon sets we are dealing with
         taxonSets = new ArrayList<BitSet>();
-        m_bounds = new ArrayList<Bound>();
-        distributions = new ArrayList<ParametricDistribution>();
+        strongMonophyletic = new ArrayList<Boolean>();
         taxonSetIDs = new ArrayList<String>();
         isMonophyletic = 0;
 
@@ -141,44 +132,14 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
             sTaxa = m_taxonset.get().asStringList();
         }
 
-        // pick up constraints from outputs, m_inititial input tree and output tree, if any
-        List<MRCAPrior> calibrations = new ArrayList<MRCAPrior>();
-        calibrations.addAll(calibrationsInput.get());
-//    	for (Plugin plugin : outputs) {
-//    	// pick up constraints in outputs
-//		if (plugin instanceof MRCAPrior && !calibrations.contains(plugin)) {
-//			calibrations.add((MRCAPrior) plugin);
-//		} else  if (plugin instanceof Tree) {
-//        	// pick up constraints in outputs if output tree
-//			Tree tree = (Tree) plugin;
-//			if (tree.m_initial.get() == this) {
-//            	for (Plugin plugin2 : tree.outputs) {
-//            		if (plugin2 instanceof MRCAPrior && !calibrations.contains(plugin2)) {
-//            			calibrations.add((MRCAPrior) plugin2);
-//            		}
-//            	}
-//			}
-//		}
-//
-//	}
-        // pick up constraints in m_initial tree
-        for (final Object plugin : getOutputs()) {
-            if (plugin instanceof MRCAPrior && !calibrations.contains(plugin) ) {
-                calibrations.add((MRCAPrior) plugin);
-            }
-        }
-        if (m_initial.get() != null) {
-            for (final Object plugin : m_initial.get().getOutputs()) {
-                if (plugin instanceof MRCAPrior && !calibrations.contains(plugin) ) {
-                    calibrations.add((MRCAPrior) plugin);
-                }
-            }
-        }
+
+        List<CladeConstraint> calibrations = new ArrayList<CladeConstraint>();
+        calibrations.addAll(cladeConstraintsInput.get());
 
 
-        for (final MRCAPrior prior : calibrations) {
-            final TaxonSet taxonSet = prior.taxonsetInput.get();
-            if (taxonSet != null && !prior.onlyUseTipsInput.get()) {
+        for (final CladeConstraint constraint: calibrations) {
+            final TaxonSet taxonSet = constraint.taxonsetInInput.get();
+            if (taxonSet != null) {
                 final BitSet bTaxa = new BitSet(nrOfTaxa);
                 if (taxonSet.asStringList() == null) {
                     taxonSet.initAndValidate();
@@ -190,39 +151,15 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
                     }
                     bTaxa.set(iID);
                 }
-                final ParametricDistribution distr = prior.distInput.get();
-                final Bound bounds = new Bound();
-                if (distr != null) {
-                    List<BEASTInterface> plugins = new ArrayList<BEASTInterface>();
-                    distr.getPredecessors(plugins);
-                    for (int i = plugins.size() - 1; i >= 0 ; i--) {
-                        plugins.get(i).initAndValidate();
-                    }
-                    bounds.lower = distr.inverseCumulativeProbability(0.0) + distr.offsetInput.get();
-                    bounds.upper = distr.inverseCumulativeProbability(1.0) + distr.offsetInput.get();
-                }
 
-                if (prior.isMonophyleticInput.get()) {
-                    // add any monophyletic constraint
-                    taxonSets.add(isMonophyletic, bTaxa);
-                    distributions.add(isMonophyletic, distr);
-                    m_bounds.add(isMonophyletic, bounds);
-                    taxonSetIDs.add(prior.getID());
-                    isMonophyletic++;
-                } else {
-                    // only calibrations with finite bounds are added
-                    if (!Double.isInfinite(bounds.lower) || !Double.isInfinite(bounds.upper)) {
-                        taxonSets.add(bTaxa);
-                        distributions.add(distr);
-                        m_bounds.add(bounds);
-                        taxonSetIDs.add(prior.getID());
-                    }
-                }
+                // add monophyletic constraint
+                taxonSets.add(isMonophyletic, bTaxa);
+                strongMonophyletic.add(isMonophyletic, constraint.isStronglyMonophyleticInput.get());
+                taxonSetIDs.add(constraint.getID());
+                isMonophyletic++;
             }
         }
 
-        // assume all calibration constraints are MonoPhyletic
-        // TODO: verify that this is a reasonable assumption
         isMonophyletic = taxonSets.size();
 
 
@@ -244,16 +181,15 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
                     // swap i & j if b1 subset of b2
                     if (bIsSubset) {
                         swap(taxonSets, i, j);
-                        swap(distributions, i, j);
-                        swap(m_bounds, i, j);
+                        swap(strongMonophyletic, i, j);
                         swap(taxonSetIDs, i, j);
                     }
                 }
             }
         }
+        strongMonophyletic.add(false);
 
         // build tree of mono constraints such that i is parent of j => j is subset of i
-        final int[] nParent = new int[isMonophyletic];
         children = new List[isMonophyletic + 1];
         for (int i = 0; i < isMonophyletic + 1; i++) {
             children[i] = new ArrayList<Integer>();
@@ -263,17 +199,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
             while (j < isMonophyletic && !isSubset(taxonSets.get(i), taxonSets.get(j))) {
                 j++;
             }
-            nParent[i] = j;
             children[j].add(i);
-        }
-
-        // make sure upper bounds of a child does not exceed the upper bound of its parent
-        for (int i = 0; i < isMonophyletic; i++) {
-            if (nParent[i] < isMonophyletic) {
-                if (m_bounds.get(i).upper > m_bounds.get(nParent[i]).upper) {
-                    m_bounds.get(i).upper = m_bounds.get(nParent[i]).upper - 1e-100;
-                }
-            }
         }
 
 
@@ -298,14 +224,6 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
         if (!node.isLeaf()) {
             double oldHeight = node.getHeight();
             node.height *= scale;
-            final Integer iConstraint = getDistrConstraint(node);
-            if (iConstraint != null) {
-                if (node.height < m_bounds.get(iConstraint).lower || node.height > m_bounds.get(iConstraint).upper) {
-                    //revert scaling
-                    node.height = oldHeight;
-                    return;
-                }
-            }
             scaleToFit(scale, node.getLeft());
             scaleToFit(scale, node.getRight());
             if (node.height < Math.max(node.getLeft().getHeight(), node.getRight().getHeight())) {
@@ -326,7 +244,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
      * @param taxa         the set of taxa to simulate a coalescent tree between
      * @param demoFunction the demographic function to use
      */
-    public void simulateTree(final List<String> taxa, final PopulationFunction demoFunction) {
+    public void simulateTree(final List<String> taxa, final PopulationFunction demoFunction) throws Exception {
         if (taxa.size() == 0)
             return;
 
@@ -352,47 +270,6 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
                 for (final Node node : candidates) {
                     fMostRecent = Math.max(fMostRecent, node.getHeight());
                 }
-                // dr.evolution.util.Date mostRecent = null;
-                // boolean usingDates = false;
-                //
-                // for (int i = 0; i < taxa.size(); i++) {
-                // if (TaxonList.Utils.hasAttribute(taxa, i,
-                // dr.evolution.util.Date.DATE)) {
-                // usingDates = true;
-                // dr.evolution.util.Date date =
-                // (dr.evolution.util.Date)taxa.getTaxonAttribute(i,
-                // dr.evolution.util.Date.DATE);
-                // if ((date != null) && (mostRecent == null || date.after(mostRecent)))
-                // {
-                // mostRecent = date;
-                // }
-                // } else {
-                // // assume contemporaneous tips
-                // candidates.get(i).setHeight(0.0);
-                // }
-                // }
-                //
-                // if (usingDates && mostRecent != null ) {
-                // TimeScale timeScale = new TimeScale(mostRecent.getUnits(), true,
-                // mostRecent.getAbsoluteTimeValue());
-                //
-                // for (int i =0; i < taxa.size(); i++) {
-                // dr.evolution.util.Date date =
-                // (dr.evolution.util.Date)taxa.getTaxonAttribute(i,
-                // dr.evolution.util.Date.DATE);
-                // if (date == null) {
-                // throw new IllegalArgumentException("Taxon, " + taxa.get(i) +
-                // ", is missing its date");
-                // }
-                //
-                // candidates.get(i).setHeight(timeScale.convertTime(date.getTimeValue(),
-                // date));
-                // }
-                // if (demoFunction.getUnits() != mostRecent.getUnits()) {
-                // //throw new
-                // IllegalArgumentException("The units of the demographic model and the most recent date must match!");
-                // }
-                // }
 
                 final List<Node> allCandidates = new ArrayList<Node>();
                 allCandidates.addAll(candidates);
@@ -418,7 +295,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
 
 
     private Node simulateCoalescent(final int iIsMonophyleticNode, final List<Node> allCandidates, final List<Node> candidates, final PopulationFunction demoFunction)
-            throws ConstraintViolatedException {
+            throws Exception {
         final List<Node> remainingCandidates = new ArrayList<Node>();
         final BitSet taxaDone = new BitSet(nrOfTaxa);
         for (final int iMonoNode : children[iIsMonophyleticNode]) {
@@ -440,7 +317,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
             }
         }
 
-        final Node MRCA = simulateCoalescent(remainingCandidates, demoFunction);
+        final Node MRCA = simulateCoalescent(strongMonophyletic.get(iIsMonophyleticNode), remainingCandidates, demoFunction);
         return MRCA;
     }
 
@@ -451,7 +328,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
      *         coalescent under the given demographic model.
      * @throws beast.evolution.tree.RandomTree.ConstraintViolatedException
      */
-    public Node simulateCoalescent(final List<Node> nodes, final PopulationFunction demographic) throws ConstraintViolatedException {
+    public Node simulateCoalescent(boolean isStronglyMonophyletic, final List<Node> nodes, final PopulationFunction demographic) throws Exception {
         // sanity check - disjoint trees
 
         // if( ! Tree.Utils.allDisjoint(nodes) ) {
@@ -463,7 +340,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
         }
 
         for (int attempts = 0; attempts < 1000; ++attempts) {
-            final List<Node> rootNode = simulateCoalescent(nodes, demographic, 0.0, Double.POSITIVE_INFINITY);
+            final List<Node> rootNode = simulateCoalescent(isStronglyMonophyletic, nodes, demographic, 0.0, Double.POSITIVE_INFINITY);
             if (rootNode.size() == 1) {
                 return rootNode.get(0);
             }
@@ -472,12 +349,42 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
         throw new RuntimeException("failed to merge trees after 1000 tries!");
     }
 
-    public List<Node> simulateCoalescent(final List<Node> nodes, final PopulationFunction demographic, double currentHeight,
-                                         final double maxHeight) throws ConstraintViolatedException {
+    public List<Node> simulateCoalescent(boolean isStronglyMonophyletic, final List<Node> nodes, final PopulationFunction demographic, double currentHeight,
+                                         final double maxHeight) throws Exception {
+
+        Node extantNode = nodes.get(0);
+
+        if (isStronglyMonophyletic) {
+            for (int i = 0; i < nodes.size(); i++) {
+                if (nodes.get(i).getHeight() == 0.0) {
+                    extantNode = nodes.get(i);
+                    nodes.remove(i);
+                    break;
+                }
+            }
+//            int extantTaxaCount =0;
+//            for (int i = 0; i < nodes.size(); i++) {
+//                if (nodes.get(i).getHeight() == 0.0) {
+//                    extantTaxaCount++;
+//                    if (extantTaxaCount == 2) {
+//                        extantNode = nodes.get(i);
+//                        nodes.remove(i);
+//                        break;
+//                    }
+//                }
+//            }
+//            if (extantTaxaCount < 2) {
+//                throw new Exception("there is only one extant taxon in a clade that is specified as strongly monophyletic");
+//            }
+        }
+
         // If only one node, return it
         // continuing results in an infinite loop
-        if (nodes.size() == 1)
+        if (nodes.size() == 1 && !isStronglyMonophyletic) {
             return nodes;
+        }
+
+
 
         final double[] heights = new double[nodes.size()];
         for (int i = 0; i < nodes.size(); i++) {
@@ -492,43 +399,61 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
         for (int i = 0; i < nodes.size(); i++) {
             nodeList.add(nodes.get(indices[i]));
         }
-        setCurrentHeight(currentHeight);
 
-        // get at least two tips
-        while (getActiveNodeCount() < 2) {
-            currentHeight = getMinimumInactiveHeight();
+        if (nodes.size() != 1) {
             setCurrentHeight(currentHeight);
-        }
 
-        // simulate coalescent events
-        double nextCoalescentHeight = currentHeight
-                + PopulationFunction.Utils.getSimulatedInterval(demographic, getActiveNodeCount(), currentHeight);
-
-        // while (nextCoalescentHeight < maxHeight && (getNodeCount() > 1)) {
-        while (nextCoalescentHeight < maxHeight && (nodeList.size() > 1)) {
-
-            if (nextCoalescentHeight >= getMinimumInactiveHeight()) {
+            // get at least two tips
+            while (getActiveNodeCount() < 2) {
                 currentHeight = getMinimumInactiveHeight();
                 setCurrentHeight(currentHeight);
-            } else {
-                currentHeight = coalesceTwoActiveNodes(currentHeight, nextCoalescentHeight);
             }
 
-            // if (getNodeCount() > 1) {
-            if (nodeList.size() > 1) {
-                // get at least two tips
-                while (getActiveNodeCount() < 2) {
+            // simulate coalescent events
+            double nextCoalescentHeight = currentHeight
+                    + PopulationFunction.Utils.getSimulatedInterval(demographic, getActiveNodeCount(), currentHeight);
+
+            // while (nextCoalescentHeight < maxHeight && (getNodeCount() > 1)) {
+            while (nextCoalescentHeight < maxHeight && (nodeList.size() > 1)) {
+
+                if (nextCoalescentHeight >= getMinimumInactiveHeight()) {
                     currentHeight = getMinimumInactiveHeight();
                     setCurrentHeight(currentHeight);
+                } else {
+                    currentHeight = coalesceTwoActiveNodes(currentHeight, nextCoalescentHeight);
                 }
 
-                // nextCoalescentHeight = currentHeight +
-                // DemographicFunction.Utils.getMedianInterval(demographic,
-                // getActiveNodeCount(), currentHeight);
-                nextCoalescentHeight = currentHeight
-                        + PopulationFunction.Utils.getSimulatedInterval(demographic, getActiveNodeCount(),
-                        currentHeight);
+                // if (getNodeCount() > 1) {
+                if (nodeList.size() > 1) {
+                    // get at least two tips
+                    while (getActiveNodeCount() < 2) {
+                        currentHeight = getMinimumInactiveHeight();
+                        setCurrentHeight(currentHeight);
+                    }
+
+                    // nextCoalescentHeight = currentHeight +
+                    // DemographicFunction.Utils.getMedianInterval(demographic,
+                    // getActiveNodeCount(), currentHeight);
+                    nextCoalescentHeight = currentHeight
+                            + PopulationFunction.Utils.getSimulatedInterval(demographic, getActiveNodeCount(),
+                            currentHeight);
+                }
             }
+        }
+
+        if (isStronglyMonophyletic && nodeList.size() == 1) {
+            Node currentMRCA = nodeList.get(0);
+            double nextCoalescentHeight = currentMRCA.getHeight() + PopulationFunction.Utils.getSimulatedInterval(demographic, 2,
+                    currentMRCA.getHeight());
+            final Node newNode = new ZeroBranchSANode();
+            newNode.setNr(nextNodeNr++);
+            newNode.setHeight(nextCoalescentHeight);
+            newNode.setLeft(extantNode);
+            extantNode.setParent(newNode);
+            newNode.setRight(currentMRCA);
+            currentMRCA.setParent(newNode);
+            nodeList.remove(0);
+            nodeList.add(newNode);
         }
 
         return nodeList;
@@ -585,7 +510,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
      * @param height
      * @return
      */
-    private double coalesceTwoActiveNodes(final double fMinHeight, double height) throws ConstraintViolatedException {
+    private double coalesceTwoActiveNodes(final double fMinHeight, double height) throws Exception {
         final int node1 = Randomizer.nextInt(activeNodeCount);
         int node2 = node1;
         while (node2 == node1) {
@@ -613,37 +538,6 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
 
         activeNodeCount += 1;
 
-        // check if there is a calibration on this node
-        final Integer iConstraint = getDistrConstraint(newNode);
-        if (iConstraint != null) {
-//			for (int i = 0; i < 1000; i++) {
-//				try {
-//					height = distr.sample(1)[0][0];
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				if (height > fMinHeight) {
-//					break;
-//				}
-//			}
-            final double fMin = Math.max(m_bounds.get(iConstraint).lower, fMinHeight);
-            final double fMax = m_bounds.get(iConstraint).upper;
-            if (fMax < fMin) {
-                // failed to draw a matching height from the MRCA distribution
-                // TODO: try to scale rest of tree down
-                throw new ConstraintViolatedException();
-            }
-            if (height < fMin || height > fMax) {
-                if (fMax == Double.POSITIVE_INFINITY) {
-                    height = fMin + 0.1;
-                } else {
-                    height = fMin + Randomizer.nextDouble() * (fMax - fMin);
-                }
-                newNode.setHeight(height);
-            }
-        }
-
-
         if (getMinimumInactiveHeight() < height) {
             throw new RuntimeException(
                     "This should never happen! Somehow the current active node is older than the next inactive node!");
@@ -651,16 +545,21 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
         return height;
     }
 
-    private Integer getDistrConstraint(final Node node) {
-        for (int i = 0; i < distributions.size(); i++) {
-            if (distributions.get(i) != null) {
-                final BitSet taxonSet = taxonSets.get(i);
-                if (traverse(node, taxonSet, taxonSet.cardinality(), new int[1]) == nrOfTaxa + 127) {
-                    return i;
-                }
+    private Node findNodeWithExtantDescendantsOnBothSides(Node node, int[] nodeIndex) {
+        if (node.isLeaf()) {
+            nodeIndex[0] = -1;
+        } else {
+            if (CladeConstraint.hasExtantDescendant(node)) {
+                nodeIndex[0] = node.getNr();
+                return node;
+            }  else {
+                Node nodeOnTheLeft=findNodeWithExtantDescendantsOnBothSides(node.getLeft(), nodeIndex);
+                if (nodeIndex[0] > 0) return nodeOnTheLeft;
+                Node nodeOnTheRight = findNodeWithExtantDescendantsOnBothSides(node.getRight(), nodeIndex);
+                if (nodeIndex[0] > 0) return nodeOnTheRight;
             }
         }
-        return null;
+        return node;
     }
 
     int traverse(final Node node, final BitSet MRCATaxonSet, final int nNrOfMRCATaxa, final int[] nTaxonCount) {

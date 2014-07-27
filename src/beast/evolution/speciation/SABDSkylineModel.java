@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * @author Alexandra Gavryushkina
  */
-@Citation("Gavryushkina, A., Welch, D., Stadler, T., and Drummond, A. J. (2014). " +
-        "“Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration”")
+@Citation("Gavryushkina, A., Welch, D., Stadler, T., and Drummond, A. J. (2014) " +
+        "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration")
 public class SABDSkylineModel extends BirthDeathSkylineModel {
 
     public Input<RealParameter> removalProbabilityChangeTimesInput =

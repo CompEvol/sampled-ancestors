@@ -13,10 +13,13 @@ import java.util.*;
  */
 public class CladeConstraint  extends Distribution {
     public Input<Tree> treeInput = new Input<Tree>("tree","tree to apply the constraint on", Input.Validate.REQUIRED);
-    public final Input<TaxonSet> taxonsetInInput = new Input<TaxonSet>("taxonsetIn", "set of taxa inside the clade, in-ta", Input.Validate.REQUIRED);
-    public final Input<TaxonSet> taxonsetOutInput = new Input<TaxonSet>("taxonsetOut", "set of taxa outside the clade");
+    public final Input<TaxonSet> taxonsetInInput = new Input<TaxonSet>("taxonsetIn", "set of taxa inside the clade, in-taxa.",
+            Input.Validate.REQUIRED);
+    public final Input<TaxonSet> taxonsetOutInput = new Input<TaxonSet>("taxonsetOut", "set of taxa outside the clade. If it is " +
+            "not specified then the in-taxa are considered to be monophyletic.");
     public final Input<Boolean> isStronglyMonophyleticInput = new Input<Boolean>("stronglyMonophyletic",
-            "whether the taxon set is monophyletic (forms a clade without other taxa) or nor. Default is false.", false);
+            "is true if the most recent common ancestor of the clade is not a sampled node and" +
+            "therefore has two children which both have extant descendants. Default is false.", false);
 
     private Tree tree;
     private int nodeCount;
@@ -79,7 +82,7 @@ public class CladeConstraint  extends Distribution {
 
             // check if this node is a common ancestor for the in-taxa and if so check if it is not an ancestor for
             // out-taxa. Note that the node which is first found as a common ancestor is the most recent common
-            // ancestor due to the way the tree is traversed - from tip nodes towards the root. 
+            // ancestor due to the way the tree is traversed - from tips towards the root.
             boolean isCommonAncestor = true;   
             for (String taxaName:taxaNamesInClade){
                 if (!tipDescendant.contains(taxaName)){
@@ -93,6 +96,13 @@ public class CladeConstraint  extends Distribution {
                 if (outCladeExist) {
                     for (String taxaName:taxaNamesOutClade){
                         if (tipDescendant.contains(taxaName)){
+                            contain = true;
+                            break;
+                        }
+                    }
+                } else {
+                    for (String taxaName:tipDescendant){
+                        if (!taxaNamesInClade.contains(taxaName)){
                             contain = true;
                             break;
                         }
@@ -112,7 +122,7 @@ public class CladeConstraint  extends Distribution {
         return tipDescendant;
     }
 
-    private boolean hasExtantDescendant(Node node){
+    public static boolean hasExtantDescendant(Node node){
         if (node.isLeaf()) {
             return node.getHeight() == 0;
         }

@@ -1,9 +1,14 @@
 package beast.evolution.operators;
 
 import beast.core.Description;
+import beast.core.Distribution;
+import beast.core.Input;
 import beast.evolution.tree.Node;
+import beast.evolution.tree.SamplingDate;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
+import beast.math.distributions.*;
+import beast.math.distributions.Uniform;
 import beast.util.Randomizer;
 
 import java.util.ArrayList;
@@ -13,14 +18,20 @@ import java.util.List;
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
 public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRandomWalker {
 
+    public Input<List<SamplingDate>> samplingDatesInput = new Input<>("samplingDates", "List of sampling dates", new ArrayList<>());
 
     boolean useNodeNumbers;
+    List<String> samplingDateTaxonNames = new ArrayList<>();
 
 
     @Override
     public void initAndValidate() throws Exception {
         windowSize = windowSizeInput.get();
         useGaussian = useGaussianInput.get();
+
+        for (SamplingDate taxon:samplingDatesInput.get()) {
+            samplingDateTaxonNames.add(taxon.taxonInput.get().getID());
+        }
 
         // determine taxon set to choose from
         if (m_taxonsetInput.get() != null) {
@@ -48,6 +59,7 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
 
     @Override
     public double proposal() {
+
         // randomly select a leaf node
         Tree tree = treeInput.get();
 
@@ -65,17 +77,28 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
             node = tree.getNode(taxonIndices[i]);
         }
 
+
+
         double value = node.getHeight();
 
         if (value == 0.0) {
             return Double.NEGATIVE_INFINITY;
         }
         double newValue = value;
-        if (useGaussian) {
-            newValue += Randomizer.nextGaussian() * windowSize;
-        } else {
-            newValue += Randomizer.nextDouble() * 2 * windowSize - windowSize;
+
+        boolean drawFromDistribution = samplingDateTaxonNames.contains(node.getID());
+        if (drawFromDistribution) {
+            SamplingDate taxonSamplingDate = samplingDatesInput.get().get(samplingDateTaxonNames.indexOf(node.getID()));
+            double range = taxonSamplingDate.getUpper() - taxonSamplingDate.getLower();
+                newValue = taxonSamplingDate.getLower() + Randomizer.nextDouble() * range;
+        }  else {
+            if (useGaussian) {
+                newValue += Randomizer.nextGaussian() * windowSize;
+            } else {
+                newValue += Randomizer.nextDouble() * 2 * windowSize - windowSize;
+            }
         }
+
 
         Node fake = null;
         double lower, upper;
@@ -148,15 +171,15 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
             System.exit(0);
         }
 
-
-
-
-
-
         //tree.setEverythingDirty(true);
 
         return 0.0;
     }
+
+    @Override
+    public void optimize(double logAlpha) {
+    }
+
 }
 
 // TODO 1. Should the height of a leaf be greater than zero?

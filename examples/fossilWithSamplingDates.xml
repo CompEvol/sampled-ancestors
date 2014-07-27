@@ -79,6 +79,8 @@
         <taxa id='taxonSet' spec='beast.evolution.alignment.TaxonSet' alignment='@alignment'/>
     </trait>
 
+
+
     <!-- tree prior model -->
     <BirthDeathSkylineModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree" conditionOnRhoSampling="true" conditionOnRoot="true">
         <parameter name="diversificationRate" id="diversificationRate" value="1."/>
@@ -328,6 +330,18 @@
         <operator id='treeScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="10.0" tree="@tree"/>
         <operator id='rootScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="5.0" tree="@tree" rootOnly='true'/>
         <operator id="updownTree" spec="UpDownOperator" scaleFactor=".95" weight="30" up="@clock.rate" down="@tree"/>
+
+
+        <!-- this operator allows to sample dates of sampled node -->
+        <operator spec='SampledNodeDateRandomWalkerForZeroBranchSATrees' windowSize="1"  tree="@tree" weight="10">
+            <!-- this input specify the taxa with variable dates. In this exampled only one taxon has a variably sampling date. -->
+            <taxonset spec="TaxonSet">
+                <taxon idref="Ursavus_primaevus"/>
+            </taxonset>
+            <!-- This input specifies bounds for taxon sampling date. It should be specified for each taxon with a sampling date range.
+            In this example, the only taxon with a varaible sampling date has also sampling date bounds. -->
+            <samplingDates id="samplingDate1" spec="beast.evolution.tree.SamplingDate" taxon="Ursavus_primaevus" upper="15." lower="1."/>
+        </operator>
 
         <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="15.0"/>
 

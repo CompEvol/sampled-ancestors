@@ -76,7 +76,7 @@
 		<mkdir dir="${buildSA}" />
 
 		<!-- Compile the java code from ${srcSA} into ${buildSA} /bin -->
-		<javac srcdir="${srcSA}" destdir="${buildSA}" classpathref="classpath" 
+		<javac source="1.6" target="1.6" srcdir="${srcSA}" destdir="${buildSA}" classpathref="classpath"
 		       fork="true"
 		       memoryinitialsize="256m"
 		       memorymaximumsize="256m"
