@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author Alexandra Gavryushkina
  */
-
+@Deprecated
 public class SampledAncestorTreeTrace {
 
     public List<Tree> beastTrees;
