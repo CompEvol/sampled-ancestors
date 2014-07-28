@@ -4,11 +4,12 @@ import beast.core.util.ESS;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
-import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
-import beast.util.TreeParser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author Alexandra Gavryushkina
@@ -32,13 +33,13 @@ public class SampledAncestorTreeAnalysis {        //TODO implement burn in
      * and taxa names are used otherwise
      */
     public void perform(boolean useNumbers) throws Exception {
-       //countClades(true, true);
-       //countSampledAncestors(true);
-       //countSAFrequencies(true, false, 0.445);
-        printTrees();
-       //printTreeHeights();
-       //removeFossils();
-       //countTopologies(true);
+//       countClades(true, true);
+//       countSampledAncestors(true);
+//       countSAFrequencies(true, false, 0.445);
+//        printTrees();
+//       printTreeHeights();
+       removeFossils();
+//       countTopologies(true);
     }
 
     public void printTrees(){
@@ -533,7 +534,7 @@ public class SampledAncestorTreeAnalysis {        //TODO implement burn in
     public void removeFossils(){
         Tree tree;
 
-        for (int i =0; i < trace.treeCount-1; i++) {
+        for (int i =0; i < trace.treeCount; i++) {
             tree = trace.beastTrees.get(i);
             for (int j=0; j<tree.getNodeCount(); j++) {
                 Node fake = tree.getNode(j);

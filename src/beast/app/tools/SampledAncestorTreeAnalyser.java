@@ -1,10 +1,10 @@
 package beast.app.tools;
 
-import beast.evolution.tree.Tree;
-import beast.util.NexusParser;
+import beast.evolution.tree.TreeTraceAnalysis;
 import beast.util.SANexusParser;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * @author Alexandra Gavryushkina
@@ -14,8 +14,8 @@ public class SampledAncestorTreeAnalyser {
 
     public static void main(String[] args) throws IOException, Exception {
 
-        int percentCredSet = 100;
-        boolean useNumbers = true;
+        int percentCredSet = 95;
+        boolean useNumbers = false;
 
 //        BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
 //        String a;
@@ -67,7 +67,10 @@ public class SampledAncestorTreeAnalyser {
             SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
             SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 
-            analysis.perform(useNumbers);
+//            analysis.perform(useNumbers);
+            analysis.removeFossils();
+            TreeTraceAnalysis analysis2 = new TreeTraceAnalysis(trace.beastTrees, 0.1);
+            analysis2.report(System.out);
         }
         catch (IOException e) {
             //
