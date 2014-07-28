@@ -33,21 +33,14 @@ public class SampledAncestorTreeAnalysis {        //TODO implement burn in
      * and taxa names are used otherwise
      */
     public void perform(boolean useNumbers) throws Exception {
-//       countClades(true, true);
-//       countSampledAncestors(true);
-//       countSAFrequencies(true, false, 0.445);
-//        printTrees();
-//       printTreeHeights();
+       countClades(true, true);
+       countSampledAncestors(true);
+       countSAFrequencies(true, false, 0.445);
+       printTreeHeights();
        removeFossils();
-//       countTopologies(true);
+       countTopologies(true);
     }
 
-    public void printTrees(){
-        System.out.println("tree number 819:" + trace.beastTrees.get(819).getRoot().toSortedNewick(new int[] {0}, false));
-        System.out.println("tree number 1190:" + trace.beastTrees.get(1190).getRoot().toSortedNewick(new int[] {0}, false));
-        System.out.println("tree number 899:" + trace.beastTrees.get(899).getRoot().toSortedNewick(new int[] {0}, false));
-        System.out.println("tree number 264:" + trace.beastTrees.get(264).getRoot().toSortedNewick(new int[] {0}, false));
-    }
 
     public void countTreesWithDClades() throws Exception {
 
@@ -296,115 +289,6 @@ public class SampledAncestorTreeAnalysis {        //TODO implement burn in
         for (int j =0; j < 50; j++)
             System.out.print(numericTrees[j] + ", ");  */
 
-    }
-
-    //test for sampling from prior.
-    // testType = 1 --- test with fixed time of origin.
-    // testType = 2 --- with logNormal prior on distance between root height and origin time.
-    public void countTopologiesTest(int testType) {
-        FrequencySet<String> topologies = new FrequencySet<String>();
-        String[] trees = trace.shortTrees;
-
-        for (int i=0; i < trees.length; i++) {
-            topologies.add(trees[i]);
-        }
-
-        Double[] treesNumberRepresentation = new Double[trees.length];
-
-        Arrays.fill(treesNumberRepresentation, 0.0);
-
-        for (int i=0; i< topologies.size(); i++) {
-            for (int j=0; j < trees.length; j++) {
-                if (trees[j] == topologies.get(i)) {
-                    treesNumberRepresentation[j] = (double)i;
-                }
-            }
-        }
-
-        int nSampleInterval = 100;
-        // calc effective sample size
-        double ACT = ESS.ACT(treesNumberRepresentation, nSampleInterval);
-        double ESS = treesNumberRepresentation.length / (ACT / nSampleInterval);
-
-        System.out.println("ACT = " + ACT);
-        System.out.println("ESS = " + ESS);
-
-        System.out.println("The number of trees in the file = " + trees.length + ".");
-        System.out.println();
-
-        /*if (0 >= percentageCredSet || percentageCredSet >= 100) {
-            percentageCredSet = 95;
-        }  */
-
-        int percentageCredSet = 100;
-
-        double sumPercentage = 0;
-        System.out.println(percentageCredSet + "% credible set: ");
-        System.out.println();
-        System.out.println("Count \t Percent \t Topology");
-        System.out.println();
-        int i;
-
-        for (i =0; i < topologies.size(); i++)
-            if (sumPercentage < percentageCredSet) {
-                double percent = (double) (topologies.getFrequency(i) * 100)/(trees.length);
-                double trueVal=0;
-                switch (testType) {
-                    case 1: trueVal = SDE1(topologies.get(i));
-                            break;
-                    case 2: trueVal = SDE2(topologies.get(i));
-                            break;
-                }
-                double sde = 200 * Math.sqrt((trueVal * (1-trueVal))/ESS);
-                String correctness;
-                if ((100 * trueVal < percent && percent < 100 * trueVal + sde) || (100 * trueVal -sde < percent && percent < 100 * trueVal))
-                    correctness = "correct";
-                else correctness = "incorrect";
-                System.out.println(topologies.getFrequency(i) + "\t" + percent + "%\t" + topologies.get(i) + "\t" + correctness);
-                sumPercentage += percent;
-            } else {
-                break;
-            }
-        System.out.println();
-        System.out.println("Total \t" + Math.round(sumPercentage) + "%");
-        System.out.println();
-        System.out.println(percentageCredSet + "% credible set has " + i + " trees.");
-        System.out.println();
-
-    }
-
-    private double SDE1(String tree) {
-
-        if (tree.equals("((1,2),3)")) {
-            return 0.7133;
-        } else if (tree.equals("((1,2))3")) {
-            return 0.0702;
-        } else if (tree.equals("((1)2,3)")) {
-            return 0.0689;
-        } else if (tree.equals("((1,3),2)") || tree.equals("(1,(2,3))")) {
-            return 0.0577;
-        } else if (tree.equals("(1,(2)3)") || tree.equals("((1)3,2)")) {
-            return 0.0124;
-        } else if (tree.equals("((1)2)3")) {
-            return 0.0074;
-        } else return 0.0;
-    }
-
-    private double SDE2(String tree) {
-
-        if (tree.equals("((1,2),3)")) {
-            return 0.6805;
-        } else if (tree.equals("((1,2))3")) {
-            return 0.1377;
-        } else if (tree.equals("((1)2,3)")) {
-            return 0.0676;
-        } else if (tree.equals("((1,3),2)") || tree.equals("(1,(2,3))")) {
-            return 0.0377;
-        } else if (tree.equals("(1,(2)3)") || tree.equals("((1)3,2)")) {
-            return 0.0121;
-        } else if (tree.equals("((1)2)3")) {
-            return 0.0145;
-        } else return 0.0;
     }
 
     private ArrayList<Integer> listNodesUnder(Node node) {
