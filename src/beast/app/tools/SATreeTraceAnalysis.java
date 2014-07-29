@@ -305,27 +305,26 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
             topologies.add(trees.get(i));
         }
 
-        Double[] numericTrees = new Double[trees.size()];
-
-        Arrays.fill(numericTrees, 0.0);
-
-        for (int i=0; i< topologies.size(); i++) {
-            for (int j=0; j < trees.size(); j++) {
-                if (trees.get(j).equals(topologies.get(i))) {
-                    numericTrees[j] = (double)i+1;
-                }
-            }
-        }
-
-        int nSampleInterval = 100;
-        // calc effective sample size
-        double ACT = ESS.ACT(numericTrees, nSampleInterval);
-        double ESS = numericTrees.length / (ACT / nSampleInterval);
-
+//        Double[] numericTrees = new Double[trees.size()];
+//
+//        Arrays.fill(numericTrees, 0.0);
+//
+//        for (int i=0; i< topologies.size(); i++) {
+//            for (int j=0; j < trees.size(); j++) {
+//                if (trees.get(j).equals(topologies.get(i))) {
+//                    numericTrees[j] = (double)i+1;
+//                }
+//            }
+//        }
+//
+//        int nSampleInterval = 100;
+//        // calc effective sample size
+//        double ACT = ESS.ACT(numericTrees, nSampleInterval);
+//        double ESS = numericTrees.length / (ACT / nSampleInterval);
+//
         System.out.println("The number of trees in the file = " + trees.size() + ".");
-        //System.out.println("ACT = " + ACT);
-        System.out.println("ESS = " + ESS);
-        System.out.println();
+//        System.out.println("ESS = " + ESS);
+//        System.out.println();
 
         double sumPercentage = 0;
         System.out.println(getCredSetProbability()*100 + "% credible set: ");
@@ -348,13 +347,6 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         System.out.println();
         System.out.println(getCredSetProbability()*100 + "% credible set has " + i + " trees.");
         System.out.println();
-
-        /*System.out.println("Numeric tree representation");
-        for(int j =0; j < 50; j++)
-            System.out.print(j + ", ");
-        System.out.println();
-        for (int j =0; j < 50; j++)
-            System.out.print(numericTrees[j] + ", ");  */
 
     }
 
