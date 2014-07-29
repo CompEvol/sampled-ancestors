@@ -4,6 +4,7 @@ import beast.core.util.ESS;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
+import beast.util.FrequencySet;
 import beast.util.Randomizer;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Comparator;
 /**
  * @author Alexandra Gavryushkina
  */
-
+@Deprecated
 public class SampledAncestorTreeAnalysis {        //TODO implement burn in
 
     SampledAncestorTreeTrace trace;
@@ -34,11 +35,11 @@ public class SampledAncestorTreeAnalysis {        //TODO implement burn in
      */
     public void perform(boolean useNumbers) throws Exception {
        countClades(true, true);
-       countSampledAncestors(true);
-       countSAFrequencies(true, false, 0.445);
-       printTreeHeights();
-       removeFossils();
-       countTopologies(true);
+//       countSampledAncestors(true);
+//       countSAFrequencies(true, false, 0.445);
+//       printTreeHeights();
+//       removeFossils();
+//       countTopologies(true);
     }
 
 

@@ -1,10 +1,10 @@
 package beast.app.tools;
 
-import beast.evolution.tree.TreeTraceAnalysis;
-import beast.util.SANexusParser;
+import beast.evolution.tree.Tree;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Alexandra Gavryushkina
@@ -62,15 +62,15 @@ public class SampledAncestorTreeAnalyser {
         try {
             System.out.println("Reading file " + file.getName());
             reader = new FileReader(file);
-            SANexusParser parser = new SANexusParser();
-            parser.parseFile(file);
-            SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
-            SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
-
+//            SANexusParser parser = new SANexusParser();
+//            parser.parseFile(file);
+//            SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
+//            SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
 //            analysis.perform(useNumbers);
-            analysis.removeFossils();
-            TreeTraceAnalysis analysis2 = new TreeTraceAnalysis(trace.beastTrees, 0.1);
-            analysis2.report(System.out);
+            List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
+            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0);
+            analysis.analyze();
+//            analysis.report(System.out);
         }
         catch (IOException e) {
             //
