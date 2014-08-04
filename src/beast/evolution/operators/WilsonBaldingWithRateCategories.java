@@ -106,14 +106,18 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        oldDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 2;
+        if (((ZeroBranchSANode)tree.getRoot()).isFake()) {
+            oldDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 2;
+        }  else {
+            oldDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 3;
+        }
 
         int iPCategory = categoriesInput.get().getValue(iP.getNr()),
             jCategory = categoriesInput.get().getValue(j.getNr());
 
         //Hastings numerator calculation + newAge of iP
         if (attachingToLeaf) {
-            newRange = (double) 1/categoryCount;
+            newRange = 1;
             newAge = j.getHeight();
             categoriesInput.get().setValue(iP.getNr(), jCategory);
             categoriesInput.get().setValue(j.getNr(), -1);
@@ -132,7 +136,7 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
 
         //Hastings denominator calculation
         if (((ZeroBranchSANode)CiP).isDirectAncestor()) {
-            oldRange = (double) 1/categoryCount;
+            oldRange = (double) 1;
             categoriesInput.get().setValue(CiP.getNr(), iPCategory);
         }
         else {
@@ -156,7 +160,12 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
         }
         iP.setHeight(newAge);
 
-        newDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 2;
+        if (((ZeroBranchSANode)tree.getRoot()).isFake()) {
+            newDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 2;
+        } else {
+            newDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 3;
+
+        }
         DimensionCoefficient = (double) oldDimension / newDimension;
 
         fHastingsRatio = Math.abs(DimensionCoefficient * newRange / oldRange);

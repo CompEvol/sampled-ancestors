@@ -49,7 +49,7 @@ public class TreeDimensionJump extends TreeOperator {
         Node parent = leaf.getParent();
 
         if (((ZeroBranchSANode)leaf).isDirectAncestor()) {
-            oldRange = (double) 1/categoryCount;
+            oldRange = (double) 1;
             if (parent.isRoot()) {
                 final double randomNumber = Randomizer.nextExponential(1);
                 newHeight = parent.getHeight() + randomNumber;
@@ -65,7 +65,7 @@ public class TreeDimensionJump extends TreeOperator {
                 categoriesInput.get().setValue(index, newValue);
             }
         } else {
-            newRange = (double) 1/categoryCount;
+            newRange = (double) 1;
             //make sure that the branch where a new sampled node to appear is not above that sampled node
             if (getOtherChild(parent, leaf).getHeight() >= leaf.getHeight())  {
                 return Double.NEGATIVE_INFINITY;
