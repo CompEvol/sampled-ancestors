@@ -125,10 +125,12 @@
                 <distr spec="beast.math.distributions.Uniform" lower="0." upper="1." offset="0."/>
             </distribution>
 
-            <!-- monophyletic constraints on specific clades. stronglyMonothiletic means
-            that the most recent common ancestor of the clade is not a sampled node and
-             that both its children have extant descendants. If taxonsetOut is not
-             specified then taxonsetIn is considered to be mohophyletic-->
+            <!-- the clade constraints has two main inputs taxonsetIn (is required) and taxonsetOut (is optional).
+             If both are specified that means that the MRCA of taxa in taxonsetIn must not be an ancestor
+             to any of the taxa in taxonsetOut. If stronglyMonophyletic input  (note that even though there is a word
+             monophyletic in the name it does not mean that any clade has to be monophyletic) is set to true then
+             the most recent common ancestor of the clade is not a sampled node and both its children have extant
+             descendants. If taxonsetOut is not specified then taxonsetIn is considered to be mohophyletic.-->
             <distribution id="bears_6.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
                 <taxonsetIn id="bears_6" spec="TaxonSet">
                     <taxon idref="Helarctos_malayanus" spec="Taxon"/>
@@ -147,26 +149,11 @@
                     <taxon idref="Tremarctos_ornatus" spec="Taxon"/>
                 </taxonsetOut>
             </distribution>
-            <distribution id="bears_4.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
-                <taxonsetIn id="bears_4" spec="TaxonSet">
-                    <taxon idref="Arctodus_simus" spec="Taxon"/>
-                    <taxon idref="Tremarctos_ornatus" spec="Taxon"/>
-                    <taxon idref="Helarctos_malayanus" spec="Taxon"/>
-                    <taxon idref="Melursus_ursinus" spec="Taxon"/>
-                    <taxon idref="Ursus_americanus" spec="Taxon"/>
-                    <taxon idref="Ursus_arctos" spec="Taxon"/>
-                    <taxon idref="Ursus_thibetanus" spec="Taxon"/>
-                    <taxon idref="Ursus_maritimus" spec="Taxon"/>
-                    <taxon idref="Ursus_abstrusus" spec="Taxon"/>
-                    <taxon idref="Ursus_spelaeus" spec="Taxon"/>
-                </taxonsetIn>
-                <taxonsetOut spec="TaxonSet">
-                    <taxon idref="Canis_lupus" spec="Taxon"/>
-                    <taxon idref="Phoca_largha" spec="Taxon"/>
-                    <taxon idref="Ailuropoda_melanoleuca" spec="Taxon"/>
-                </taxonsetOut>
-            </distribution>
-            <distribution id="bears_3.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
+
+            <!-- This constraint specifies the bear clade, which is monophyletic. If a clade is monophyletic then
+              the taxonsetOut should include all the taxa but the taxa in taxonsetIn. This also can be specified by simply
+             omitting taxonsetOut input as it is done for this constraint -->
+            <distribution id="bears_3.prior" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
                 <taxonsetIn id="bears_3" spec="TaxonSet">
                     <taxon idref="Ailuropoda_melanoleuca" spec="Taxon"/>
                     <taxon idref="Tremarctos_ornatus" spec="Taxon"/>
@@ -186,46 +173,12 @@
                     <taxon idref="Ursus_abstrusus" spec="Taxon"/>
                     <taxon idref="Ursus_spelaeus" spec="Taxon"/>
                 </taxonsetIn>
-                <taxonsetOut spec="TaxonSet">
-                    <taxon idref="Canis_lupus" spec="Taxon"/>
-                    <taxon idref="Phoca_largha" spec="Taxon"/>
-                </taxonsetOut>
             </distribution>
-            <distribution id="bears_seals_2.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
-                <taxonsetIn id="bears_seals_2" spec="TaxonSet">
-                    <taxon idref="Ailuropoda_melanoleuca" spec="Taxon"/>
-                    <taxon idref="Tremarctos_ornatus" spec="Taxon"/>
-                    <taxon idref="Helarctos_malayanus" spec="Taxon"/>
-                    <taxon idref="Melursus_ursinus" spec="Taxon"/>
-                    <taxon idref="Ursus_americanus" spec="Taxon"/>
-                    <taxon idref="Ursus_arctos" spec="Taxon"/>
-                    <taxon idref="Ursus_thibetanus" spec="Taxon"/>
-                    <taxon idref="Ursus_maritimus" spec="Taxon"/>
-                    <taxon idref="Parictis_montanus" spec="Taxon"/>
-                    <taxon idref="Zaragocyon_daamsi" spec="Taxon"/>
-                    <taxon idref="Ballusia_elmensis" spec="Taxon"/>
-                    <taxon idref="Ursavus_primaevus" spec="Taxon"/>
-                    <taxon idref="Ursavus_brevihinus" spec="Taxon"/>
-                    <taxon idref="Indarctos_vireti" spec="Taxon"/>
-                    <taxon idref="Indarctos_arctoides" spec="Taxon"/>
-                    <taxon idref="Indarctos_punjabiensis" spec="Taxon"/>
-                    <taxon idref="Ailurarctos_lufengensis" spec="Taxon"/>
-                    <taxon idref="Agriarctos_spp" spec="Taxon"/>
-                    <taxon idref="Kretzoiarctos_beatrix" spec="Taxon"/>
-                    <taxon idref="Arctodus_simus" spec="Taxon"/>
-                    <taxon idref="Ursus_abstrusus" spec="Taxon"/>
-                    <taxon idref="Ursus_spelaeus" spec="Taxon"/>
-                    <taxon idref="Phoca_largha" spec="Taxon"/>
-                    <taxon idref="Enaliarctos_tedfordi" spec="Taxon"/>
-                    <taxon idref="Proneotherium_repenningi" spec="Taxon"/>
-                    <taxon idref="Leptophoca_lenis" spec="Taxon"/>
-                    <taxon idref="Acrophoca" spec="Taxon"/>
-                    <taxon idref="Phoca_vitulina" spec="Taxon"/>
-                </taxonsetIn>
-                <taxonsetOut spec="TaxonSet">
-                    <taxon idref="Canis_lupus" spec="Taxon"/>
-                </taxonsetOut>
-            </distribution>
+
+            <!-- this constraint includes all the taxa. Generally such constraint would be redundant but it
+            can be used to specify the stronglyMonophyletic input for the root node as it is done in this constraint.
+            Since the stronglyMonophyletic input is true, the root is not a sampled node and there are extant samples on
+             both sides of the root.  -->
             <distribution id="whole_group_1.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
                 <taxonsetIn id="whole_group_1" spec="TaxonSet">
                     <taxon id="Ailuropoda_melanoleuca" spec="Taxon"/>
@@ -274,6 +227,8 @@
     </distribution>
 
 
+    <!-- the starting tree can be specified directly passing in a newick tree as in the commented example. If it is specified like this
+    then init input of run should be removed and stateNode tree has to refer to this tree through idref="tree". -->
     <!-- <tree spec='ZeroBranchSATreeParser' id='tree' nodetype="beast.evolution.tree.ZeroBranchSANode" trait='@tipDates'>
         <taxonset spec='beast.evolution.alignment.TaxonSet' id='taxa' alignment='@alignment'/>
         <input name='newick'>
@@ -283,11 +238,13 @@
 
     <run chainLength="1000000000" id="mcmc" spec="MCMC" storeEvery="1000000" distribution="@posterior">
 
+        <!--This input initialize the tree state. It creates a random tree which obeys the clade constraints however
+            it makes all the clades that encounter as taxonsetIn inputs of clade constraints monophyletic. Make sure
+             that every pair of taxonsetIn inputs is consistent, that is, the taxa sets in the two taxonsetIn inputs
+             either don't intersect or one is a strict  subset of another. -->
         <init spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree' nodetype="beast.evolution.tree.ZeroBranchSANode" initial='@tree' taxonset='@taxonSet'>
             <cladeConstraint idref="whole_group_1.prior"/>
-            <cladeConstraint idref="bears_seals_2.prior"/>
             <cladeConstraint idref="bears_3.prior"/>
-            <cladeConstraint idref="bears_4.prior"/>
             <cladeConstraint idref="bears_6.prior"/>
 
             <populationModel id='ConstantPopulation' spec='ConstantPopulation'>
@@ -296,7 +253,8 @@
         </init>
 
         <state id="state" storeEvery="1000000">
-            <!-- <stateNode idref="tree"/>  -->
+            <!-- If the tree is initialized with newick tree then use this stateNode: <stateNode idref="tree"/>
+                 instead the following one   -->
             <stateNode id="tree" trait='@tipDates' spec='beast.evolution.tree.ZeroBranchSATree' nodetype='beast.evolution.tree.ZeroBranchSANode'>
                 <taxonset idref="taxonSet"/>
             </stateNode>
@@ -346,9 +304,7 @@
             <log idref="jointTreeLikelihood"/>
             <log id="treeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
             <!-- logs the heights of monophyletic clades (the height of the most recent common ancestor of in-taxa) -->
-            <log idref="bears_seals_2.prior"/>
             <log idref="bears_3.prior"/>
-            <log idref="bears_4.prior"/>
             <log idref="bears_6.prior"/>
             <log id="SACount" spec="beast.evolution.tree.SALogger" tree="@tree"/>
             <log idref="diversificationRate"/>

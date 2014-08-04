@@ -332,14 +332,19 @@
         <operator id="updownTree" spec="UpDownOperator" scaleFactor=".95" weight="30" up="@clock.rate" down="@tree"/>
 
 
-        <!-- this operator allows to sample dates of sampled node -->
+        <!-- this operator allows to sample dates of sampled nodes. The dates will be variable for all the
+         taxa listed in the taxonset input and in the samplingDates inputs -->
         <operator spec='SampledNodeDateRandomWalkerForZeroBranchSATrees' windowSize="1"  tree="@tree" weight="10">
-            <!-- this input specify the taxa with variable dates. In this exampled only one taxon has a variably sampling date. -->
+            <!-- this input specify the taxa with variable dates. In this example only one taxon has a variably sampling date.
+                If this input is not specified then all the leaves except the most recent are assumed to have
+                variable sampling dates. -->
             <taxonset spec="TaxonSet">
                 <taxon idref="Ursavus_primaevus"/>
             </taxonset>
-            <!-- This input specifies bounds for taxon sampling date. It should be specified for each taxon with a sampling date range.
-            In this example, the only taxon with a varaible sampling date has also sampling date bounds. -->
+            <!-- This input specifies bounds for taxon sampling date. It should be specified for each taxon
+                with a sampling date range. In this example, the only taxon with a varaible sampling date
+                has also sampling date range with bounds 1 and 15. Note that if a samplingDates is specified for
+                a taxon then the bounds will be used even if this taxon is not in taxonset. -->
             <samplingDates id="samplingDate1" spec="beast.evolution.tree.SamplingDate" taxon="Ursavus_primaevus" upper="15." lower="1."/>
         </operator>
 
