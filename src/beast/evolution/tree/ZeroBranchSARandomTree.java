@@ -26,22 +26,20 @@
 package beast.evolution.tree;
 
 
-import java.util.*;
-import java.util.function.BooleanSupplier;
-
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
-import beast.core.BEASTInterface;
-import beast.core.Input.Validate;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.coalescent.PopulationFunction;
-import beast.math.distributions.MRCAPrior;
-import beast.math.distributions.ParametricDistribution;
 import beast.util.HeapSort;
 import beast.util.Randomizer;
+
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 
 
@@ -50,7 +48,7 @@ import beast.util.Randomizer;
 @Description("This class provides the basic engine for coalescent simulation of a given demographic model over a given time period. ")
 public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNodeInitialiser {
     public Input<Alignment> taxaInput = new Input<Alignment>("taxa", "set of taxa to initialise tree specified by alignment");
-    public Input<TaxonSet> m_taxonset = new Input<TaxonSet>("taxonset","set of taxa to initialise tree with specified by a taxonset", Validate.REQUIRED);
+//    public Input<TaxonSet> m_taxonset = new Input<TaxonSet>("taxonset","set of taxa to initialise tree with specified by a taxonset", Validate.REQUIRED);
     public Input<PopulationFunction> populationFunctionInput = new Input<PopulationFunction>("populationModel", "population function for generating coalescent???", Validate.REQUIRED);
     public Input<List<CladeConstraint>> cladeConstraintsInput = new Input<List<CladeConstraint>>("cladeConstraint", "specifies monophyletic clades", new ArrayList<CladeConstraint>());
     public Input<Double> rootHeightInput = new Input<Double>("rootHeight", "If specified the tree will be scaled to match the root height, if constraints allow this");

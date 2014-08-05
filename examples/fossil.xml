@@ -242,7 +242,7 @@
             it makes all the clades that encounter as taxonsetIn inputs of clade constraints monophyletic. Make sure
              that every pair of taxonsetIn inputs is consistent, that is, the taxa sets in the two taxonsetIn inputs
              either don't intersect or one is a strict  subset of another. -->
-        <init spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree' nodetype="beast.evolution.tree.ZeroBranchSANode" initial='@tree' taxonset='@taxonSet'>
+        <init spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree' nodetype="beast.evolution.tree.ZeroBranchSANode" initial='@tree'>
             <cladeConstraint idref="whole_group_1.prior"/>
             <cladeConstraint idref="bears_3.prior"/>
             <cladeConstraint idref="bears_6.prior"/>
