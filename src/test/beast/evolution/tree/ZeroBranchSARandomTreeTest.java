@@ -95,8 +95,9 @@ public class ZeroBranchSARandomTreeTest {
                     "cladeConstraint", cladeConstraints
             );
 
-//            System.out.println(TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true));
-            assert TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true).contentEquals(treeTopology);
+            String sortedNewickTopology = TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true);
+//            System.out.println(sortedNewickTopology);
+            assert sortedNewickTopology.contentEquals(treeTopology);
         }
     }
 
@@ -147,8 +148,9 @@ public class ZeroBranchSARandomTreeTest {
                     "cladeConstraint", cladeConstraints
             );
 
-            System.out.println(TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true));
-//            assert TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true).contentEquals(treeTopology);
+            String sortedNewickTopology = TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true);
+//            System.out.println(sortedNewickTopology);
+            assert sortedNewickTopology.contentEquals(treeTopology);
         }
     }
 }
