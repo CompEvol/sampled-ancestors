@@ -9,6 +9,7 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.evolution.tree.ZeroBranchSATree;
+import beast.util.ZeroBranchSATreeParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @Citation("Gavryushkina, A., Welch, D., Stadler, T., and Drummond, A. J. (2014) " +
         "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration")
-public class SABDSkylineModel extends BirthDeathSkylineModel {
+public class SABDSkylineModel extends BirthDeathSkylineModel {        // for version 1.0.1 you need r107 of bdssm package and 2.1.3 beast2
 
     public Input<RealParameter> removalProbabilityChangeTimesInput =
             new Input<RealParameter>("removalProbabilityChangeTimes", "The times t_i specifying when removal probability changes occur", (RealParameter) null);
@@ -47,7 +48,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {
 
     @Override
     public void initAndValidate() throws Exception {
-        if (origin.get() != null && origin.get().getValue() < treeInput.get().getRoot().getHeight()){
+        if (treeInput.get() instanceof ZeroBranchSATreeParser && origin.get() != null && origin.get().getValue() < treeInput.get().getRoot().getHeight()){
             throw new RuntimeException("Initial value of origin should be greater than initial root height");
         }
 

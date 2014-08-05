@@ -5,6 +5,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.*;
+import beast.util.ZeroBranchSATreeParser;
 
 /**
  * @author Alexandra Gavryushkina
@@ -97,7 +98,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
             throw new RuntimeException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
 
-        if (originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
+        if (treeInput.get() instanceof ZeroBranchSATreeParser && originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
             throw new RuntimeException("Initial value of origin should be greater than initial root height");
 
         }
