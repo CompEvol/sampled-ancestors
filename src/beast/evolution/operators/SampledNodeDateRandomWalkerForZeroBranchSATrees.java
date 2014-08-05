@@ -68,16 +68,10 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
             int leafNodeCount = tree.getLeafNodeCount();
             int i = Randomizer.nextInt(leafNodeCount);
             node = tree.getNode(i);
-//            do {
-//                int i = Randomizer.nextInt(leafNodeCount);
-//                node = tree.getNode(i);
-//            }  while (!node.isLeaf());
         }  else {
             int i = Randomizer.nextInt(taxonIndices.length);
             node = tree.getNode(taxonIndices[i]);
         }
-
-
 
         double value = node.getHeight();
 

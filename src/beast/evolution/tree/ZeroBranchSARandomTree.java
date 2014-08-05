@@ -70,7 +70,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     // number of the next internal node, us ed when creating new internal nodes
     int nextNodeNr;
 
-    // used to indicate one of the MRCA constraints could not be met
+    // used to indicate one of the clade constraints could not be met
     protected class ConstraintViolatedException extends Exception {
         private static final long serialVersionUID = 1L;
     }
@@ -242,7 +242,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
      * @param taxa         the set of taxa to simulate a coalescent tree between
      * @param demoFunction the demographic function to use
      */
-    public void simulateTree(final List<String> taxa, final PopulationFunction demoFunction) throws Exception {
+    public void simulateTree(final List<String> taxa, final PopulationFunction demoFunction) {
         if (taxa.size() == 0)
             return;
 
@@ -293,7 +293,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
 
 
     private Node simulateCoalescent(final int iIsMonophyleticNode, final List<Node> allCandidates, final List<Node> candidates, final PopulationFunction demoFunction)
-            throws Exception {
+            throws ConstraintViolatedException {
         final List<Node> remainingCandidates = new ArrayList<Node>();
         final BitSet taxaDone = new BitSet(nrOfTaxa);
         for (final int iMonoNode : children[iIsMonophyleticNode]) {
@@ -326,7 +326,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
      *         coalescent under the given demographic model.
      * @throws beast.evolution.tree.RandomTree.ConstraintViolatedException
      */
-    public Node simulateCoalescent(boolean isStronglyMonophyletic, final List<Node> nodes, final PopulationFunction demographic) throws Exception {
+    public Node simulateCoalescent(boolean isStronglyMonophyletic, final List<Node> nodes, final PopulationFunction demographic) throws ConstraintViolatedException {
         // sanity check - disjoint trees
 
         // if( ! Tree.Utils.allDisjoint(nodes) ) {
@@ -348,7 +348,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     }
 
     public List<Node> simulateCoalescent(boolean isStronglyMonophyletic, final List<Node> nodes, final PopulationFunction demographic, double currentHeight,
-                                         final double maxHeight) throws Exception {
+                                         final double maxHeight) throws ConstraintViolatedException {
 
         Node extantNode = nodes.get(0);
 
@@ -455,13 +455,6 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
         }
 
         return nodeList;
-
-        // Node[] nodesLeft = new Node[nodeList.size()];
-        // for (int i = 0; i < nodesLeft.length; i++) {
-        // nodesLeft[i] = nodeList.get(i);
-        // }
-        //
-        // return nodesLeft;
     }
 
     /**
@@ -485,7 +478,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     }
 
     /**
-     * @return the numver of active nodes (equate to lineages)
+     * @return the number of active nodes (equate to lineages)
      */
     private int getActiveNodeCount() {
         return activeNodeCount;
@@ -508,7 +501,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
      * @param height
      * @return
      */
-    private double coalesceTwoActiveNodes(final double fMinHeight, double height) throws Exception {
+    private double coalesceTwoActiveNodes(final double fMinHeight, double height) throws ConstraintViolatedException {
         final int node1 = Randomizer.nextInt(activeNodeCount);
         int node2 = node1;
         while (node2 == node1) {
