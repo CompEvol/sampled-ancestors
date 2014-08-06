@@ -3,10 +3,7 @@ package test.beast.evolution.tree;
 import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.CladeConstraint;
-import beast.evolution.tree.TreeUtils;
-import beast.evolution.tree.ZeroBranchSARandomTree;
-import beast.evolution.tree.ZeroBranchSATree;
+import beast.evolution.tree.*;
 import beast.evolution.tree.coalescent.ConstantPopulation;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +16,7 @@ import java.util.List;
  */
 public class ZeroBranchSARandomTreeTest {
     String treeTopology = "(((A,B),C),(D,E))";
+    String[] topologies = {"(((A,B),C),(D,E))", "(((B,C),A),(D,E))", "((((A,B),C),E),D)", "((((B,C),A),E),D)"};
 
     Taxon A;
     Taxon B;
@@ -26,6 +24,8 @@ public class ZeroBranchSARandomTreeTest {
     Taxon D;
     Taxon E;
     TaxonSet taxonSetAll;
+
+    TraitSet traitSet;
 
     @Before
     public void setUp() throws Exception {
@@ -36,6 +36,9 @@ public class ZeroBranchSARandomTreeTest {
         E = new Taxon("E");
         taxonSetAll = new TaxonSet();
         taxonSetAll.initByName("taxon", A, "taxon", B, "taxon", C, "taxon", D, "taxon", E);
+        traitSet = new TraitSet();
+        traitSet.initByName("value", "A=0.0, B=1.0, C=0.0, D=0.0, E=2.0", "taxa", taxonSetAll, "traitname", "date-backward");
+        traitSet.initAndValidate();
     }
 
     @Test
@@ -106,7 +109,7 @@ public class ZeroBranchSARandomTreeTest {
 //        Randomizer.setSeed(777);
 
         ZeroBranchSATree tree = new ZeroBranchSATree();
-        tree.initByName("taxonset", taxonSetAll);
+        tree.initByName("taxonset", taxonSetAll, "trait", traitSet);
 
         // cladeConstraints
         List<CladeConstraint> cladeConstraints = new ArrayList<>();
@@ -115,12 +118,12 @@ public class ZeroBranchSARandomTreeTest {
         clade.setID("constraint1");
         TaxonSet taxonSetIn = new TaxonSet();
         taxonSetIn.initByName("taxon", A, "taxon", B, "taxon", C);
-        TaxonSet taxonSetOut = new TaxonSet();
-        taxonSetOut.initByName("taxon", D);
+//        TaxonSet taxonSetOut = new TaxonSet();
+//        taxonSetOut.initByName("taxon", D);
         clade.initByName(
                 "tree", tree,
                 "taxonsetIn", taxonSetIn,
-                "taxonsetOut", taxonSetOut,
+                //"taxonsetOut", taxonSetOut,
                 "stronglyMonophyletic", true
         );
         cladeConstraints.add(clade);
@@ -149,8 +152,13 @@ public class ZeroBranchSARandomTreeTest {
             );
 
             String sortedNewickTopology = TreeUtils.sortedNewickTopology(sARandomTree.getRoot(), true);
-//            System.out.println(sortedNewickTopology);
-            assert sortedNewickTopology.contentEquals(treeTopology);
+            //System.out.println(sortedNewickTopology);
+
+            boolean contain = false;
+            for (String topology:topologies)  {
+                contain = (contain || sortedNewickTopology.contentEquals(topology));
+            }
+            assert contain;
         }
     }
 }
