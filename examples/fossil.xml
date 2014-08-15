@@ -250,6 +250,7 @@
             <populationModel id='ConstantPopulation' spec='ConstantPopulation'>
                 <popSize id='randomPopSize' spec='parameter.RealParameter' value='1'/>
             </populationModel>
+            <taxonset idref="taxonSet"/>
         </init>
 
         <state id="state" storeEvery="1000000">
@@ -287,6 +288,22 @@
         <operator id='rootScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="5.0" tree="@tree" rootOnly='true'/>
         <operator id="updownTree" spec="UpDownOperator" scaleFactor=".95" weight="30" up="@clock.rate" down="@tree"/>
 
+        <!-- this operator allows to sample dates of sampled nodes. The dates will be variable for all the
+         taxa listed in the taxonset input and in the samplingDates inputs -->
+        <operator spec='SampledNodeDateRandomWalkerForZeroBranchSATrees' windowSize="1"  tree="@tree" weight="10">
+            <!-- this input specify the taxa with variable dates. In this example only one taxon has a variably sampling date.
+                If this input is not specified then all the leaves except the most recent are assumed to have
+                variable sampling dates. -->
+            <taxonset spec="TaxonSet">
+                <taxon idref="Ursavus_primaevus"/>
+            </taxonset>
+            <!-- This input specifies bounds for taxon sampling date. It should be specified for each taxon
+                with a sampling date range. In this example, the only taxon with a varaible sampling date
+                has also sampling date range with bounds 1 and 15. Note that if a samplingDates is specified for
+                a taxon then the bounds will be used even if this taxon is not in taxonset. -->
+            <samplingDates id="samplingDate1" spec="beast.evolution.tree.SamplingDate" taxon="Ursavus_primaevus" upper="15." lower="1."/>
+        </operator>
+
         <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="15.0"/>
 
         <operator spec='ScaleOperator' scaleFactor=".75" weight=".2" parameter="@rateAC"/>
@@ -298,7 +315,7 @@
         <operator autoOptimize="true" delta="0.2" id="FrequenciesExchanger" integer="false" spec="DeltaExchangeOperator" weight="0.1" parameter="@freqParameter"/>
 
 
-        <logger fileName="bears.$(seed).log" id="tracelog" logEvery="1000" mode="autodetect" model="@posterior">
+        <logger fileName="fossil_example.$(seed).log" id="tracelog" logEvery="1000" mode="autodetect" model="@posterior">
             <distribution idref="posterior" name="log"/>
             <log idref="BDlikelihood"/>
             <log idref="jointTreeLikelihood"/>
@@ -332,7 +349,7 @@
             <log idref="treeHeight"/>
         </logger>
 
-        <logger spec="beast.evolution.tree.SATreeLogger" fileName="bears.$(seed).trees" id="treelog" logEvery="500000" mode="tree" logWithZeroBranches="true">
+        <logger spec="beast.evolution.tree.SATreeLogger" fileName="fossil_example.$(seed).trees" id="treelog" logEvery="500000" mode="tree" logWithZeroBranches="true">
             <tree idref="tree" name="log"/>
         </logger>
 

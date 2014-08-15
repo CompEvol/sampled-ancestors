@@ -18,7 +18,8 @@ import java.util.List;
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
 public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRandomWalker {
 
-    public Input<List<SamplingDate>> samplingDatesInput = new Input<>("samplingDates", "List of sampling dates", new ArrayList<>());
+    public Input<List<SamplingDate>> samplingDatesInput = new Input<>("samplingDates",
+            "List of sampling dates", new ArrayList<SamplingDate>());
 
     boolean useNodeNumbers;
     List<String> samplingDateTaxonNames = new ArrayList<>();
