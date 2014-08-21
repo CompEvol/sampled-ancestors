@@ -87,12 +87,12 @@
             </logger>
 
             <operator id='SATreeDimensionJump.t:$(n)' spec='TreeDimensionJump' weight="10" tree="@Tree.t:$(n)"/>
-            <operator id='SAWilsonBalding.t:$(n)' spec='WilsonBaldingForFakeSampledAncestorTrees' weight="3" tree="@Tree.t:$(n)"/>
-            <operator id='SAwideExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="3" tree="@Tree.t:$(n)"/>
-            <operator id='SAnarrowExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' weight="15" tree="@Tree.t:$(n)"/>
-            <operator id='SAtreeUniform.t:$(n)' spec='UniformForFakeSATrees' weight="30" tree="@Tree.t:$(n)"/>
-            <operator id='SArootScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)" rootOnly='true'/>
-            <operator id='SAtreeScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
+            <operator id='SAWilsonBalding.t:$(n)' spec='WilsonBaldingForZeroBranchSampledAncestorTrees' weight="3" tree="@Tree.t:$(n)"/>
+            <operator id='SAwideExchange.t:$(n)' spec='ExchangeForZeroBranchSampledAncestorTrees' isNarrow="false" weight="3" tree="@Tree.t:$(n)"/>
+            <operator id='SAnarrowExchange.t:$(n)' spec='ExchangeForZeroBranchSampledAncestorTrees' weight="15" tree="@Tree.t:$(n)"/>
+            <operator id='SAtreeUniform.t:$(n)' spec='UniformForZeroBranchSATrees' weight="30" tree="@Tree.t:$(n)"/>
+            <operator id='SArootScaler.t:$(n)' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)" rootOnly='true'/>
+            <operator id='SAtreeScaler.t:$(n)' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
 
             <operator id='proportionInvariantScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
             <operator id='mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
@@ -178,12 +178,12 @@
     </distribution>
 
     <operator id='SATreeDimensionJump.t:$(n)' spec='TreeDimensionJump' weight="10" tree="@Tree.t:$(n)"/>
-    <operator id='SAWilsonBalding.t:$(n)' spec='WilsonBaldingForFakeSampledAncestorTrees' weight="3" tree="@Tree.t:$(n)"/>
-    <operator id='SAwideExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' isNarrow="false" weight="3" tree="@Tree.t:$(n)"/>
-    <operator id='SAnarrowExchange.t:$(n)' spec='ExchangeForFakeSampledAncestorTrees' weight="15" tree="@Tree.t:$(n)"/>
-    <operator id='SAtreeUniform.t:$(n)' spec='UniformForFakeSATrees' weight="30" tree="@Tree.t:$(n)"/>
-    <operator id='SArootScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)" rootOnly='true'/>
-    <operator id='SAtreeScaler.t:$(n)' spec='ScaleOperatorForFakeSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
+    <operator id='SAWilsonBalding.t:$(n)' spec='WilsonBaldingForZeroBranchSampledAncestorTrees' weight="3" tree="@Tree.t:$(n)"/>
+    <operator id='SAwideExchange.t:$(n)' spec='ExchangeForZeroBranchSampledAncestorTrees' isNarrow="false" weight="3" tree="@Tree.t:$(n)"/>
+    <operator id='SAnarrowExchange.t:$(n)' spec='ExchangeForZeroBranchSampledAncestorTrees' weight="15" tree="@Tree.t:$(n)"/>
+    <operator id='SAtreeUniform.t:$(n)' spec='UniformForZeroBranchSATrees' weight="30" tree="@Tree.t:$(n)"/>
+    <operator id='SArootScaler.t:$(n)' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)" rootOnly='true'/>
+    <operator id='SAtreeScaler.t:$(n)' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
 
 	<operator id='SAoriginScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@SAorigin.t:$(n)"/>
     <operator id='SAbirthScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAbirthRate.t:$(n)"/>
