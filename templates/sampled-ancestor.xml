@@ -120,10 +120,10 @@
         <connect srcID='MutationRatePrior.s:$(n)'         targetID='prior' inputName='distribution' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
 
         <connect srcID='Tree.t:$(n)'                      targetID='state' inputName='stateNode' if='inposterior(Tree.t:$(n))'/>
-        <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(SAproportionInvariant.s:$(n)) andAproportionInvariant.s:$(n)/estimate=true'/>
-        <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(SAmutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
-        <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(SAgammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
-        <connect srcID='clockRate.c:$(n)'                 targetID='state' inputName='stateNode' if='inlikelihood(SAclockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+        <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
+        <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
+        <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
+        <connect srcID='clockRate.c:$(n)'                 targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
 
         <connect srcID='proportionInvariantScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Scales proportion of invariant sites parameter of partition $(n)</connect>
         <connect srcID='mutationRateScaler.s:$(n)'        targetID='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
