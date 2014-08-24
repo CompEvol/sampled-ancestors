@@ -9,7 +9,7 @@
                      suppressInputs='beast.evolution.speciation.SABDSamplingThroughTimeModel.birthRate,
     	beast.evolution.speciation.SABDSamplingThroughTimeModel.deathRate,
 	beast.evolution.speciation.SABDSamplingThroughTimeModel.samplingRate,
-	beast.evolution.speciation.SABDSamplingThroughTimeModel.becomeNoninfectiousAfterSamplingProbability,
+	beast.evolution.speciation.SABDSamplingThroughTimeModel.removalProbability,
 	beast.evolution.speciation.SABDSamplingThroughTimeModel.tree,
 	beast.evolution.speciation.SABDSamplingThroughTimeModel.treeIntervals,
 	beast.math.distributions.MarkovChainDistribution.parameter
@@ -54,7 +54,7 @@
                 <parameter name="birthRate" id="SAbirthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
                 <parameter name="deathRate" id="SAdeathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
                 <parameter name="samplingRate" id="SAsamplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
-                <parameter name="becomeNoninfectiousAfterSamplingProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
+                <parameter name="removalProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
 	        </BirthDeathSamplingModel>
 
 	        <distribution  id='SAoriginPrior.t:$(n)' x="@SAorigin.t:$(n)" spec='beast.math.distributions.Prior'>
@@ -103,7 +103,7 @@
             <operator id='SAdeathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAdeathRate.t:$(n)"/>
 	        <operator id='SAsamplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAsamplingRate.t:$(n)"/>
             <operator id='SArScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@SAr.t:$(n)"/>
-            <operator id='SArJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" becomeNoninfectiousAfterSamplingProbability="@SAr.t:$(n)" tree = "@Tree.t:$(n)"/>
+            <operator id='SArJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" removalProbability="@SAr.t:$(n)" tree = "@Tree.t:$(n)"/>
 
 			<operator id='StrictClockRateScaler.c:$(n)' spec='ScaleOperator' scaleFactor="0.75" weight="3" parameter='@clockRate.c:$(n)'/>
 
@@ -158,7 +158,7 @@
         <parameter name="birthRate" id="SAbirthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
         <parameter name="deathRate" id="SAdeathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
         <parameter name="samplingRate" id="SAsamplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
+        <parameter name="removalProbability" id="SAr.t:$(n)" value="0.5" lower="0." upper="1."/>
     </BirthDeathSamplingModel>
 
     <distribution  id='SAoriginPrior.t:$(n)' x="@SAorigin.t:$(n)" spec='beast.math.distributions.Prior'>
@@ -190,7 +190,7 @@
     <operator id='SAdeathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAdeathRate.t:$(n)"/>
 	<operator id='SAsamplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@SAsamplingRate.t:$(n)"/>
     <operator id='SArScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@SAr.t:$(n)"/>
-    <operator id='SArJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" becomeNoninfectiousAfterSamplingProbability="@SAr.t:$(n)" tree = "@Tree.t:$(n)"/>
+    <operator id='SArJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" removalProbability="@SAr.t:$(n)" tree = "@Tree.t:$(n)"/>
 
     <plugin id='SACount.t:$(n)' spec='beast.evolution.tree.SALogger' tree='@Tree.t:$(n)'/>
 
@@ -212,8 +212,8 @@
             <connect srcID='SArScaler.t:$(n)'            targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAr.t:$(n)/estimate=true'/>
             <connect srcID='SArJumpOperator.t:$(n)'      targetID='mcmc'    inputName='operator'     if='inposterior(SABirthDeathSampling.t:$(n)) and SAr.t:$(n)/estimate=true'/>
 
-            <connect srcID='SAr.t:$(n)'                  targetID='SATreeDimensionJump.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
-            <connect srcID='SAr.t:$(n)'                  targetID='SAWilsonBalding.t:$(n)'     inputName='becomeNoninfectiousAfterSamplingProbability'/>
+            <connect srcID='SAr.t:$(n)'                  targetID='SATreeDimensionJump.t:$(n)' inputName='removalProbability'/>
+            <connect srcID='SAr.t:$(n)'                  targetID='SAWilsonBalding.t:$(n)'     inputName='removalProbability'/>
 
             <connect srcID='SABirthDeathSampling.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n))'/>
             <connect srcID='SACount.t:$(n)'              targetID='tracelog' inputName='log' if='inposterior(SABirthDeathSampling.t:$(n)) and inposterior(Tree.t:$(n))'/>

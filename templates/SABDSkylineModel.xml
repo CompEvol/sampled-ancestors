@@ -29,7 +29,7 @@
         <parameter name="birthRate" id="birthRate.t:$(n)" value ="1.5" lower ="0." upper="100"/>
         <parameter name="deathRate" id="deathRate.t:$(n)" value ="0.2" lower="0." upper="10"/>
         <parameter name="samplingRate" id="samplingRate.t:$(n)" value="0.5" lower="0." upper="10"/>
-        <parameter name="becomeNoninfectiousAfterSamplingProbability" id="r.t:$(n)" value="0.5" lower="0." upper="1."/>
+        <parameter name="removalProbability" id="r.t:$(n)" value="0.5" lower="0." upper="1."/>
         <parameter name="samplingRateChangeTimes" id="samplingRateChangeTimes.t:$(n)" value="0." lower="0." upper="1."/>
         <reverseTimeArrays spec='parameter.BooleanParameter' value='false false true false'/>
 	</SABDSkylineModel>
@@ -56,7 +56,7 @@
     <operator id='deathScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@deathRate.t:$(n)"/>
 	<operator id='samplingScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingRate.t:$(n)"/>
     <operator id='rScaler.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@r.t:$(n)"/>
-    <operator id='rJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" becomeNoninfectiousAfterSamplingProbability="@r.t:$(n)" tree = "@Tree.t:$(n)"/>
+    <operator id='rJumpOperator.t:$(n)' spec='JumpToPoint' weight = "1" removalProbability="@r.t:$(n)" tree = "@Tree.t:$(n)"/>
 
     <plugin id='SACount.t:$(n)' spec='beast.evolution.tree.SALogger' tree='@Tree.t:$(n)'/>
 
@@ -76,8 +76,8 @@
             <connect srcID='rScaler.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(SABDSkyline.t:$(n)) and r.t:$(n)/estimate=true'/>
             <connect srcID='rJumpOperator.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(SABDSkyline.t:$(n)) and r.t:$(n)/estimate=true'/>
 
-            <connect srcID='r.t:$(n)' targetID='TreeDimensionJump.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
-            <connect srcID='r.t:$(n)' targetID='WilsonBalding.t:$(n)' inputName='becomeNoninfectiousAfterSamplingProbability'/>
+            <connect srcID='r.t:$(n)' targetID='TreeDimensionJump.t:$(n)' inputName='removalProbability'/>
+            <connect srcID='r.t:$(n)' targetID='WilsonBalding.t:$(n)' inputName='removalProbability'/>
 
             <connect srcID='SABDSkyline.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(SABDSkyline.t:$(n))'/>
             <plate var='p' range='origin,birthRate,deathRate,samplingRate,r'>

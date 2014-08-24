@@ -352,9 +352,6 @@
         <logger spec="beast.evolution.tree.SATreeLogger" fileName="fossil_example.$(seed).trees" id="treelog" logEvery="500000" mode="tree" logWithZeroBranches="true">
             <tree idref="tree" name="log"/>
         </logger>
-
-
-
     </run>
 
 </beast>
