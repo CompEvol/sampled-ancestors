@@ -47,13 +47,16 @@ public class ScaleOperatorForZeroBranchSATrees extends ScaleOperator {
                         return Double.NEGATIVE_INFINITY;
                     }
 
-                    root.setHeight(fNewHeight);
                     if (((ZeroBranchSANode)root).isFake() && scaleSNodes) {
                         Node directAncestor = root.getLeft();
                         if (!((ZeroBranchSANode)directAncestor).isDirectAncestor())
                             directAncestor = root.getRight();
+                        root.setHeight(fNewHeight);
                         directAncestor.setHeight(fNewHeight);
+                    } else {
+                        root.setHeight(fNewHeight);
                     }
+
                     return -Math.log(scale);
                 } else {
                     // scale the beast.tree

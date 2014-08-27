@@ -238,9 +238,9 @@ public class ZeroBranchSANode extends Node {
      */
     public void scale(double fScale, boolean scaleSNodes) throws Exception {
         startEditing();
+        isDirty |= Tree.IS_DIRTY;
         if (scaleSNodes || (!isLeaf() && !isFake())) {
             height *= fScale;
-            isDirty |= Tree.IS_DIRTY;
         }
         if (!isLeaf()) {
             ((ZeroBranchSANode)getLeft()).scale(fScale, scaleSNodes);
