@@ -434,7 +434,7 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {        // for ver
 
         int internalNodeCount = tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
 
-        logP +=  Math.log(Math.pow(2, internalNodeCount));
+        logP +=  Math.log(2)*internalNodeCount;
 
         return logP;
     }
