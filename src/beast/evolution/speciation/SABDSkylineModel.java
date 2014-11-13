@@ -305,6 +305,10 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {        // for ver
             }
         }
 
+//        for (int i=0; i< totalIntervals; i++) {
+//            if (birth[i]<death[i]) return -1.;
+//        }
+
         if (m_rho.get() != null && rhoSamplingTimes.get() != null) {
 
             Double[] rhos = m_rho.get().getValues();
