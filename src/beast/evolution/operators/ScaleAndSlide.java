@@ -5,7 +5,9 @@ import beast.evolution.tree.ZeroBranchSATree;
 
 /**
  * Alexandra Gavryushkina
+ * AT THE DEVELOPING STAGE
  */
+
 public class ScaleAndSlide extends ScaleOperator {
 
     @Override   //WARNING works with bifurcating (exactly 2 children) trees only
