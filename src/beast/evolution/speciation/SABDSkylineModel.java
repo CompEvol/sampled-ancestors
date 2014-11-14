@@ -410,7 +410,8 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {        // for ver
             n[j] = ((j == 0) ? 0 : lineageCountAtTime(times[totalIntervals - 1] - time, tree, k));
 
             if (n[j] > 0) { //term for non-sampled lineages at time t_i
-                logP += n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j])); //here g(j,..) corresponds to q_{i+1} and \rho[j] to \rho_i
+                temp = n[j] * (Math.log(g(j, times[j], time)) + Math.log(1-rho[j])); //here g(j,..) corresponds to q_{i+1} and \rho[j] to \rho_i
+                logP += temp;
                 if (printTempResults)
                     System.out.println("3rd factor (nj loop) = " + temp + "; interval = " + j + "; n[j] = " + n[j]);
                 if (Double.isInfinite(logP)) {
@@ -427,7 +428,8 @@ public class SABDSkylineModel extends BirthDeathSkylineModel {        // for ver
             }
 
             if (rho[j+1] > 0 && N[j] > 0) {  //joint term for sampled nodes at time t_i
-                logP += N[j] * Math.log(rho[j+1]); // here N[j] corresponds to N_i and rho[j+1] to rho_i
+                temp = N[j] * Math.log(rho[j+1]); // here N[j] corresponds to N_i and rho[j+1] to rho_i
+                logP += temp;
                 if (printTempResults)
                     System.out.println("3rd factor (Nj loop) = " + temp + "; interval = " + j + "; N[j] = " + N[j]);
                 if (Double.isInfinite(logP)){
