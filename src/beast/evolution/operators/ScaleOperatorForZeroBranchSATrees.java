@@ -38,10 +38,7 @@ public class ScaleOperatorForZeroBranchSATrees extends ScaleOperator {
                     //make sure the new height doesn't make a parent younger than a child
                     double oldestChildHeight;
                     if (((ZeroBranchSANode)root).isFake()) {
-                        oldestChildHeight = root.getRight().getHeight();
-                        if (((ZeroBranchSANode)root.getLeft()).isDirectAncestor()) {
-                            oldestChildHeight = root.getLeft().getHeight();
-                        }
+                        oldestChildHeight = root.getNonDirectAncestorChild().getHeight();
                     } else oldestChildHeight = Math.max(root.getLeft().getHeight(), root.getRight().getHeight());
                     if (fNewHeight < oldestChildHeight) {
                         return Double.NEGATIVE_INFINITY;

@@ -319,7 +319,7 @@
 			<log idref="rateGT"/>
 		</logger>
 	
-		<logger id="screenlog" logEvery="5000000" mode="autodetect">
+		<logger id="screenlog" logEvery="10000" mode="autodetect">
 			<distribution idref="posterior" name="log"/>
 			<log arg="@posterior" id="ESS.0" spec="util.ESS"/>
 			<log idref="BDlikelihood"/>
