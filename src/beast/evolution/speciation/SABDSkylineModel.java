@@ -19,8 +19,9 @@ import java.util.List;
 /**
  * @author Alexandra Gavryushkina
  */
-@Citation("Gavryushkina, A., Welch, D., Stadler, T., and Drummond, A. J. (2014) " +
-        "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration")
+@Citation("Gavryushkina A, Welch D, Stadler T, Drummond AJ (2014) \n" +
+        "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration. \n" +
+        "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919")
 public class SABDSkylineModel extends BirthDeathSkylineModel {        // for version 1.0.1 you need r107 of bdssm package and 2.1.3 beast2
 
     public Input<RealParameter> removalProbabilityChangeTimesInput =
