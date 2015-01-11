@@ -359,14 +359,14 @@ public class SABDTreeSimulator {
             root=newRoot;
         }
 
-        if (root.getLeafNodeCount() > 250){
-            highCount++;
-            return -1;
-        }
-        if (root.getLeafNodeCount() < 5){
-            lowCount++;
-            return -3;
-        }
+//        if (root.getLeafNodeCount() > 250){
+//            highCount++;
+//            return -1;
+//        }
+//        if (root.getLeafNodeCount() < 5){
+//            lowCount++;
+//            return -3;
+//        }
         writer.println("tree");
         writer.println(root.toShortNewick(false));
         treeWriter.println(root.toShortNewick(false) + ";");
@@ -486,12 +486,13 @@ public class SABDTreeSimulator {
         try {
             writer = new PrintStream(new File("trees_and_pars.txt"));
             treeWriter = new PrintStream(new File("trees.txt"));
+
             int meanLeafCount = 0;
             int low=0;
             int high=0;
             do {
                 //double[] rates = simulateParameters(0.0, 0.0, 0.0, 0.0);
-                //double [] rates = {1.5, 0.5, 1.0, 0.0, 0.0};
+                double [] rates = {2., 0.5, 0.8, 0.0, 0.0};
 //                double d = 0.03033;
 //                double r_turnover = 0.835;
 //                double s = 0.26;
@@ -501,7 +502,7 @@ public class SABDTreeSimulator {
 //                rates[2] = rates[1]*s/(1-s);// psi
 //                rates[3] = 0.0;//Randomizer.nextDouble();
 
-                double[] rates = simulateTransClock(1., 2., false, 0.02, 0.0);
+                //double[] rates = simulateTransClock(1., 2., false, 0.02, 0.0);
 
                 //SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 100);
                 SABDTreeSimulator simulator = new SABDTreeSimulator(rates[0], rates[1], rates[2], rates[3], 0.0, 3);
@@ -512,11 +513,11 @@ public class SABDTreeSimulator {
 //                    writer.println(rates[1]);
 //                    writer.println(rates[2]);
 //                    writer.println(rates[3]);
-//                   writer.println(rates[4]);
-                    writer.println(rates[5]);  //d
-                    writer.println(rates[6]);  //r_t
-                    writer.println(rates[7]);  //s
-                    writer.println(rates[3]);  //r
+//                    writer.println(rates[4]);
+//                    writer.println(rates[5]);  //d
+//                    writer.println(rates[6]);  //r_t
+//                    writer.println(rates[7]);  //s
+//                    writer.println(rates[3]);  //r
 //                    writer.println(rates[4]);
                     //lambdaSt += Double.toString(rates[0]) + ", ";
                     //muSt += Double.toString(rates[1]) + ", ";
@@ -526,8 +527,8 @@ public class SABDTreeSimulator {
                    meanLeafCount += leafCount[0];
                     index++;
                 } else {
-                    low += simulator.lowCount;
-                    high +=simulator.highCount;
+//                    low += simulator.lowCount;
+//                    high +=simulator.highCount;
                     count++;
                 }
             } while (index<treeCount);
@@ -537,11 +538,12 @@ public class SABDTreeSimulator {
 //            System.out.println(psiSt.substring(0,psiSt.length()-2) + ")");
 //            System.out.println(clockSt);
 //            System.out.println(heightSt.substring(0,heightSt.length()-2) + ")");
-            System.out.println("Number of trees with less than 5 sampled nodes: " + low);
-            System.out.println("Number of trees with more than 250 sampled nodes: " + high);
-            System.out.println("Average sampled node count: " + meanLeafCount/treeCount);
-            System.out.println();
-            System.out.println("Number of trees rejected due to process died out: " + count);
+//            System.out.println("Number of trees with less than 5 sampled nodes: " + low);
+//            System.out.println("Number of trees with more than 250 sampled nodes: " + high);
+//            System.out.println("Average sampled node count: " + meanLeafCount/(treeCount+count));
+            System.out.print(meanLeafCount/(treeCount+count));
+            //System.out.println();
+            //System.out.println("Number of trees rejected due to process died out: " + count);
 
         } catch (IOException e) {
             //

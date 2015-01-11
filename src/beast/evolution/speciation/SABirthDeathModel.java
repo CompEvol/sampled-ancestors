@@ -20,7 +20,7 @@ import beast.util.ZeroBranchSATreeParser;
 @Citation("Gavryushkina A, Welch D, Stadler T, Drummond AJ (2014) \n" +
         "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration. \n" +
         "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919")
-public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
+public class SABirthDeathModel extends SpeciesTreeDistribution {
 
     public Input<RealParameter> originInput =
             new Input<RealParameter>("origin", "The origin of infection",(RealParameter)null);
@@ -180,7 +180,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         double x0 = origin;
         double x1=tree.getRoot().getHeight();
 
-        if (x0 < x1 || r==1 && ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() > 0) {
+        if (x0 < x1 || r==1 && ((Tree)tree).getDirectAncestorNodeCount() > 0) {
             return Double.NEGATIVE_INFINITY;
         }
 
@@ -188,9 +188,9 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
         if (!conditionOnRootInput.get()){
             logPost = -Math.log(q(x0, c1, c2));
         } else {
-            if (((ZeroBranchSANode)tree.getRoot()).isFake()){   //when conditioning on the root we assume the process
-                                                                //starts at the time of the first branching event and
-                                                               //that means that the root can not be a sampled ancestor
+            if (tree.getRoot().isFake()){   //when conditioning on the root we assume the process
+                //starts at the time of the first branching event and
+                //that means that the root can not be a sampled ancestor
                 return Double.NEGATIVE_INFINITY;
             } else {
                 logPost = -Math.log(q(x1, c1, c2));
@@ -203,19 +203,19 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
 
         if (conditionOnRhoSamplingInput.get()) {
             if (conditionOnRootInput.get()) {
-               logPost -= Math.log(lambda*oneMinusP0Hat(x1, c1, c2)* oneMinusP0Hat(x1, c1, c2));
+                logPost -= Math.log(lambda*oneMinusP0Hat(x1, c1, c2)* oneMinusP0Hat(x1, c1, c2));
             }  else {
                 logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
             }
         }
 
-        int internalNodeCount = tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 1;
+        int internalNodeCount = tree.getLeafNodeCount() - ((Tree)tree).getDirectAncestorNodeCount() - 1;
 
         logPost += internalNodeCount*Math.log(2);
 
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
-                if  (!((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor())  {
+                if  (!tree.getNode(i).isDirectAncestor())  {
                     if (tree.getNode(i).getHeight() > 0.000000000005 || rho == 0.) {
                         logPost += Math.log(psi) + Math.log(q(tree.getNode(i).getHeight(), c1, c2)) + Math.log(p0s(tree.getNode(i).getHeight(), c1, c2));
                     } else {
@@ -223,7 +223,7 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
                     }
                 }
             } else {
-                if (((ZeroBranchSANode)tree.getNode(i)).isFake()) {
+                if (tree.getNode(i).isFake()) {
                     if (r == 1) {
                         System.out.println("r = 1 but there are sampled ancestors in the tree");
                         System.exit(0);
@@ -244,3 +244,4 @@ public class SABDSamplingThroughTimeModel extends SpeciesTreeDistribution {
     }
 
 }
+
