@@ -17,9 +17,8 @@ public class SABDSimulator {
     final static int DEATH = 1;
     final static int SAMPLING = 2;
 
-    int lowCount=0, highCount =0;
+    //int lowCount=0, highCount =0;
 
-    int finalSampleCount;  // the number of sampled nodes in the simulated tree
     private int sampleCount; //a counter of sampled nodes that counts nodes during simulation and also used for numbering
     //internal nodes when collecting nodes that will be presented in 'sampled tree' from the
     // full simulated tree
@@ -28,34 +27,6 @@ public class SABDSimulator {
     double origin = 0; //is the distance between the origin (0) and the youngest sampled node
     boolean rhoSamplingTimeReached = false; //is true if at least one individual reached rhoSamplingTime
     Node root; // the root of the tree
-    private boolean useRhoSamplingTime;
-
-    /**
-     * construct a tree simulator under birth-death serially-sampled + one rho sampling time model
-     * @param newLambda  birth rate or diversification rate if transform is true
-     * @param newMu      death rate or turnover rate if transform is true
-     * @param newPsi     sampling rate or sampling proportion if transform is true
-     * @param newR       removing parameter
-     * @param transform  if true dvs parameterisation is used
-     * @param newFSCount the number of sampled individuals
-     */
-    public SABDSimulator(double newLambda, double newMu, double newPsi, double newR, boolean transform, int newFSCount) {
-        if (!transform) {
-            psi = newPsi;
-            mu = newMu;
-            lambda = newLambda;
-        } else {
-            lambda = newLambda/(1-newMu);
-            mu = newMu*lambda;
-            psi = mu*newPsi/(1-newPsi);
-        }
-        r= newR;
-        rho = 0.0;
-        sampleCount = 0;
-        sampledNodes = new HashSet<Node>();
-        finalSampleCount = newFSCount;
-        useRhoSamplingTime = false;
-    }
 
     /**
      *
@@ -82,232 +53,6 @@ public class SABDSimulator {
         sampleCount = 0;
         sampledNodes = new HashSet<Node>();
         rhoSamplingTime = newRSTime;
-        useRhoSamplingTime = true;
-    }
-
-    public int simulate(PrintStream writer) {
-        if (useRhoSamplingTime) {
-            return simulateWithRhoSamplingTime(writer);
-        } else {
-            return simulate(writer);
-        }
-    }
-
-    /**
-     * Simulate a tree under the model. The simulation is stopped when the number
-     * of sampled nodes reaches finalSampleCount or if the process dies out.
-     * Note that nodes in the tree have negative heights (the origin node has height 0)
-     * @return 1 if simulated tree has finalSampleCount sampled nodes and -1 if the process stopped
-     * (all the individuals died out) before the necessary number of samples had been reached.
-     */
-    public int simulateUntilTheSampleSizeReached(PrintStream writer) {
-        //create an initial node (origin of tree)
-        Node initial = new Node();
-        initial.setNr(-1);
-        initial.setHeight(0.0);
-        ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
-        tipNodes.add(initial);
-        boolean stopCondition = false;
-        //At each stage, for each node in TipNodes array simulate the next event and
-        //collect children nodes resulting from this event to newTipNodes array.
-        //After each stage, tipNodes represents tip nodes of the simulated tree that haven't died till this point
-        do {
-            Node node = tipNodes.get(0);
-            int typeOfEvent;
-            double[] timeIntervals = new double[3];
-            double[] sortedTimeIntervals = new double[3];
-            timeIntervals[0] = Randomizer.nextExponential(lambda);
-            timeIntervals[1] = Randomizer.nextExponential(mu);
-            timeIntervals[2] = Randomizer.nextExponential(psi);
-            System.arraycopy(timeIntervals, 0, sortedTimeIntervals, 0, 3);
-            Arrays.sort(sortedTimeIntervals);
-            double timeInterval = sortedTimeIntervals[0];
-            if (timeInterval == timeIntervals[0]) {
-                typeOfEvent=BIRTH;
-            } else {
-                if (timeInterval == timeIntervals[1]) {
-                    typeOfEvent=DEATH;
-                } else typeOfEvent=SAMPLING;
-            }
-            tipNodes.remove(0);
-            for (Node child: getNewNodes(node, typeOfEvent, timeInterval))  {
-                int insPoint = -Collections.binarySearch(tipNodes, child, nodeComparator) - 1;
-                tipNodes.add(insPoint, child);
-
-            }
-            stopCondition = evaluateStopCondition(tipNodes);
-        }  while (!stopCondition && !tipNodes.isEmpty()); //stop simulating tree when either there are enough sampled nodes
-        // or all the individuals died
-
-        //Remove children added at the last stage because the process has stopped and we don't need to know
-        //what happens after this point
-        for (Node node:tipNodes) {
-            Node parent = node.getParent();
-            if (parent != null){
-                if (parent.getRight() != null && parent.getRight().getNr() != -1) {
-                    parent.setNr(parent.getRight().getNr());
-                    sampledNodes.remove(parent.getRight());
-                    sampledNodes.add(parent);
-                }
-                parent.removeAllChildren(false);
-            }
-
-        }
-
-        if (sampledNodes.isEmpty() || sampledNodes.size() < finalSampleCount) {
-            return -1;
-        }
-
-
-        //remove excess of sampled nodes
-        removeSampleExcess();
-
-        HashSet<Node> parents;
-        HashSet<Node> children = sampledNodes;
-        while (children.size() > 1 ) {
-            parents = collectParents(children);
-            children = parents;
-        }
-
-        //the unique node remained in the array is the root of the sampled tree
-        root = new Node();
-        for (Node node:children) {
-            root=node;
-        }
-
-        removeSingleChildNodes(root);
-
-        if (root.getChildCount()==1) {
-            Node newRoot = root.getLeft();
-            root=newRoot;
-        }
-        //writer.println("tree");
-        writer.println(root.toShortNewick(false));// + ";");
-
-//        writer.println("traits");
-//        printTraits(root, writer);
-//        writer.println("parameters");
-//        writer.println(origin);
-//        writer.println(origin + root.getHeight());
-//        writer.println(countSA(root));
-        System.out.println(origin + root.getHeight());
-        return 1;
-    }
-
-    public int simulateWithRho(PrintStream writer, double[] rootHeight) {
-        Node initial = new Node();
-        initial.setNr(-1);
-        initial.setHeight(0.0);
-        ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
-        tipNodes.add(initial);
-        double lineage_sampleCount;
-        HashSet<Node> parents = new HashSet<Node>();
-        int typeOfEvent;
-
-        do{
-            double commonRate = (lambda + mu + psi)*tipNodes.size();
-            double timeInterval = Randomizer.nextExponential(commonRate);
-
-            //pick the type of event
-            double tmp = Randomizer.nextDouble() * (lambda + mu + psi);
-            if (tmp < lambda) {
-                typeOfEvent = BIRTH;
-            } else if (tmp < lambda+mu) {
-                typeOfEvent = DEATH;
-            } else {
-                typeOfEvent = SAMPLING;
-            }
-            int nodeNumber = Randomizer.nextInt(tipNodes.size());
-            Node node = tipNodes.get(nodeNumber);
-            tipNodes.remove(nodeNumber);
-            tipNodes.addAll(getNewNodes(node, typeOfEvent, timeInterval));
-
-            if (tipNodes.isEmpty()){
-                return -1;
-            }
-
-            double newHeight = node.getHeight();
-            //count the number of lineages at time of node1
-            for (Node child:tipNodes) {
-                child.setHeight(newHeight);
-            }
-
-            if (typeOfEvent == BIRTH || typeOfEvent == SAMPLING) {
-                lineage_sampleCount = tipNodes.size()+sampledNodes.size() - 1;
-            }  else {
-                lineage_sampleCount = parents.size()+sampledNodes.size() + 1;
-            }
-
-        } while (lineage_sampleCount < finalSampleCount);
-
-        origin = - tipNodes.get(0).getHeight();
-
-        if (typeOfEvent == BIRTH) {
-            Node child1 = tipNodes.get(tipNodes.size()-2);
-            Node child2 = tipNodes.get(tipNodes.size()-1);
-            if (!child1.getParent().equals(child2.getParent())) {
-                System.out.println("Something is wrong in deleting children");
-                System.exit(0);
-            }
-            Node parent = child1.getParent();
-            tipNodes.remove(child1);
-            tipNodes.remove(child2);
-            tipNodes.add(parent);
-            parent.removeAllChildren(false);
-        }
-
-        if (typeOfEvent == SAMPLING) {
-            Node child = tipNodes.get(tipNodes.size()-1);
-            Node parent = child.getParent();
-            if (parent != null && child.getHeight() == parent.getHeight()) {
-                int nodeNr = parent.getRight().getNr();
-                parent.setNr(nodeNr);
-                if (!sampledNodes.contains(parent.getRight())){
-                    System.out.println("Wrong sampling");
-                    System.exit(0);
-                }
-                sampledNodes.remove(parent.getRight());
-                sampledNodes.add(parent);
-                tipNodes.remove(child);
-                parent.removeAllChildren(false);
-            }
-        }
-
-        for (Node tipNode:tipNodes) {
-            tipNode.setNr(sampleCount);
-            sampledNodes.add(tipNode);
-            sampleCount++;
-        }
-
-        HashSet<Node> children = sampledNodes;
-        while (children.size() > 1 ) {
-            parents = collectParents(children);
-            children = parents;
-        }
-
-        //the unique node remained in the array is the root of the sampled tree
-        Node root = new Node();
-        for (Node node:children) {
-            root=node;
-        }
-
-        removeSingleChildNodes(root);
-
-        if (root.getChildCount()==1) {
-            Node newRoot = root.getLeft();
-            root=newRoot;
-        }
-
-//        writer.println("tree");
-        writer.println(root.toShortNewick(false) + ";");
-//        writer.println("traits");
-//        printTraits(root, writer);
-//        writer.println("parameters");
-//        writer.println(origin);
-//        writer.println(origin+root.getHeight());
-//        writer.println(countSA(root));
-        rootHeight[0] = origin+root.getHeight();
-        return 1;
     }
 
     /**
@@ -318,13 +63,22 @@ public class SABDSimulator {
      * @return 1 if simulated tree has finalSampleCount sampled nodes and -1 if the process stopped
      * (all the individuals died out) before the necessary number of samples had been reached.
      */
-    public int simulateWithRhoSamplingTime(PrintStream treeWriter) { //}, PrintStream writer, int[] leafCount) {
+    public int simulate() { // (PrintStream treeWriter, PrintStream writer, int[] leafCount) {
+        //clear old values
+        sampleCount = 0;
+        sampledNodes.clear();
+        extinctNodes = new HashSet<Node>();
+        origin = 0;
+        rhoSamplingTimeReached = false;
+        root = null;
+
         //create an initial node (origin of tree)
         Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
         tipNodes.add(initial);
+
         //At each stage, for each node in TipNodes array simulate the next event and
         //collect children nodes resulting from this event to newTipNodes array.
         //After each stage, tipNodes represents tip nodes of the simulated tree that haven't died till this point
@@ -392,7 +146,7 @@ public class SABDSimulator {
 //        }
         //writer.println("tree");
         //writer.println(root.toShortNewick(false));
-        treeWriter.println(root.toShortNewick(false) + ";");
+        //treeWriter.println(root.toShortNewick(false) + ";");
         //writer.println("traits");
 //        double minSampleAge = 0.0;
 //        if (rho != 0.0) {
@@ -548,52 +302,6 @@ public class SABDSimulator {
     }
 
     /**
-     * sort nodes by their heights and then only keep finalSampleCount of nodes that have been sampled first
-     * also change the sampleCount to represent the actual number of sampled nodes.
-     */
-    public void removeSampleExcess() {
-        ArrayList<Node> sampledNodeList = new ArrayList<Node>(sampledNodes);
-        Collections.sort(sampledNodeList, nodeComparator);
-        if (sampledNodeList.size() > finalSampleCount) {
-            for (int i=0; i<finalSampleCount; i++) {
-                sampledNodeList.get(i).setNr(i);
-            }
-            for (int i=finalSampleCount; i<sampledNodeList.size(); i++) {
-                sampledNodeList.get(i).setNr(-1);
-            }
-            sampledNodeList.subList(finalSampleCount, sampledNodes.size()).clear();
-            sampledNodes = new HashSet<Node>(sampledNodeList);
-            sampleCount = finalSampleCount;
-            origin = - sampledNodeList.get(finalSampleCount-1).getHeight();
-        } else {
-            origin = - sampledNodeList.get(sampleCount-1).getHeight();
-        }
-
-
-    }
-
-    /**
-     *
-     * @param tipNodes
-     * @return true if the number of sampled nodes exceeds finalSampleCount
-     * and all the nodes in TipNodes array are younger than the youngest sampled node.
-     */
-
-    public boolean evaluateStopCondition(ArrayList<Node> tipNodes){
-        if (sampleCount >= finalSampleCount) {
-            ArrayList<Node> sampledNodeList = new ArrayList<Node>(sampledNodes);
-            Collections.sort(sampledNodeList, nodeComparator);
-            double height = sampledNodeList.get(finalSampleCount - 1).getHeight();
-            for (Node node:tipNodes) {
-                if (node.getHeight() > height) {
-                    return false;
-                }
-            }
-            return true;
-        }   else return false;
-    }
-
-    /**
      * Node1 is less than node2 if node1 is closer to the root (or to the origin)
      * than node2. Note that, since the nodes heights are negative, node1 is less than node2 if
      * node1 height is greater than node2 height.
@@ -604,7 +312,7 @@ public class SABDSimulator {
         }
     };
 
-    private int countSA(Node node){
+    public int countSA(Node node){
         if (!node.isLeaf()) {
             return countSA(node.getLeft()) + countSA(node.getRight());
         } else {
@@ -623,7 +331,7 @@ public class SABDSimulator {
         }
     }
 
-    private void printTraitsWithRhoSamplingTime(Node node, PrintStream writer){
+    public void printTraitsWithRhoSamplingTime(Node node, PrintStream writer){
         if (node.isLeaf()){
             writer.println(node.getNr() + "=" + (rhoSamplingTime + node.getHeight()) + ',');
         } else {
@@ -645,6 +353,28 @@ public class SABDSimulator {
             double minRight = printSAWithRhoSamplingTime(node.getRight(), writer);
             return Math.min(minLeft, minRight);
         }
+    }
+
+    public HashSet<String> printInternalNodeAges(Node node, PrintStream writer) {
+
+        HashSet<String> extantDescendants = new HashSet<>();
+
+        if (!node.isLeaf()) {
+            HashSet<String> leftExtantDescendants = printInternalNodeAges(node.getLeft(), writer);
+            HashSet<String> rightExtantDescendants = printInternalNodeAges(node.getRight(), writer);
+            extantDescendants.addAll(leftExtantDescendants);
+            extantDescendants.addAll(rightExtantDescendants);
+
+            if (!leftExtantDescendants.isEmpty() && !rightExtantDescendants.isEmpty()) {
+                writer.println(rhoSamplingTime + node.getHeight() + extantDescendants.toString());
+            }
+        } else {
+            if (node.getHeight() + rhoSamplingTime == 0.0) {
+                extantDescendants.add(Integer.toString(node.getNr()));
+            }
+        }
+
+        return extantDescendants;
     }
 
 }
