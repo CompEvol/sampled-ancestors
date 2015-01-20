@@ -18,8 +18,8 @@
 	<property name="srcBeast2" location="${beast2path}/src" />
 	<property name="beast2classpath" location="${beast2path}/build" />
     <property name="beastiiclasspath" location="../beastii/build" />
-    <property name="bdskyclasspath" location="../bdssm-beast2-read-only/build" />
-    <!--property name="beastclassicclasspath" location="../beast-classic/build" /-->
+	<!--<property name="bdskyclasspath" location="../bdssm-beast2-read-only/build" />
+    property name="beastclassicclasspath" location="../beast-classic/build" /-->
 	<property name="Add_on_dir" value="${release_dir}/add-on" />
 
     <import file="${beast2path}/build.xml" />
@@ -35,8 +35,8 @@
         <fileset dir="${libBeast2}" includes="beagle.jar"/>
         <pathelement path="${beast2classpath}"/>
         <pathelement path="${beastiiclasspath}"/>
-        <pathelement path="${bdskyclasspath}"/>
-        <!--pathelement path="${beastclassicclasspath}"/-->
+		<!--<pathelement path="${bdskyclasspath}"/>
+        pathelement path="${beastclassicclasspath}"/-->
 	</path>
 
 	<!-- start -->
@@ -76,7 +76,7 @@
 		<mkdir dir="${buildSA}" />
 
 		<!-- Compile the java code from ${srcSA} into ${buildSA} /bin -->
-		<javac source="1.6" target="1.6" srcdir="${srcSA}" destdir="${buildSA}" classpathref="classpath"
+		<javac srcdir="${srcSA}" destdir="${buildSA}" classpathref="classpath"
 		       fork="true"
 		       memoryinitialsize="256m"
 		       memorymaximumsize="256m"
@@ -84,6 +84,9 @@
 			<include name="beast/**/**" />
 			<!-- compile JUnit test classes -->
 			<include name="test/beast/**" />
+			<!-- do not compile skyline model -->
+			<exclude name="beast/**/SABDSkylineModel*"/>
+			<exclude name="test/**/SABDSkylineMode*"/>
 		</javac>
 		<echo message="Successfully compiled." />
 	</target>
@@ -109,9 +112,9 @@
 				<include name="beagle/**/*.class" />
 				<include name="org/**/*.class" />
 			</fileset>
-            <zipgroupfileset dir="${libBeast2}" includes="jam.jar" />
+			<!--<zipgroupfileset dir="${libBeast2}" includes="jam.jar" />
             <zipgroupfileset dir="${libBeast2}" includes="beagle.jar" />
-          <!--  <zipgroupfileset dir="${libBeast2}" includes="colt.jar" />
+            <zipgroupfileset dir="${libBeast2}" includes="colt.jar" />
             <zipgroupfileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar" /> -->
 		</jar>
 		<jar jarfile="${distSA}/SA.src.jar">
@@ -195,17 +198,16 @@
 		<copy todir="${Add_on_dir}">
 			<fileset dir="${distSA}" includes="SA.src.jar" />
 		</copy>
-		<!-- <copy todir="${Add_on_dir}/templates">
-			<fileset file="templates/sampled-ancestor.xml" />
-            <fileset file="templates/SABDSkylineModel.xml" />
-		</copy>  -->
+		<copy todir="${Add_on_dir}/templates">
+			<fileset file="templates/FBD.xml" />
+		</copy>
 
 		<jar jarfile="${distSA}/SA.addon.zip">
 			<fileset dir="${Add_on_dir}">
 				<include name="**/*" />
 			</fileset>
         </jar>
-		<echo message="Add-on version release is finished." />
+		<echo message="Package version release is finished." />
 	</target>
 
 </project>

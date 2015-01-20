@@ -12,10 +12,29 @@ import java.io.PrintStream;
 
 public class Simulator {
 
-    public static void main(String[] args) throws Exception{
+    double[] parameters = new double[6];
+
+    public Simulator(String[] parametersStr) {
+        for (int i=0; i<6; i++) {
+            parameters[i] = Double.parseDouble(parametersStr[i]); 
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        if (args.length != 6) {
+            System.out.println("There have to be six arguments for parameters: d, nu, s, r, rho, and t_origin");
+        } else {
+            Simulator simulator = new Simulator(args);
+            simulator.simulateForTotalEvidence();
+        }
+
+    }
+
+    private void simulateForTotalEvidence() throws Exception {
 
         PrintStream writer = null;
-        PrintStream treeWriter = null;
+        //PrintStream treeWriter = null;
 
         int treeCount = 1;
 
@@ -24,8 +43,8 @@ public class Simulator {
 
 
         try {
-            writer = System.out; //new PrintStream(new File("trees_and_pars.txt"));
-            treeWriter = new PrintStream(new File("trees.txt"));
+            writer = new PrintStream(new File("trees_and_pars.txt"));
+            //treeWriter = new PrintStream(new File("trees.txt"));
 
 
             for (int i=0; i< treeCount; i++) {
@@ -33,13 +52,15 @@ public class Simulator {
                 //int low=0;
                 //int high=0;
 
-                //double[] rates = simulateParameters(0.0, 0.0, 0.0, 0.0);
-                double [] rates = {0.0042, 0.924, 0.114, 0.0, 0.81};
-                double rhoSamplingTime=63.0;
-                SABDSimulator simulator = new SABDSimulator(rates[0], rates[1], rates[2], rates[3], rates[4], true, rhoSamplingTime);
+                //parameters = {0.04, 0.6, 0.2, 0.0, 0.8};
+                
+                SABDSimulator simulator = new SABDSimulator(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], true, parameters[5]);
                 int result;
                 do {
                     result = simulator.simulate();
+//                    if (simulator.sampledNodeNumber < 5 || simulator.sampledNodeNumber > 250) {
+//                        result = -1;
+//                    }
                     count++;
                 } while (result < 0);
 
@@ -47,28 +68,40 @@ public class Simulator {
 
                 writer.println("tree");
                 writer.println(simulator.root.toShortNewick(false));
-                treeWriter.println(simulator.root.toShortNewick(false) + ";");
+                //treeWriter.println(simulator.root.toShortNewick(false) + ";");
 
                 writer.println("traits");
 //              double minSampleAge = 0.0;
                 simulator.printTraitsWithRhoSamplingTime(simulator.root, writer);
 
                 writer.println("parameters");
-                writer.println(rhoSamplingTime);
+                writer.println(simulator.rhoSamplingTime);
                 writer.println(simulator.root.getHeight()+simulator.rhoSamplingTime);
 
                 for (int j=0; j<3; j++) {
-                    writer.println(rates[j]);
+                    writer.println(parameters[j]);
                 }
-                writer.println(rates[4]);
+                writer.println(parameters[4]);
                 //writer.println(simulator.countSA(simulator.root));
                 writer.println("divergence times");
                 simulator.printInternalNodeAges(simulator.root, writer);
 
+                writer.println("fossil count");
+                writer.println(simulator.sampledNodeNumber - simulator.rhoSampledNodeNumber);
+                writer.println("rho sample count");
+                writer.println(simulator.rhoSampledNodeNumber);
+                writer.println("total sample count");
+                writer.println(simulator.sampledNodeNumber);
+                if (simulator.sampledNodeNumber < 5 || simulator.sampledNodeNumber > 250) {
+                    System.out.print("Too few or too many sampled nodes: " + simulator.sampledNodeNumber +" in tree ");
+                }
+
+
             }
             //System.out.print(meanLeafCount/(treeCount+count));
             //System.out.println();
-            System.out.println("Number of trees rejected due to process died out: " + count);
+            //System.out.println("Number of trees rejected: " + count);
+
 
         } catch (IOException e) {
             //
@@ -77,17 +110,10 @@ public class Simulator {
             if (writer != null) {
                 writer.close();
             }
-            if (treeWriter != null) {
-                treeWriter.close();
-            }
+//            if (treeWriter != null) {
+//                treeWriter.close();
+//            }
         }
 
-
-
-
-        // Simulate a tree under a set of parameters d=0.0042, v=0.924, s=0.114, rho=0.81, r = 0, t_origin=60
-        // print the parameters: d, v, s, rho, t_origin
-        // print the traits (psi-sampled nodes)
-        // print the divergence times + clades
     }
 }

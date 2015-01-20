@@ -1,0 +1,101 @@
+<beast version='2.0'
+       namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions'>
+
+    <!-- tree priors -->
+    <mergewith point='treePriorTemplates'>
+
+        <subtemplate id='FossilizedBirthDeathModel' class='beast.evolution.speciation.SABirthDeathModel' mainid='FBD.t:$(n)'
+                     suppressInputs='beast.evolution.speciation.SABirthDeathModel.removalProbability,
+	beast.evolution.speciation.SABirthDeathModel.treeIntervals,
+	beast.evolution.speciation.SABirthDeathModel.birthRate,
+	beast.evolution.speciation.SABirthDeathModel.deathRate,
+	beast.evolution.speciation.SABirthDeathModel.samplingRate,
+	beast.evolution.speciation.SABirthDeathModel.conditioningOnRoot'>
+            <![CDATA[
+    <!-- Sampled Ancestor Birth Death model-->
+    <SABirthDeathModel spec="beast.evolution.speciation.SABirthDeathModel" id="FBD.t:$(n)" tree="@Tree.t:$(n)" conditionOnRhoSampling="true">
+		<parameter name="origin" id="originFBD.t:$(n)" value ="100.0" lower="0."/>
+		<parameter name="diversificationRate" id="diversificationRateFBD.t:$(n)" value="1." lower="0."/>
+        <parameter name="turnover" id="turnoverFBD.t:$(n)" value=".5" lower="0." upper="1."/>
+        <parameter name="samplingProportion" id="samplingProportionFBD.t:$(n)" value="0.5" lower="0." upper="1."/>
+        <parameter estimate="false" name="rho" id="rhoFBD.t:$(n)" value="1.0" lower="0." upper = "1."/>
+        <parameter name="removalProbability" id="rFBD.t:$(n)" value="0." lower="0." upper="1."/>
+	</SABirthDeathModel>
+
+
+	<distribution  id='originPriorFBD.t:$(n)' x="@originFBD.t:$(n)" spec='beast.math.distributions.Prior'>
+		<distr spec='beast.math.distributions.Uniform' lower="0." upper="Infinity"/>
+	</distribution>
+	<distribution id="diversificationRatePriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@diversificationRateFBD.t:$(n)">
+		<distr spec='beast.math.distributions.Uniform' lower="0." upper="Infinity"/>
+	</distribution>
+	<distribution id="turnoverPriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@turnoverFBD.t:$(n)">
+		<distr spec='beast.math.distributions.Uniform' lower="0." upper="1."/>
+	</distribution>
+	<distribution id="samplingProportionPriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@samplingProportionFBD.t:$(n)">
+		<distr spec='beast.math.distributions.Uniform' lower="0." upper="1."/>
+	</distribution>
+	<distribution id="rhoPriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@rhoFBD.t:$(n)">
+		<distr spec='beast.math.distributions.Uniform' lower="0." upper="1."/>
+	</distribution>
+
+	<operator id='originScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@originFBD.t:$(n)"/>
+    <operator id='divRateScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@diversificationRateFBD.t:$(n)"/>
+    <operator id='turnoverScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@turnoverFBD.t:$(n)"/>
+	<operator id='samplingPScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingProportionFBD.t:$(n)"/>
+    <operator id='rhoScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@rhoFBD.t:$(n)"/>
+
+    <plugin id='SACountFBD.t:$(n)' spec='beast.evolution.tree.SampledAncestorLogger' tree='@Tree.t:$(n)'/>
+
+    <!-- operators for sampled ancestor trees -->
+    <operator id='LeafToSAFBD.t:$(n)' spec='beast.evolution.operators.LeafToSampledAncestorJump' weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SAWilsonBaldingFBD.t:$(n)' spec='beast.evolution.operators.SAWilsonBalding' weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SAWideFBD.t:$(n)' spec='beast.evolution.operators.SAExchange' isNarrow="false" weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SANarrowFBD.t:$(n)' spec='beast.evolution.operators.SAExchange' weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SAUniformOperatorFBD.t:$(n)' spec='beast.evolution.operators.SAUniform' weight="20" tree="@Tree.t:$(n)"/>
+    <operator id='SATreeRootScalerFBD.t:$(n)' spec='beast.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="1" tree="@Tree.t:$(n)" rootOnly='true'/>
+    <operator id='SATreeScalerFBD.t:$(n)' spec='beast.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
+
+]]>
+            <connect srcID='FBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+
+            <connect srcID='originPriorFBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and originFBD.t:$(n)/estimate=true'>prior on originFBD.t:$(n)</connect>
+            <connect srcID='diversificationRatePriorFBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and diversificationRateFBD.t:$(n)/estimate=true'>prior on diversificationRateFBD.t:$(n)</connect>
+            <connect srcID='turnoverPriorFBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and turnoverFBD.t:$(n)/estimate=true'>prior on turnoverFBD.t:$(n)</connect>
+            <connect srcID='samplingProportionPriorFBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and samplingProportionFBD.t:$(n)/estimate=true'>prior on samplingProportionFBD.t:$(n)</connect>
+            <connect srcID='rhoPriorFBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and rhoFBD.t:$(n)/estimate=true'>prior on rFBD.t:$(n)</connect>
+
+            <connect srcID='originScalerFBD.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(FBD.t:$(n)) and originFBD.t:$(n)/estimate=true'/>
+            <connect srcID='divRateScalerFBD.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(FBD.t:$(n)) and diversificationRateFBD.t:$(n)/estimate=true'/>
+            <connect srcID='turnoverScalerFBD.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(FBD.t:$(n)) and turnoverFBD.t:$(n)/estimate=true'/>
+            <connect srcID='samplingPScalerFBD.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(FBD.t:$(n)) and samplingProportionFBD.t:$(n)/estimate=true'/>
+            <connect srcID='rhoScalerFBD.t:$(n)' targetID='mcmc' inputName='operator'     if='inposterior(FBD.t:$(n)) and rhoFBD.t:$(n)/estimate=true'/>
+
+            <connect srcID='treeScaler.t:$(n)'                targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+            <connect srcID='treeRootScaler.t:$(n)'            targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+            <connect srcID='UniformOperator.t:$(n)'           targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+            <connect srcID='SubtreeSlide.t:$(n)'              targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+            <connect srcID='narrow.t:$(n)'                    targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+            <connect srcID='wide.t:$(n)'                      targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+            <connect srcID='WilsonBalding.t:$(n)'             targetID='mcmc' inputName='operator' if='inposterior(YuleModel.t:$(n))'></connect>
+
+            <connect srcID='LeafToSAFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+            <connect srcID='SAWilsonBaldingFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+            <connect srcID='SAWideFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+            <connect srcID='SANarrowFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+            <connect srcID='SAUniformOperatorFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+            <connect srcID='SATreeRootScalerFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+            <connect srcID='SATreeScalerFBD.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(FBD.t:$(n)) and Tree.t:$(n)/estimate=true'/>
+
+            <connect srcID='FBD.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(FBD.t:$(n))'/>
+            <plate var='p' range='origin,diversificationRate,turnover,samplingProportion,rho'>
+                <connect srcID='$(p)FBD.t:$(n)' targetID='state' inputName='stateNode' if='inposterior(FBD.t:$(n)) and $(p)FBD.t:$(n)/estimate=true'/>
+                <connect srcID='$(p)FBD.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(FBD.t:$(n)) and $(p)FBD.t:$(n)/estimate=true'/>
+            </plate>
+            <connect srcID='FBD.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(FBD.t:$(n))'/>
+
+            <connect srcID='SACountFBD.t:$(n)' targetID='tracelog' inputName='log' if='inposterior(Tree.t:$(n))'/>
+        </subtemplate>
+    </mergewith>
+
+</beast>

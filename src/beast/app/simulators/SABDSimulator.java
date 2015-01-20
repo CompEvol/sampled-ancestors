@@ -27,6 +27,8 @@ public class SABDSimulator {
     double origin = 0; //is the distance between the origin (0) and the youngest sampled node
     boolean rhoSamplingTimeReached = false; //is true if at least one individual reached rhoSamplingTime
     Node root; // the root of the tree
+    int sampledNodeNumber;
+    int rhoSampledNodeNumber;
 
     /**
      *
@@ -55,6 +57,17 @@ public class SABDSimulator {
         rhoSamplingTime = newRSTime;
     }
 
+    private void clear() {
+        sampleCount = 0;
+        sampledNodes.clear();
+        extinctNodes = new HashSet<Node>();
+        origin = 0;
+        rhoSamplingTimeReached = false;
+        root = null;
+        sampledNodeNumber = 0;
+        rhoSampledNodeNumber = 0;
+    }
+
     /**
      * Simulate a tree under the model with rhoSamplingTime.
      * The simulation is stopped at rho sampling time and all existing lineages are cut
@@ -65,12 +78,7 @@ public class SABDSimulator {
      */
     public int simulate() { // (PrintStream treeWriter, PrintStream writer, int[] leafCount) {
         //clear old values
-        sampleCount = 0;
-        sampledNodes.clear();
-        extinctNodes = new HashSet<Node>();
-        origin = 0;
-        rhoSamplingTimeReached = false;
-        root = null;
+        clear();
 
         //create an initial node (origin of tree)
         Node initial = new Node();
@@ -167,7 +175,7 @@ public class SABDSimulator {
 //        writer.println(countSA(root));
         //rootHeight[0] = origin+root.getHeight();
         //System.out.println(origin);
-        //leafCount[0] = root.getLeafNodeCount();
+        sampledNodeNumber = root.getLeafNodeCount();
         //writer.println(leafCount[0]);
         return 1;
     }
@@ -195,6 +203,7 @@ public class SABDSimulator {
                 node.setNr(sampleCount);
                 sampledNodes.add(node);
                 sampleCount++;
+                rhoSampledNodeNumber++;
                 rhoSamplingTimeReached = true;
             }
             if (rho == 0.0) {
