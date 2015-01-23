@@ -1,0 +1,171 @@
+
+                   BEAST v2.2.0 Prerelease, 2002-2014
+             Bayesian Evolutionary Analysis Sampling Trees
+                       Designed and developed by
+ Remco Bouckaert, Alexei J. Drummond, Andrew Rambaut & Marc A. Suchard
+                                    
+                     Department of Computer Science
+                         University of Auckland
+                        remco@cs.auckland.ac.nz
+                        alexei@cs.auckland.ac.nz
+                                    
+                   Institute of Evolutionary Biology
+                        University of Edinburgh
+                           a.rambaut@ed.ac.uk
+                                    
+                    David Geffen School of Medicine
+                 University of California, Los Angeles
+                           msuchard@ucla.edu
+                                    
+                      Downloads, Help & Resources:
+                           http://beast2.org/
+                                    
+  Source code distributed under the GNU Lesser General Public License:
+                   http://github.com/CompEvol/beast2
+                                    
+                           BEAST developers:
+   Alex Alekseyenko, Trevor Bedford, Erik Bloomquist, Joseph Heled, 
+ Sebastian Hoehna, Denise Kuehnert, Philippe Lemey, Wai Lok Sibon Li, 
+Gerton Lunter, Sidney Markowitz, Vladimir Minin, Michael Defoin Platel, 
+                 Oliver Pybus, Chieh-Hsi Wu, Walter Xie
+                                    
+                               Thanks to:
+          Roald Forsberg, Beth Shapiro and Korbinian Strimmer
+
+Random number seed: 1421971968611
+
+File: bears.xml seed: 1421971968611 threads: 1
+Failed to load BEAGLE library: no hmsbeagle-jni in java.library.path
+Start likelihood: -8042.469186055794 
+         Sample      posterior ESS(posterior)     likelihood          prior
+              0     -8042.8651              N     -7572.3905      -470.4745 --
+Turning on scaling to prevent numeric instability 1.0201
+         100000     -2224.9958         2.0        -2109.4446      -115.5512 --
+         200000     -2228.9233         3.0        -2107.6230      -121.3003 --
+         300000     -2246.0106         4.0        -2105.5106      -140.5000 --
+         400000     -2227.9878         5.0        -2108.1727      -119.8150 --
+         500000     -2240.9263         6.0        -2106.0215      -134.9047 --
+         600000     -2244.0305         7.0        -2104.6780      -139.3524 23s/Msamples
+         700000     -2237.8160         8.0        -2104.2377      -133.5783 23s/Msamples
+         800000     -2218.4998         9.0        -2107.8298      -110.6699 23s/Msamples
+         900000     -2250.4562         9.0        -2105.5520      -144.9041 23s/Msamples
+        1000000     -2207.3704        10.0        -2108.6701       -98.7002 23s/Msamples
+        1100000     -2245.6815        11.0        -2104.6743      -141.0071 23s/Msamples
+        1200000     -2211.7468        12.0        -2105.7761      -105.9706 23s/Msamples
+        1300000     -2216.2798        13.0        -2105.2635      -111.0163 23s/Msamples
+        1400000     -2223.0098        11.2        -2107.5513      -115.4584 23s/Msamples
+        1500000     -2239.8603        14.8        -2106.4551      -133.4051 23s/Msamples
+        1600000     -2243.6703        15.8        -2105.7935      -137.8767 23s/Msamples
+        1700000     -2255.9439        12.9        -2109.8464      -146.0975 23s/Msamples
+        1800000     -2233.9473        13.5        -2107.6135      -126.3338 23s/Msamples
+        1900000     -2228.5171        13.7        -2110.2545      -118.2625 23s/Msamples
+        2000000     -2217.5257        14.3        -2104.2677      -113.2580 23s/Msamples
+        2100000     -2215.5366        13.5        -2104.5495      -110.9870 23s/Msamples
+        2200000     -2208.4294        11.8        -2105.8518      -102.5775 23s/Msamples
+        2300000     -2240.8410        14.0        -2107.3789      -133.4620 23s/Msamples
+        2400000     -2221.8543        14.3        -2106.8370      -115.0173 23s/Msamples
+        2500000     -2230.9653        14.9        -2110.2065      -120.7587 23s/Msamples
+        2600000     -2235.7313        15.8        -2105.2158      -130.5155 23s/Msamples
+        2700000     -2235.0805        16.3        -2107.9390      -127.1414 23s/Msamples
+        2800000     -2217.7927        17.9        -2105.7294      -112.0632 23s/Msamples
+        2900000     -2215.5118        17.5        -2105.6671      -109.8446 23s/Msamples
+        3000000     -2237.8189        19.3        -2108.7972      -129.0217 23s/Msamples
+        3100000     -2219.6623        19.7        -2106.4587      -113.2036 23s/Msamples
+        3200000     -2241.6529        20.7        -2108.0723      -133.5805 23s/Msamples
+        3300000     -2239.4232        21.4        -2106.5375      -132.8857 23s/Msamples
+        3400000     -2219.5449        23.8        -2106.8214      -112.7235 23s/Msamples
+        3500000     -2231.2558        24.6        -2103.4855      -127.7702 23s/Msamples
+        3600000     -2207.2670        24.5        -2105.2839      -101.9830 23s/Msamples
+        3700000     -2215.5031        23.8        -2105.8305      -109.6726 23s/Msamples
+        3800000     -2236.4757        26.1        -2103.3494      -133.1263 23s/Msamples
+        3900000     -2232.1352        27.2        -2106.9354      -125.1997 23s/Msamples
+        4000000     -2213.9036        29.5        -2109.5345      -104.3690 23s/Msamples
+        4100000     -2226.3769        30.1        -2108.7543      -117.6226 23s/Msamples
+        4200000     -2222.0851        30.1        -2109.3258      -112.7593 23s/Msamples
+        4300000     -2240.2740        31.8        -2107.8126      -132.4614 23s/Msamples
+        4400000     -2207.6256        34.0        -2103.8077      -103.8178 23s/Msamples
+        4500000     -2238.8363        35.7        -2109.8795      -128.9567 23s/Msamples
+        4600000     -2241.3264        38.0        -2106.3146      -135.0118 23s/Msamples
+        4700000     -2230.8715        38.4        -2107.3594      -123.5120 23s/Msamples
+        4800000     -2236.4595        38.2        -2107.7116      -128.7479 23s/Msamples
+        4900000     -2226.2913        38.2        -2104.9612      -121.3300 23s/Msamples
+        5000000     -2234.1470        38.8        -2104.5344      -129.6126 23s/Msamples
+        5100000     -2242.7435        39.4        -2107.1157      -135.6278 23s/Msamples
+        5200000     -2206.0512        45.2        -2106.3431       -99.7081 23s/Msamples
+        5300000     -2227.0818        46.0        -2106.2987      -120.7830 23s/Msamples
+        5400000     -2226.7477        46.3        -2108.1494      -118.5983 23s/Msamples
+        5500000     -2218.5180        47.0        -2102.9879      -115.5300 23s/Msamples
+        5600000     -2211.5711        46.0        -2107.0538      -104.5172 23s/Msamples
+        5700000     -2213.6414        43.5        -2106.3559      -107.2854 23s/Msamples
+        5800000     -2245.1263        49.6        -2106.2797      -138.8465 23s/Msamples
+        5900000     -2205.8802        54.0        -2105.6026      -100.2775 23s/Msamples
+        6000000     -2213.0368        54.9        -2111.0384      -101.9984 23s/Msamples
+        6100000     -2229.9754        56.0        -2110.5739      -119.4014 23s/Msamples
+        6200000     -2240.2197        57.0        -2104.1477      -136.0720 23s/Msamples
+        6300000     -2234.5088        58.0        -2108.5765      -125.9323 23s/Msamples
+        6400000     -2224.8361        59.0        -2108.7313      -116.1047 23s/Msamples
+        6500000     -2218.2353        60.0        -2107.0134      -111.2218 23s/Msamples
+        6600000     -2230.3052        61.0        -2112.1073      -118.1979 23s/Msamples
+        6700000     -2245.3877        62.0        -2106.8598      -138.5278 23s/Msamples
+        6800000     -2199.4884        63.0        -2106.3214       -93.1670 23s/Msamples
+        6900000     -2212.0418        63.0        -2107.0565      -104.9852 23s/Msamples
+        7000000     -2230.8330        64.0        -2106.5173      -124.3157 23s/Msamples
+        7100000     -2234.2665        65.0        -2108.1973      -126.0691 23s/Msamples
+        7200000     -2216.0935        66.0        -2102.7973      -113.2962 23s/Msamples
+        7300000     -2230.0593        67.0        -2105.0097      -125.0496 23s/Msamples
+        7400000     -2231.6745        68.0        -2108.6802      -122.9942 23s/Msamples
+        7500000     -2239.2772        69.0        -2107.2188      -132.0583 23s/Msamples
+        7600000     -2233.8207        70.0        -2103.5268      -130.2939 23s/Msamples
+        7700000     -2229.0540        71.0        -2104.3577      -124.6963 23s/Msamples
+        7800000     -2215.8841        72.0        -2106.3066      -109.5775 23s/Msamples
+        7900000     -2223.7628        72.0        -2106.0726      -117.6901 23s/Msamples
+        8000000     -2235.4605        73.0        -2109.5047      -125.9557 23s/Msamples
+        8100000     -2204.7512        74.0        -2112.2766       -92.4745 23s/Msamples
+        8200000     -2229.0900        75.0        -2105.7920      -123.2979 23s/Msamples
+        8300000     -2239.9006        76.0        -2107.9626      -131.9380 23s/Msamples
+        8400000     -2231.8084        77.0        -2110.6646      -121.1437 23s/Msamples
+        8500000     -2204.5605        78.0        -2104.2880      -100.2724 23s/Msamples
+        8600000     -2227.7892        79.0        -2106.6546      -121.1346 23s/Msamples
+        8700000     -2236.1700        80.0        -2108.1170      -128.0530 23s/Msamples
+        8800000     -2216.0094        81.0        -2112.3361      -103.6733 23s/Msamples
+        8900000     -2229.7786        81.0        -2107.8660      -121.9125 23s/Msamples
+        9000000     -2231.2866        82.0        -2106.8261      -124.4604 23s/Msamples
+        9100000     -2224.5506        83.0        -2104.3943      -120.1562 23s/Msamples
+        9200000     -2223.8186        84.0        -2105.5815      -118.2370 23s/Msamples
+        9300000     -2231.4589        85.0        -2103.5144      -127.9444 23s/Msamples
+        9400000     -2257.4948        86.0        -2106.5474      -150.9474 23s/Msamples
+        9500000     -2223.8638        87.0        -2107.6541      -116.2096 23s/Msamples
+        9600000     -2203.2450        88.0        -2104.9502       -98.2947 23s/Msamples
+        9700000     -2237.3057        89.0        -2105.4250      -131.8806 23s/Msamples
+        9800000     -2209.7183        90.0        -2104.8598      -104.8584 23s/Msamples
+        9900000     -2228.7884        90.0        -2105.3247      -123.4636 23s/Msamples
+       10000000     -2218.7328        91.0        -2105.2413      -113.4914 23s/Msamples
+
+Operator                                                Tuning    #accept    #reject      Pr(m)  Pr(acc|m)
+ScaleOperator(ucldMeanScaler.c:bears)                   0.5636      17424      57694     0.0075     0.2320 
+ScaleOperator(ucldStdevScaler.c:bears)                  0.4704     153807      69326     0.0224     0.6893 Try setting scaleFactor to about 0.221
+IntRandomWalkOperator(CategoriesRandomWalk.c:bears)          -     487805     258054     0.0746     0.6540 
+SwapOperator(CategoriesSwapOperator.c:bears)                 -     702869      44300     0.0746     0.9407 
+UniformOperator(CategoriesUniform.c:bears)                   -     720340      26845     0.0746     0.9641 
+UpDownOperator(relaxedUpDownOperator.c:bears)           0.1052       1123     222383     0.0224     0.0050 Try setting scaleFactor to about 0.324
+ScaleOperator(originScalerFBD.t:bears)                  0.6880      47825     176106     0.0224     0.2136 
+ScaleOperator(divRateScalerFBD.t:bears)                 0.4159     188450     557213     0.0746     0.2527 
+ScaleOperator(turnoverScalerFBD.t:bears)                0.4598     103583     642887     0.0746     0.1388 
+ScaleOperator(samplingPScalerFBD.t:bears)               0.4616     143233     603147     0.0746     0.1919 
+LeafToSampledAncestorJump(LeafToSAFBD.t:bears)               -      96464     650712     0.0746     0.1291 
+SAWilsonBalding(SAWilsonBaldingFBD.t:bears)                  -      52329     693676     0.0746     0.0701 
+SAExchange(SAWideFBD.t:bears)                                -      25571     719937     0.0746     0.0343 
+SAExchange(SANarrowFBD.t:bears)                              -     186219     558946     0.0746     0.2499 
+SAUniform(SAUniformOperatorFBD.t:bears)                      -    1073071     419825     0.1493     0.7188 
+SAScaleOperator(SATreeRootScalerFBD.t:bears)            0.7834      18144      56737     0.0075     0.2423 
+SAScaleOperator(SATreeScalerFBD.t:bears)                0.4803       6304     217652     0.0224     0.0281 Try setting scaleFactor to about 0.693
+
+     Tuning: The value of the operator's tuning parameter, or '-' if the operator can't be optimized.
+    #accept: The total number of times a proposal by this operator has been accepted.
+    #reject: The total number of times a proposal by this operator has been rejected.
+      Pr(m): The probability this operator is chosen in a step of the MCMC (i.e. the normalized weight).
+  Pr(acc|m): The acceptance probability (#accept as a fraction of the total proposals for this operator).
+
+
+Total calculation time: 236.152 seconds
+End likelihood: -2218.7328103683662
