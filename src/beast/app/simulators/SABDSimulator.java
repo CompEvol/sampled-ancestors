@@ -202,6 +202,7 @@ public class SABDSimulator {
                 node.setHeight(-rhoSamplingTime);
                 node.setNr(sampleCount);
                 sampledNodes.add(node);
+                node.setID("A"+sampleCount);
                 sampleCount++;
                 rhoSampledNodeNumber++;
                 rhoSamplingTimeReached = true;
@@ -241,9 +242,11 @@ public class SABDSimulator {
                     connectParentToChildren(node, left, right);
                     newNodes.add(left);
                     sampledNodes.add(right);
+                    right.setID("A"+sampleCount);
                 } else {
                     node.setNr(sampleCount);
                     sampledNodes.add(node);
+                    node.setID("A"+sampleCount);
                 }
                 sampleCount++;
             }
@@ -333,7 +336,7 @@ public class SABDSimulator {
 
     private void printTraits(Node node, PrintStream writer){
         if (node.isLeaf()){
-            writer.println(node.getNr() + "=" + (origin + node.getHeight()) + ',');
+            writer.println(node.getID() + "=" + (origin + node.getHeight()) + ',');
         } else {
             printTraits(node.getLeft(), writer);
             printTraits(node.getRight(), writer);
@@ -342,7 +345,7 @@ public class SABDSimulator {
 
     public void printTraitsWithRhoSamplingTime(Node node, PrintStream writer){
         if (node.isLeaf()){
-            writer.println(node.getNr() + "=" + (rhoSamplingTime + node.getHeight()) + ',');
+            writer.println(node.getID() + "=" + (rhoSamplingTime + node.getHeight()) + ',');
         } else {
             printTraitsWithRhoSamplingTime(node.getLeft(), writer);
             printTraitsWithRhoSamplingTime(node.getRight(), writer);
@@ -352,9 +355,9 @@ public class SABDSimulator {
     private double printSAWithRhoSamplingTime(Node node, PrintStream writer){
         if (node.isLeaf()){
             if (node.isDirectAncestor()) {
-                writer.println(node.getNr() + "=1");
+                writer.println(node.getID() + "=1");
             }   else {
-                writer.println(node.getNr() + "=0");
+                writer.println(node.getID() + "=0");
             }
             return rhoSamplingTime + node.getHeight();
         } else {
@@ -379,7 +382,7 @@ public class SABDSimulator {
             }
         } else {
             if (node.getHeight() + rhoSamplingTime == 0.0) {
-                extantDescendants.add(Integer.toString(node.getNr()));
+                extantDescendants.add(node.getID());
             }
         }
 

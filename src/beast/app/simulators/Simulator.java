@@ -67,7 +67,7 @@ public class Simulator {
                 count--;
 
                 writer.println("tree");
-                writer.println(simulator.root.toShortNewick(false));
+                writer.println(simulator.root.toNewick());
                 //treeWriter.println(simulator.root.toShortNewick(false) + ";");
 
                 writer.println("traits");
