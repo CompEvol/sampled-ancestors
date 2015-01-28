@@ -6,6 +6,12 @@
 \newcommand{\TracerVersion}{1.6}
 \newcommand{\FigTreeVersion}{1.4.2}
 
+\newcommand{\includeimage}[2][]{%
+%HEVEA\imgsrc{#2.hevea.png}%
+%BEGIN LATEX
+\includegraphics[#1]{#2}
+%END LATEX
+}
 
 \newcommand{\lra}[1]{\langle #1 \rangle}
 
@@ -75,9 +81,8 @@ Having BEAST and SA package installed and sequence data of extant species togeth
 
 %\begin{figure}	
 %\centering
-%\includegraphics[width=\textwidth]{figures/AlignmentViewer}
+%\includeimage[width=\textwidth]{figures/AlignmentViewer}
 %\caption{The {\bf Partition} panel in BEAUti with a loaded alignment.\label{fig:alignmentViewer}}
-%\label{fig:BEAUti_ImportNexus}
 %\end{figure}
 The example file contains an alignment of a single gene of ten extant species and 24 fossil samples (each site in the fossil sequences is a gap).   
 After loading the alignment you may need to link trees and clock models if this is an alignment of multiple genes. 
@@ -86,9 +91,9 @@ The next step is to specify the ages in the {\bf Tip Dates} panel. Tick the `Use
 
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/TipDates}
+\includeimage[width=\textwidth]{figures/TipDates}
 \caption{The {\bf Tip Dates} panel in BEAUti. Select `Use tip dates' and appropriate `Dates specified as' options. Then extract the dates from the taxon labels by clicking on `Guess' button and choosing an appropriate pattern.\label{fig:tipDates}}
-\label{fig:BEAUti_ImportNexus}
+
 \end{figure}
 It is also possible to specify the age ranges however BEAUti does not support this option. If you want to do this then finish the XML specification in BEAUti and add the ranges manually.  See bears\_ranges.xml file in {\tt examples/} folder in the SA package directory as an example. Note that you still need to specify the ages in BEAUti. These ages should be within the ranges and will be used as initial values. 
 
@@ -96,34 +101,30 @@ Further we need to specify site and clock models. We leave the default site mode
 
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/FBDmodel}
+\includeimage[width=\textwidth]{figures/FBDmodel}
 \caption{Choose the `Fossilised Birth Death Model' in the {\bf Priors} panel. \label{fig:FBDmodel}}
-\label{fig:BEAUti_ImportNexus}
 \end{figure}
 
 In the default settings of the FBD model, the proportion of species sampled at present, $\rho$, is fixed to one. For the example data, we leave this setting. In other analyses, you might need to change this value depending on the sampling scheme. Also you might choose another parameter to be fixed or estimate all the parameters placing informative prior distributions on one or more parameters. Although all the parameters in this model are identifiable, i.e., can be inferred from the phylogeny, in absence of comparative data of fossil samples we need to fix or place an informative prior distribution on one of the parameters.  You also may need to adjust the initial values of the parameters, e.g.,  time of origin, which has to be older than the oldest fossil sample. If you believe all the fossil samples are crown, that is the most recent common ancestor of all taxa included in the analysis is not a fossil or, in other words, the root of the phylogeny is a two-degree node and not a sampled node, then also tick `Condition on Root' box (see Figure \ref{fig:FBDsettings}). `Condition on Rho Sampling' is preferable for a dating analysis and we leave it selected. 
 
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/FBDsettings}
+\includeimage[width=\textwidth]{figures/FBDsettings}
 \caption{The settings of the FBD model. All the parameter except for $\rho$ are estimated and $\rho$ is fixed to the one meaning that we sampled all the known species in the clade. We assume the most recent ancestor of all the taxa can be a fossil sample. So we do not select `Condition On Root'. \label{fig:FBDsettings}}
-\label{fig:BEAUti_ImportNexus}
 \end{figure}
 
 Further, you may specify monophyletic constraints on the same panel. Click the plus button at the bottom of the {\bf Priors} panel, name the monophyletic clade and move all the taxa included in the clade to the right window. Then tick the `monophyletic' box next to the `$<$Clade\_name$>$.prior' (Canidae.prior in the example) and leave the prior distribution as `[none]' (see Figures \ref{fig:MonophyleticClade} and \ref{fig:MonophyleticConstraint}). We do not recommend to specify any distribution for internal nodes because the interaction between multiple distributions applied to the phylogeny is not well understood.
  
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/MonophyleticClade}
+\includeimage[width=\textwidth]{figures/MonophyleticClade}
 \caption{Defining a clade. Click the plus button at the bottom of the {\bf Priors} panel and specify the clade. Type in the name of the clade and put the clade members to the right window using arrow buttons. \label{fig:MonophyleticClade}}
-\label{fig:BEAUti_ImportNexus}
 \end{figure}
 
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/MonophyleticConstraint}
+\includeimage[width=\textwidth]{figures/MonophyleticConstraint}
 \caption{Introducing monophyletic constraints in the {\bf Priors} panel. Select `monophyletic' option next to the clade prior. Leave the prior as `[none]'. \label{fig:MonophyleticConstraint}}
-\label{fig:BEAUti_ImportNexus}
 \end{figure}
 
 Specify all the remaining prior distributions and proceed to the {\bf MCMC} panel. We only change the `Log Every' option for the `screenlog' to 10000 to make the output of BEAST analysis more compact. Then save the file. Now the input XML file for BEAST is ready and you can run BEAST. The resulting XML file, bears.xml, prepared following this tutorial can be found in {\tt examples/} (or {\tt examples\textbackslash} for Windows) directory in the SA package directory. 
@@ -138,7 +139,7 @@ Open the LOG file in Tracer to review estimated statistics. For this analysis, t
 
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/TracerOutput}
+\includeimage[width=\textwidth]{figures/TracerOutput}
 \caption{The posterior estimates from the bear analysis in Tracer. \label{fig:TracerOutput}}
 \end{figure}
 
@@ -146,7 +147,7 @@ Use TreeAnnotator to summarise the tree distribution and FigTree to view the sum
 
 \begin{figure}	
 \centering
-\includegraphics[width=\textwidth]{figures/FigTree}
+\includeimage[width=\textwidth]{figures/FigTree}
 \caption{FigTree view of the maximum clade credibility tree with mean node heights obtained with TreeAnnotator. The strictly horizontal branches (zero length branches) represent sampled ancestor nodes. \label{fig:FigTree}}
 \end{figure}
 
