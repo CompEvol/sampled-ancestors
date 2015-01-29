@@ -100,7 +100,6 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         countSampledAncestors(true);
         countSAFrequencies(true, false, 0.445);
         printTreeHeights();
-        removeFossils();
         countTopologies(false);
     }
 
@@ -419,28 +418,82 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         System.out.println(tree.getRoot().getHeight() + ")");
     }
 
-    public void removeFossils(){
-        Tree tree;
+//    public void removeFossils(){
+//        Tree tree;
+//
+//        for (int i =0; i < getTotalTreesBurninRemoved(); i++) {
+//            tree = treeInTrace.get(i);
+//            for (int j=0; j<tree.getNodeCount(); j++) {
+//                Node fake = tree.getNode(j);
+//                if (((ZeroBranchSANode)fake).isFake()) {
+//                    Node parent = fake.getParent();
+//                    Node otherChild = ((ZeroBranchSANode)fake.getLeft()).isDirectAncestor()?fake.getRight():fake.getLeft();
+//                    parent.removeChild(fake);
+//                    parent.addChild(otherChild);
+//                } else if (!fake.isLeaf() && ((fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005) || (fake.getRight().isLeaf() && fake.getRight().getHeight() > 0.0000000005))) {
+//                    Node parent = fake.getParent();
+//                    Node otherChild= (fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005)?fake.getRight():fake.getLeft();
+//                    parent.removeChild(fake);
+//                    parent.addChild(otherChild);
+//                }
+//            }
+//            System.out.println("tree STATE_"+ i*1000 + " = "+tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
+//        }
+//
+//    }
 
+    public void removeFossilsFromAllTrees() {
+        Tree tree;
         for (int i =0; i < getTotalTreesBurninRemoved(); i++) {
             tree = treeInTrace.get(i);
-            for (int j=0; j<tree.getNodeCount(); j++) {
-                Node fake = tree.getNode(j);
-                if (((ZeroBranchSANode)fake).isFake()) {
-                    Node parent = fake.getParent();
-                    Node otherChild = ((ZeroBranchSANode)fake.getLeft()).isDirectAncestor()?fake.getRight():fake.getLeft();
-                    parent.removeChild(fake);
-                    parent.addChild(otherChild);
-                } else if (!fake.isLeaf() && ((fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005) || (fake.getRight().isLeaf() && fake.getRight().getHeight() > 0.0000000005))) {
-                    Node parent = fake.getParent();
-                    Node otherChild= (fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005)?fake.getRight():fake.getLeft();
-                    parent.removeChild(fake);
-                    parent.addChild(otherChild);
-                }
-            }
-            System.out.println("tree STATE_"+ i*1000 + " = "+tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
+            removeFossils(tree.getRoot(), tree, new ArrayList<>());
+            System.out.println("tree STATE_"+ i*1000 + " = "+tree.getRoot().toSortedNewick(new int[]{0}, true) + ";");
         }
 
+    }
+
+    public void removeFossils(Node node, Tree tree, ArrayList<Node> removedNodes) {
+        if (node.isLeaf()) {
+            if (node.getHeight() > 0.00005) {
+                node.getParent().removeChild(node);
+                node.setParent(null);
+                removedNodes.add(node);
+            }
+        }  else {
+            Node left = node.getLeft();
+            Node right = node.getRight();
+            removeFossils(left, tree, removedNodes);
+            removeFossils(right, tree, removedNodes);
+//            if (!removedNodes.contains(left)) {
+//                removeFossils(left, tree, removedNodes);
+//            }
+//            if (!removedNodes.contains(right)) {
+//                removeFossils(right, tree, removedNodes);
+//            }
+
+
+            if (node.isLeaf()) {
+                node.getParent().removeChild(node);
+                node.setParent(null);
+                removedNodes.add(node);
+            }
+            if (node.getChildCount() == 1) {
+                Node child = node.getChild(0);
+                if (node.getParent() != null) {
+                    Node grandParent = node.getParent();
+                    grandParent.removeChild(node);
+                    grandParent.addChild(child);
+                    child.setParent(grandParent);
+                    node.setParent(null);
+                }
+                else {
+                    child.setParent(null);
+                    tree.setRootOnly(child);
+                }
+                removedNodes.add(node);
+            }
+
+        }
     }
 
     //********* private ***********

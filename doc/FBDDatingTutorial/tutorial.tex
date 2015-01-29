@@ -110,7 +110,7 @@ In the default settings of the FBD model, the proportion of species sampled at p
 \begin{figure}	
 \centering
 \includeimage[width=\textwidth]{figures/FBDsettings}
-\caption{The settings of the FBD model. All the parameter except for $\rho$ are estimated and $\rho$ is fixed to the one meaning that we sampled all the known species in the clade. We assume the most recent ancestor of all the taxa can be a fossil sample. So we do not select `Condition On Root'. \label{fig:FBDsettings}}
+\caption{The settings of the FBD model. All the parameters except for $\rho$ are estimated and $\rho$ is fixed to one meaning that we sampled all the known species in the clade. We assume the most recent common ancestor of all the taxa can be a fossil sample. So we do not select `Condition On Root'. \label{fig:FBDsettings}}
 \end{figure}
 
 Further, you may specify monophyletic constraints on the same panel. Click the plus button at the bottom of the {\bf Priors} panel, name the monophyletic clade and move all the taxa included in the clade to the right window. Then tick the `monophyletic' box next to the `$<$Clade\_name$>$.prior' (Canidae.prior in the example) and leave the prior distribution as `[none]' (see Figures \ref{fig:MonophyleticClade} and \ref{fig:MonophyleticConstraint}). We do not recommend to specify any distribution for internal nodes because the interaction between multiple distributions applied to the phylogeny is not well understood.
@@ -143,7 +143,7 @@ Open the LOG file in Tracer to review estimated statistics. For this analysis, t
 \caption{The posterior estimates from the bear analysis in Tracer. \label{fig:TracerOutput}}
 \end{figure}
 
-Use TreeAnnotator to summarise the tree distribution and FigTree to view the summary tree. The summary tree of trees in bears.trees is shown in Figure~\ref{fig:FigTree}. It is obtained using TreeAnnotator with 10\% burnin, zero `Posterior probability limit', `Maximum Clade Credibility Tree' as the `Target tree type' and `Mean heights' as `Node heights'. To find the maximum clade credibility tree the TreeAnnotator takes into account sampled ancestor clades, that is, any two clades with the same taxa are considered as distinct clades if the most recent common ancestor in one clade is a sampled node and in another clade is a bifurcation node. TreeAnnotator gives sensible results for sampled ancestor trees only in case when fossil ages are fixed.  
+Use TreeAnnotator to summarise the tree distribution and FigTree to view the summary tree. The summary tree for trees in bears.trees is shown in Figure~\ref{fig:FigTree}. It is obtained using TreeAnnotator with 10\% burnin, zero `Posterior probability limit', `Maximum Clade Credibility Tree' as the `Target tree type' and `Mean heights' as `Node heights'. To find the maximum clade credibility tree the TreeAnnotator takes into account sampled ancestor clades, that is, any two clades with the same taxa are considered as distinct clades if the most recent common ancestor in one clade is a sampled node and in another clade is a bifurcation node. TreeAnnotator gives sensible results for sampled ancestor trees only in case when fossil ages are fixed.  
 
 \begin{figure}	
 \centering
