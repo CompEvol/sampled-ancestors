@@ -68,6 +68,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     protected double origin;
     protected double rho;
     protected boolean transform; //is true if the model is parametrised through transformed parameters
+    private boolean lambdaExceedsMu = false;
 
     public void initAndValidate() throws Exception {
 
@@ -176,6 +177,9 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     {
         int nodeCount = tree.getNodeCount();
         updateParameters();
+        if (lambdaExceedsMu && lambda <= mu) {
+            return Double.NEGATIVE_INFINITY;
+        }
         //double x0 = tree.getRoot().getHeight() + origToRootDistance;
         double x0 = origin;
         double x1=tree.getRoot().getHeight();

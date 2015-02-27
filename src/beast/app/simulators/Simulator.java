@@ -100,7 +100,7 @@ public class Simulator {
             }
             //System.out.print(meanLeafCount/(treeCount+count));
             //System.out.println();
-            //System.out.println("Number of trees rejected: " + count);
+            System.out.println("Number of trees rejected: " + count);
 
 
         } catch (IOException e) {
