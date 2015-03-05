@@ -23,7 +23,7 @@ import beast.util.ZeroBranchSATreeParser;
 public class SABirthDeathModel extends SpeciesTreeDistribution {
 
     public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The origin of infection",(RealParameter)null);
+            new Input<RealParameter>("origin", "The time when the process started",(RealParameter)null);
 
     //'direct' parameters
     public Input<RealParameter> birthRateInput =
