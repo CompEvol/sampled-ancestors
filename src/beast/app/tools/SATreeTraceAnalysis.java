@@ -37,15 +37,10 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        countSampledAncestors(true);
-//        countSAFrequencies(true, false, 0.445);
-//        printTreeHeights();
 //        removeFossils();
 
         // this should be after removeFossils
         super.analyze(credSetProbability);
-
-//        countTopologies(false);
 
     }
 
