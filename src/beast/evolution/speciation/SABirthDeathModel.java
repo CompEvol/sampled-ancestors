@@ -100,7 +100,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             throw new RuntimeException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
 
-        if (treeInput.get() instanceof ZeroBranchSATreeParser && originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
+        if (originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
             throw new RuntimeException("Initial value of origin should be greater than initial root height");
 
         }
