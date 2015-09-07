@@ -22,10 +22,9 @@ import beast.util.ZeroBranchSATreeParser;
         "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919")
 public class SABirthDeathModel extends SpeciesTreeDistribution {
 
+    //'direct' parameters
     public Input<RealParameter> originInput =
             new Input<RealParameter>("origin", "The time when the process started",(RealParameter)null);
-
-    //'direct' parameters
     public Input<RealParameter> birthRateInput =
             new Input<RealParameter>("birthRate", "Birth rate");
     public Input<RealParameter> deathRateInput =
@@ -34,6 +33,8 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             new Input<RealParameter>("samplingRate", "Sampling rate per individual");
 
     //transformed parameters:
+    public Input<RealParameter> expectedNInput =
+            new Input<RealParameter>("expectedN", "The expected-N-at-present parameterisation of T",(RealParameter)null);
     public Input<RealParameter> diversificationRateInput =
             new Input<RealParameter>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.XOR, birthRateInput);
     public Input<RealParameter> turnoverInput =
@@ -68,18 +69,28 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     protected double origin;
     protected double rho;
     protected boolean transform; //is true if the model is parametrised through transformed parameters
+
+    protected boolean transformT = false;
+    protected boolean originSpecified;
+
     private boolean lambdaExceedsMu = false;
 
     public void initAndValidate() throws Exception {
 
-        if (originInput.get() == null && !conditionOnRootInput.get()) {
-            throw new RuntimeException("Either specify origin input or set conditionOnRoot input to \"true\"");
+        if (originInput.get() != null && expectedNInput.get() != null){
+            throw new RuntimeException("Only one of (origin, expectedN) inputs may be specified.");
         }
 
-        if (originInput.get() != null && conditionOnRootInput.get()){
-            throw new RuntimeException("Either don't specify origin input or set conditionOnRoot input to \"false\"");
+        originSpecified = originInput.get() != null || expectedNInput.get() != null;
+        transformT = expectedNInput.get() != null;
+
+        if (!originSpecified && !conditionOnRootInput.get()) {
+            throw new RuntimeException("Specify one of (origin, expectedN) inputs or set conditionOnRoot input to \"true\"");
         }
 
+        if (originSpecified && conditionOnRootInput.get()) {
+            throw new RuntimeException("Remove (origin/expectedN) input or set conditionOnRoot input to \"false\"");
+        }
 
         if (conditionOnSamplingInput.get() && conditionOnRhoSamplingInput.get()){
             throw new RuntimeException("Either set to \"true\" only one of conditionOnSampling and conditionOnRhoSampling inputs or don't specify both!");
@@ -88,9 +99,6 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         if (birthRateInput.get() != null && deathRateInput.get() != null && samplingRateInput.get() != null) {
 
             transform = false;
-            //mu = deathRateInput.get().getValue();
-            //psi = samplingRateInput.get().getValue();
-            //lambda = birthRateInput.get().getValue();
 
         } else if (diversificationRateInput.get() != null && turnoverInput.get() != null && samplingProportionInput.get() != null) {
 
@@ -100,9 +108,9 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             throw new RuntimeException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
 
-        if (originInput.get() != null && originInput.get().getValue() < treeInput.get().getRoot().getHeight()){
-            throw new RuntimeException("Initial value of origin should be greater than initial root height");
-
+        double rootHeight = treeInput.get().getRoot().getHeight();
+        if (originSpecified && origin() < rootHeight){
+            throw new RuntimeException("Initial value of origin (" + origin() + ") should be greater than initial root height (" +rootHeight + ")");
         }
 
 
@@ -138,6 +146,39 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         return Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2);
     }
 
+    /**
+     * @return the current origin, regardless of parameterization
+     */
+    private double origin() {
+        if (transformT) {
+            double N = expectedNInput.get().getValue();
+            return Math.log((1.0 - turnover())*N + r)/d();
+        }
+        return originInput.get().getValue();
+    }
+
+    /**
+     * @return the current diversification rate, regardless of parametrization.
+     */
+    private double d() {
+        if (transform) return diversificationRateInput.get().getValue();
+
+        double lambda = birthRateInput.get().getValue();
+        return lambda * (1.0 - turnover());
+    }
+
+    /**
+     * @return the current turnover, regardless of parametrization.
+     */
+    private double turnover() {
+        if (transform) return turnoverInput.get().getValue();
+
+        double lambda = birthRateInput.get().getValue();
+        double mu = deathRateInput.get().getValue();
+
+        return mu/lambda;
+    }
+
     private void transformParameters() {
         double d = diversificationRateInput.get().getValue();
         double r_turnover = turnoverInput.get().getValue();
@@ -165,8 +206,8 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         }
         c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
         c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-        if (originInput.get() != null){
-            origin = originInput.get().getValue();
+        if (originSpecified){
+            origin = origin();
         }  else {
             origin = Double.POSITIVE_INFINITY;
         }
