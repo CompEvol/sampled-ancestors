@@ -49,5 +49,5 @@ public class DiversificationTurnoverParameterization extends SABDParameterizatio
     }
 
     @Override
-    public void initAndValidate() throws Exception {}
+    public void initAndValidate() {}
 }

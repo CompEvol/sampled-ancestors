@@ -53,13 +53,13 @@ public class ParameterizedSABirthDeathModel extends SpeciesTreeDistribution {
 
     private boolean lambdaExceedsMu = false;
 
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
         updateParameters();
 
         double rootHeight = treeInput.get().getRoot().getHeight();
         if (origin < rootHeight){
-            throw new RuntimeException("Initial value of origin (" + origin + ") should be greater than initial root height (" +rootHeight + ")");
+            throw new IllegalArgumentException("Initial value of origin (" + origin + ") should be greater than initial root height (" +rootHeight + ")");
         }
     }
 

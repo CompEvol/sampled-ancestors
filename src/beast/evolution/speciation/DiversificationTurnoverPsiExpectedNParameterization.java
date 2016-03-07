@@ -45,5 +45,5 @@ public class DiversificationTurnoverPsiExpectedNParameterization extends SABDPar
     }
 
     @Override
-    public void initAndValidate() throws Exception {}
+    public void initAndValidate() {}
 }

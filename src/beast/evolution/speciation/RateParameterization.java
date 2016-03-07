@@ -35,5 +35,5 @@ public class RateParameterization extends SABDParameterization {
     }
 
     @Override
-    public void initAndValidate() throws Exception {}
+    public void initAndValidate() {}
 }
