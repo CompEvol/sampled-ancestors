@@ -4,8 +4,8 @@ import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.evolution.tree.*;
-import beast.util.ZeroBranchSATreeParser;
+import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
 
 /**
  * @author Alexandra Gavryushkina
@@ -20,29 +20,9 @@ import beast.util.ZeroBranchSATreeParser;
 @Citation("Gavryushkina A, Welch D, Stadler T, Drummond AJ (2014) \n" +
         "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration. \n" +
         "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919")
-public class SABirthDeathModel extends SpeciesTreeDistribution {
+public class ParameterizedSABirthDeathModel extends SpeciesTreeDistribution {
 
-
-    //'direct' parameters
-    public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The time when the process started", Input.Validate.REQUIRED);
-    public Input<RealParameter> birthRateInput =
-            new Input<RealParameter>("birthRate", "Birth rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> deathRateInput =
-            new Input<RealParameter>("deathRate", "Death rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> samplingRateInput =
-            new Input<RealParameter>("samplingRate", "Sampling rate per individual", Input.Validate.REQUIRED);
-
-    //transformed parameters:
-    public Input<RealParameter> expectedNInput =
-            new Input<RealParameter>("expectedN", "The expected-N-at-present parameterisation of T",(RealParameter)null);
-    public Input<RealParameter> diversificationRateInput =
-            new Input<RealParameter>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.XOR, birthRateInput);
-    public Input<RealParameter> turnoverInput =
-            new Input<RealParameter>("turnover", "Turnover. Death rate/birth rate", Input.Validate.XOR, deathRateInput);
-    public Input<RealParameter> samplingProportionInput =
-            new Input<RealParameter>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.XOR, samplingRateInput);
-
+    public Input<SABDParameterization> parameterizationInput = new Input<>("parameterization", "The parameterization to use.", Input.Validate.REQUIRED);
 
     // r parameter
     public Input<RealParameter> removalProbability =
@@ -61,68 +41,26 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             "likelihood is conditioned on the root height otherwise on the time of origin", false);
 
     protected double r;
+    protected double c1;
+    protected double c2;
+    protected double rho;
+
     protected double lambda;
     protected double mu;
     protected double psi;
-    protected double c1;
-    protected double c2;
     protected double origin;
-    protected double rho;
-    protected boolean transform; //is true if the model is parametrised through transformed parameters
 
-    protected boolean transformT = false;
-    protected boolean originSpecified;
 
     private boolean lambdaExceedsMu = false;
 
-    public void initAndValidate() {
+    public void initAndValidate() throws Exception {
 
-        if (originInput.get() != null && expectedNInput.get() != null){
-            throw new IllegalArgumentException("Only one of (origin, expectedN) inputs may be specified.");
-        }
-
-        originSpecified = originInput.get() != null || expectedNInput.get() != null;
-        transformT = expectedNInput.get() != null;
-
-        if (!originSpecified && !conditionOnRootInput.get()) {
-            throw new IllegalArgumentException("Specify one of (origin, expectedN) inputs or set conditionOnRoot input to \"true\"");
-        }
-
-        if (originSpecified && conditionOnRootInput.get()) {
-            throw new RuntimeException("Remove (origin/expectedN) input or set conditionOnRoot input to \"false\"");
-        }
-
-        if (conditionOnSamplingInput.get() && conditionOnRhoSamplingInput.get()){
-            throw new IllegalArgumentException("Either set to \"true\" only one of conditionOnSampling and conditionOnRhoSampling inputs or don't specify both!");
-        }
-
-        if (birthRateInput.get() != null && deathRateInput.get() != null && samplingRateInput.get() != null) {
-
-            transform = false;
-
-        } else if (diversificationRateInput.get() != null && turnoverInput.get() != null && samplingProportionInput.get() != null) {
-
-            transform = true;
-
-        } else {
-            throw new IllegalArgumentException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
-        }
+        updateParameters();
 
         double rootHeight = treeInput.get().getRoot().getHeight();
-        if (originSpecified && origin() < rootHeight){
-            throw new IllegalArgumentException("Initial value of origin (" + origin() + ") should be greater than initial root height (" +rootHeight + ")");
+        if (origin < rootHeight){
+            throw new RuntimeException("Initial value of origin (" + origin + ") should be greater than initial root height (" +rootHeight + ")");
         }
-
-
-//        r = becomeNoninfectiousAfterSamplingProbability.get().getValue();
-//        if (rhoProbability.get() != null ) {
-//            rho = rhoProbability.get().getValue();
-//        } else {
-//            rho = 0.;
-//        }
-//        c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
-//        c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-//        origin = originInput.get().getValue();
     }
 
     private double p0s(double t, double c1, double c2) {
@@ -146,56 +84,15 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         return Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2);
     }
 
-    /**
-     * @return the current origin, regardless of parameterization
-     */
-    private double origin() {
-        if (transformT) {
-            double N = expectedNInput.get().getValue();
-            return Math.log((1.0 - turnover())*N + turnover())/d();
-        }
-        return originInput.get().getValue();
-    }
-
-    /**
-     * @return the current diversification rate, regardless of parametrization.
-     */
-    private double d() {
-        if (transform) return diversificationRateInput.get().getValue();
-
-        double lambda = birthRateInput.get().getValue();
-        return lambda * (1.0 - turnover());
-    }
-
-    /**
-     * @return the current turnover, regardless of parametrization.
-     */
-    private double turnover() {
-        if (transform) return turnoverInput.get().getValue();
-
-        double lambda = birthRateInput.get().getValue();
-        double mu = deathRateInput.get().getValue();
-
-        return mu/lambda;
-    }
-
-    private void transformParameters() {
-        double d = diversificationRateInput.get().getValue();
-        double r_turnover = turnoverInput.get().getValue();
-        double s = samplingProportionInput.get().getValue();
-        lambda = d/(1-r_turnover);
-        mu = r_turnover*lambda;
-        psi = mu*s/(1-s);
-    }
-
     private void updateParameters() {
 
-        if (transform) {
-            transformParameters();
-        } else {
-            lambda = birthRateInput.get().getValue();
-            mu = deathRateInput.get().getValue();
-            psi = samplingRateInput.get().getValue();
+        lambda = parameterizationInput.get().lambda();
+        mu = parameterizationInput.get().mu();
+        psi = parameterizationInput.get().psi();
+        if (!conditionOnRootInput.get()){
+            origin = parameterizationInput.get().origin();
+        }  else {
+            origin = Double.POSITIVE_INFINITY;
         }
 
         r = removalProbability.get().getValue();
@@ -206,11 +103,6 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         }
         c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
         c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
-        if (originSpecified){
-            origin = origin();
-        }  else {
-            origin = Double.POSITIVE_INFINITY;
-        }
     }
 
     @Override
