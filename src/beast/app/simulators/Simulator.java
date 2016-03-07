@@ -1,7 +1,5 @@
 package beast.app.simulators;
 
-import beast.util.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;

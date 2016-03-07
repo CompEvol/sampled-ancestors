@@ -18,11 +18,11 @@ public class SamplingDate extends BEASTObject {
 
     private double upper, lower;
 
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         upper=Double.parseDouble(upperInput.get());
         lower=Double.parseDouble(lowerInput.get());
         if (upper < 0 || lower < 0 || upper < lower) {
-            throw new Exception("Upper and lower inputs of samplingDate should be both positive and upper should be greater than lower.");
+            throw new IllegalArgumentException("Upper and lower inputs of samplingDate should be both positive and upper should be greater than lower.");
         }
     }
 

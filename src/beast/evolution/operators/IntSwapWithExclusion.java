@@ -24,7 +24,7 @@ public class IntSwapWithExclusion extends Operator {
     private List<Integer> masterList = null;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         parameter = parameterInput.get();
 
         List<Integer> list = new ArrayList<Integer>();

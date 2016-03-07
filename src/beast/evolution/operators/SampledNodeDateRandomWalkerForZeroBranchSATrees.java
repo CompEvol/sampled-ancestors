@@ -26,7 +26,7 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
 
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         windowSize = windowSizeInput.get();
         useGaussian = useGaussianInput.get();
 
@@ -49,7 +49,7 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
             for (String sTaxon : set) {
                 int iTaxon = sTaxaNames.indexOf(sTaxon);
                 if (iTaxon < 0) {
-                    throw new Exception("Cannot find taxon " + sTaxon + " in tree");
+                    throw new IllegalArgumentException("Cannot find taxon " + sTaxon + " in tree");
                 }
                 taxonIndices[k++] = iTaxon;
             }

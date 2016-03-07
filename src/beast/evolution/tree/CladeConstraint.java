@@ -34,7 +34,7 @@ public class CladeConstraint  extends Distribution {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         tree = treeInput.get();
         nodeCount=tree.getNodeCount();
         taxaNamesInClade = taxonsetInInput.get().asStringList();
@@ -51,11 +51,11 @@ public class CladeConstraint  extends Distribution {
     }
 
     @Override
-    public double calculateLogP() throws Exception {
+    public double calculateLogP() {
         holds = 0;
         collectNodeTipDescendants(tree.getRoot());
         if (holds == 0) {
-            throw new Exception("the most recent common ancestor of a clade is not found.");
+            throw new RuntimeException("the most recent common ancestor of a clade is not found.");
         }
         if (holds == 1) {
             logP = 0.0;

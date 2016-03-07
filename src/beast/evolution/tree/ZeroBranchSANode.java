@@ -236,7 +236,7 @@ public class ZeroBranchSANode extends Node {
      *                  internal nodes should be scaled.
      * @throws Exception throws exception if resulting tree would have negative branch lengths.
      */
-    public void scale(double fScale, boolean scaleSNodes) throws Exception {
+    public void scale(double fScale, boolean scaleSNodes) {
         startEditing();
         isDirty |= Tree.IS_DIRTY;
         if (scaleSNodes || (!isLeaf() && !isFake())) {
@@ -248,7 +248,7 @@ public class ZeroBranchSANode extends Node {
                 ((ZeroBranchSANode)getRight()).scale(fScale, scaleSNodes);
             }
             if (height < getLeft().height || height < getRight().height) {
-                throw new Exception("Scale gives negative branch length");
+                throw new IllegalArgumentException("Scale gives negative branch length");
             }
         }
     }

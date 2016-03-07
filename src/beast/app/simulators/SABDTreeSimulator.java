@@ -1,6 +1,5 @@
 package beast.app.simulators;
 
-import beast.core.Distribution;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.math.distributions.LogNormalDistributionModel;
@@ -8,7 +7,6 @@ import beast.util.Randomizer;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 /**
  *

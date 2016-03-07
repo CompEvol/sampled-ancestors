@@ -73,7 +73,7 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
      * Ensure the class behaves properly, even when inputs are not specified.
      */
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
         if (dataInput.get() != null) {
             labels = dataInput.get().getTaxaNames();
@@ -393,7 +393,7 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
         return UNKNOWN;
     }
 
-    public Node parseNewick(String sStr) throws Exception {
+    public Node parseNewick(String sStr) {
         // get rid of initial and terminal spaces
         sStr = sStr.replaceAll("^\\s+", "");
         sStr = sStr.replaceAll("\\s+$", "");
@@ -439,7 +439,7 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
                                 break;
                             } else {
                                 // don't know how to process single child nodes
-                                throw new Exception("Node with single child found.");
+                                throw new RuntimeException("Node with single child found.");
                             }
                         }
                         // process multi(i.e. more than 2)-child nodes by pairwise merging.
@@ -507,13 +507,13 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
                     case SEMI_COLON:
                         return finishNewickParsing(stack.lastElement(), sampleSize);
                     default:
-                        throw new Exception("parseNewick: unknown token");
+                        throw new RuntimeException("parseNewick: unknown token");
                 }
             }
             return finishNewickParsing(stack.lastElement(), sampleSize);
         } catch (Exception e) {
             System.err.println(e.getClass().toString() + "/" + e.getMessage() + ": " + sStr.substring(Math.max(0, m_iTokenStart - 100), m_iTokenStart) + " >>>" + sStr.substring(m_iTokenStart, m_iTokenEnd) + " <<< ...");
-            throw new Exception(e.getMessage() + ": " + sStr.substring(Math.max(0, m_iTokenStart - 100), m_iTokenStart) + " >>>" + sStr.substring(m_iTokenStart, m_iTokenEnd) + " <<< ...");
+            throw new RuntimeException(e.getMessage() + ": " + sStr.substring(Math.max(0, m_iTokenStart - 100), m_iTokenStart) + " >>>" + sStr.substring(m_iTokenStart, m_iTokenEnd) + " <<< ...");
         }
 //        return node;
     }

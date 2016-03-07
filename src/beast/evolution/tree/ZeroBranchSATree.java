@@ -13,7 +13,7 @@ public class ZeroBranchSATree extends Tree {
     public boolean logWithZeroBranches=false;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         if (m_initial.get() != null && !(this instanceof StateNodeInitialiser)) {
             final Tree other = m_initial.get();
             root = other.root.copy();
@@ -83,11 +83,11 @@ public class ZeroBranchSATree extends Tree {
     }
 
     @Override
-    public int scale(double fScale) throws Exception {
+    public int scale(double fScale) {
         return scale(fScale,false);
     }
 
-    public int scale(double fScale, boolean scaleSNodes) throws Exception {
+    public int scale(double fScale, boolean scaleSNodes) {
         ((ZeroBranchSANode)root).scale(fScale, scaleSNodes);
         if (scaleSNodes) {
             return getNodeCount() - getDirectAncestorNodeCount();

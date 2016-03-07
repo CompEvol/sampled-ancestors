@@ -5,7 +5,6 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.NexusParser;
-import beast.util.TreeParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -20,16 +20,16 @@ public class DegenerateUniform extends ParametricDistribution {
     double lower, upper, point, mass, density;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         lower = lowerInput.get();
         upper = upperInput.get();
         point = pointInput.get();
         if (lower >= upper || point < lower || upper < point) {
-            throw new Exception("Upper value should be higher than lower value and a mass point should be between lower and upper bound (inclusive)");
+            throw new IllegalArgumentException("Upper value should be higher than lower value and a mass point should be between lower and upper bound (inclusive)");
         }
         mass = massInput.get();
         if (mass <= 0 || mass >= 1) {
-            throw new Exception("Mass value should be between 0 and 1");
+            throw new IllegalArgumentException("Mass value should be between 0 and 1");
         }
         distr.setParameters(lower, upper, point, mass);
         density = (1-mass)/(upper - lower);
