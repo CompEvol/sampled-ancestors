@@ -23,16 +23,16 @@ public class DegenerateBeta extends ParametricDistribution {
     double alpha, beta, point, mass, density;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         alpha = alphaInput.get().getValue();
         beta = betaInput.get().getValue();
         point = pointInput.get();
         if (point < 0 || 1 < point) {
-            throw new Exception("Point should be between 0 and 1 (inclusive)");
+            throw new IllegalArgumentException("Point should be between 0 and 1 (inclusive)");
         }
         mass = massInput.get();
         if (mass <= 0 || mass >= 1) {
-            throw new Exception("Mass value should be between 0 and 1");
+            throw new IllegalArgumentException("Mass value should be between 0 and 1");
         }
         betaDistr.setAlpha(alpha);
         betaDistr.setBeta(beta);

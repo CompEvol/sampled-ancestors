@@ -22,7 +22,7 @@ public class SANexusParser extends NexusParser {
      * @param reader a reader to parse from
      */
     @Override
-    public void parseFile(String id, Reader reader) throws Exception {
+    public void parseFile(String id, Reader reader) throws IOException {
         lineNr = 0;
         BufferedReader fin = null;
         if (reader instanceof BufferedReader) {
@@ -53,7 +53,7 @@ public class SANexusParser extends NexusParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Around line " + lineNr + "\n" + e.getMessage());
+            throw new IOException("Around line " + lineNr + "\n" + e.getMessage());
         }
     } // parseFile
 

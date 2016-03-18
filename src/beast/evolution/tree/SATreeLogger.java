@@ -12,7 +12,7 @@ public class SATreeLogger extends Logger {
             "are logged as tips on zero branches otherwise they are logged as single child nodes", false);
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         super.initAndValidate();
         ZeroBranchSATree tree = (ZeroBranchSATree)loggersInput.get().get(0);
         tree.logWithZeroBranches = logWithZeroBranchesInput.get();

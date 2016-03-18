@@ -13,13 +13,13 @@ public class SpecialMRCAPrior extends MRCAPrior {
     public final Input<TaxonSet> taxonsetOutInput = new Input<TaxonSet>("taxonsetOut",
             "set of taxa which are outside of the clade");
 
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
 
     }
 
     @Override
-    public double calculateLogP() throws Exception {
+    public double calculateLogP() {
         logP = 0;
         return logP;
     }

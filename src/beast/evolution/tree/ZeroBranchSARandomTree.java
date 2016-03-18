@@ -76,7 +76,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     }
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         final List<String> sTaxa;
         if (taxaInput.get() != null) {
             sTaxa = taxaInput.get().getTaxaNames();
@@ -116,7 +116,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
     }
 
     //@Override
-    public void initStateNodes() throws Exception {
+    public void initStateNodes() {
         // find taxon sets we are dealing with
         taxonSets = new ArrayList<BitSet>();
         strongMonophyletic = new ArrayList<Boolean>();
@@ -145,7 +145,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
                 for (final String sTaxonID : taxonSet.asStringList()) {
                     final int iID = sTaxa.indexOf(sTaxonID);
                     if (iID < 0) {
-                        throw new Exception("Taxon <" + sTaxonID + "> could not be found in list of taxa. Choose one of " + sTaxa.toArray(new String[0]));
+                        throw new IllegalArgumentException("Taxon <" + sTaxonID + "> could not be found in list of taxa. Choose one of " + sTaxa.toArray(new String[0]));
                     }
                     bTaxa.set(iID);
                 }
@@ -173,7 +173,7 @@ public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNod
                     // o taxonset1 is superset of taxonset2 OR
                     // o taxonset1 does not intersect taxonset2
                     if (!(bIsSubset || bIsSubset2)) {
-                        throw new Exception("333: Don't know how to generate a Random Tree for taxon sets that intersect, " +
+                        throw new IllegalArgumentException("333: Don't know how to generate a Random Tree for taxon sets that intersect, " +
                                 "but are not inclusive. Taxonset " + taxonSetIDs.get(i) + " and " + taxonSetIDs.get(j));
                     }
                     // swap i & j if b1 subset of b2

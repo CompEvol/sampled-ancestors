@@ -21,10 +21,10 @@ public class JumpToPoint extends Operator {
     double point;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         point = pointInput.get();
         if (point < 0 || point > 1) {
-            throw new Exception("Point in JumpToPoint operator have to be between 0 and 1");
+            throw new IllegalArgumentException("Point in JumpToPoint operator has to be between 0 and 1");
         }
     }
 

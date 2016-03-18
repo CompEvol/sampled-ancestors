@@ -17,7 +17,7 @@ public class Binary extends Operator {
     double point;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
     }
 
     @Override

@@ -2,7 +2,6 @@ package beast.app.simulators;
 
 import beast.core.Description;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 

@@ -1,6 +1,5 @@
 package beast.app.tools;
 
-import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.SANexusParser;
 
@@ -9,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 
 /**
  * @author Alexandra Gavryushkina

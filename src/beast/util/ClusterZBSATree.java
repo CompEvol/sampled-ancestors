@@ -60,14 +60,14 @@ public class ClusterZBSATree extends ZeroBranchSATree implements StateNodeInitia
     List<String> taxaNames;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
 
         if (dataInput.get() != null) {
             taxaNames = dataInput.get().getTaxaNames();
         } else {
             if (m_taxonset.get() == null) {
-                throw new Exception("At least one of taxa and taxonset input needs to be specified");
+                throw new IllegalArgumentException("At least one of taxa and taxonset input needs to be specified");
             }
             taxaNames = m_taxonset.get().asStringList();
         }
@@ -262,7 +262,7 @@ public class ClusterZBSATree extends ZeroBranchSATree implements StateNodeInitia
             }
         }
 
-        Node toNode() throws Exception {
+        Node toNode() {
             final Node node = newNode();
             node.setHeight(m_fHeight);
             if (m_left == null) {
@@ -351,7 +351,7 @@ public class ClusterZBSATree extends ZeroBranchSATree implements StateNodeInitia
 
 
     @SuppressWarnings("unchecked")
-    public Node buildClusterer() throws Exception {
+    public Node buildClusterer() {
         final int nTaxa = taxaNames.size();
         if (nTaxa == 1) {
             // patalogical case

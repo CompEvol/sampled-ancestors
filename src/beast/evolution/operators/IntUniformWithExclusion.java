@@ -20,13 +20,13 @@ public class IntUniformWithExclusion extends Operator {
     int iLower, iUpper;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         parameter = parameterInput.get();
         if (parameter instanceof IntegerParameter) {
             iLower = (Integer) parameter.getLower();
             iUpper = (Integer) parameter.getUpper();
         } else {
-            throw new Exception("parameter should be an IntergerParameter, not " + parameter.getClass().getName());
+            throw new RuntimeException("parameter should be an IntergerParameter, not " + parameter.getClass().getName());
         }
     }
 

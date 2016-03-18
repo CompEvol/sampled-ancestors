@@ -83,19 +83,19 @@ public class ProbabilitySA extends Distribution {
 
     }
 
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
         if (originInput.get() == null && !conditionOnRootInput.get()) {
-            throw new RuntimeException("Either specify origin input or set conditionOnRoot input to \"true\"");
+            throw new IllegalArgumentException("Either specify origin input or set conditionOnRoot input to \"true\"");
         }
 
         if (originInput.get() != null && conditionOnRootInput.get()){
-            throw new RuntimeException("Either don't specify origin input or set conditionOnRoot input to \"false\"");
+            throw new IllegalArgumentException("Either don't specify origin input or set conditionOnRoot input to \"false\"");
         }
 
 
         if (conditionOnSamplingInput.get() && conditionOnRhoSamplingInput.get()){
-            throw new RuntimeException("Either set to \"true\" only one of conditionOnSampling and conditionOnRhoSampling inputs or don't specify both!");
+            throw new IllegalArgumentException("Either set to \"true\" only one of conditionOnSampling and conditionOnRhoSampling inputs or don't specify both!");
         }
 
         if (birthRateInput.get() != null && deathRateInput.get() != null && samplingRateInput.get() != null) {
@@ -110,7 +110,7 @@ public class ProbabilitySA extends Distribution {
             transform = true;
 
         } else {
-            throw new RuntimeException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
+            throw new IllegalArgumentException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
     }
 

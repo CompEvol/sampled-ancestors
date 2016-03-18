@@ -1,6 +1,5 @@
 package beast.app.tools;
 
-import beast.core.util.ESS;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeTraceAnalysis;
