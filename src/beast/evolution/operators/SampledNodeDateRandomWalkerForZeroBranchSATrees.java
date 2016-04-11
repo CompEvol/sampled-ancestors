@@ -3,6 +3,7 @@ package beast.evolution.operators;
 import beast.core.Description;
 import beast.core.Distribution;
 import beast.core.Input;
+import beast.core.util.Log;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.SamplingDate;
 import beast.evolution.tree.Tree;
@@ -11,6 +12,10 @@ import beast.math.distributions.*;
 import beast.math.distributions.Uniform;
 import beast.util.Randomizer;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,18 +24,23 @@ import java.util.List;
 public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRandomWalker {
 
     public Input<List<SamplingDate>> samplingDatesInput = new Input<>("samplingDates",
-            "List of sampling dates", new ArrayList<SamplingDate>());
+            "List of sampling dates", new ArrayList<>());
+
+    public Input<String> essFileInput = new Input<>("essFile", "tab-delimited file containing relative weights and ESS values for sampling dates from previous run. " +
+            "Used to calculate new relative weights. " +
+            "This is only used if a taxon set is also provided.");
 
     boolean useNodeNumbers;
     List<String> samplingDateTaxonNames = new ArrayList<>();
 
+    double[] relativeWeights = null;
 
     @Override
     public void initAndValidate() {
         windowSize = windowSizeInput.get();
         useGaussian = useGaussianInput.get();
 
-        for (SamplingDate taxon:samplingDatesInput.get()) {
+        for (SamplingDate taxon : samplingDatesInput.get()) {
             samplingDateTaxonNames.add(taxon.taxonInput.get().getID());
         }
 
@@ -53,9 +63,115 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
                 }
                 taxonIndices[k++] = iTaxon;
             }
+
+            if (essFileInput.get() != null) {
+                relativeWeights = new double[nNrOfTaxa];
+                double[] ess = new double[nNrOfTaxa];
+                int count = 0;
+                double essSum = 0.0;
+                double prevWeightSum = 0.0;
+
+                double[] prevWeights = new double[nNrOfTaxa];
+
+
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(essFileInput.get()));
+
+                    String line = reader.readLine();
+                    while (line != null ) {
+                        String[] parts = line.split("\t");
+                        int index = set.indexOf(parts[0]);
+                        if (index < 0) {
+                            Log.warning("taxon '" + parts[0] + "' in ESS file '" + essFileInput.get() + "' not found in taxa set.");
+                        } else {
+                            if (ess[index] > 0) {
+                                throw new RuntimeException("Taxon '" + parts[0] + "' is duplicated in ESS file '" + essFileInput.get() + "'");
+                            }
+                            count += 1;
+                            ess[index] = Double.parseDouble(parts[2]);
+                            essSum += ess[index];
+                            prevWeights[index] = Double.parseDouble(parts[1]);
+                            prevWeightSum += prevWeights[index];
+                        }
+                        line = reader.readLine();
+                    }
+
+                    if (count < ess.length) {
+                        double meanESS = essSum / count;
+                        double meanPrevWeight = prevWeightSum / count;
+                        Log.warning("Only " + count + " out of " + ess.length + " taxa found in ESS file. The remainder will be set to the mean weight and ESS.");
+                        for (int i = 0; i < ess.length; i++) {
+                            if (ess[i] == 0) {
+                                ess[i] = meanESS;
+                                prevWeights[i] = meanPrevWeight;
+                            }
+                        }
+                    }
+
+                    double sum = 0.0;
+                    for (int i = 0; i < relativeWeights.length; i++) {
+                        relativeWeights[i] = prevWeights[i] / ess[i];
+                        sum += relativeWeights[i];
+                    }
+                    // normalize
+                    for (int i = 0; i < relativeWeights.length; i++) {
+                        relativeWeights[i] /= sum;
+                        Log.info(set.get(i) + "\t" + relativeWeights[i]);
+                    }
+                    //cumulative
+                    for (int i = 1; i < relativeWeights.length; i++) {
+                        relativeWeights[i] = relativeWeights[i-1] + relativeWeights[i];
+                    }
+                    Log.info("Last relative weight = " + relativeWeights[relativeWeights.length-1]);
+
+                } catch (FileNotFoundException e) {
+                    Log.warning("ESS file named '" + essFileInput.get() + "' not found. Defaulting to equal weights.");
+                    relativeWeights = null;
+                } catch (IOException e) {
+                    Log.warning("IO exception reading file named '" + essFileInput.get() + "'. Defaulting to equal weights.");
+                    relativeWeights = null;
+                }
+            }
+
         } else {
             useNodeNumbers = true;
         }
+
+
+        // check that all nodes are within bounds.
+        List<Node> nodes = getNodesToOperateOn();
+        boolean err = false;
+        for (Node node : nodes) {
+            double age = node.getHeight();
+            boolean drawFromDistribution = samplingDateTaxonNames.contains(node.getID());
+            if (drawFromDistribution) {
+                SamplingDate taxonSamplingDate = samplingDatesInput.get().get(samplingDateTaxonNames.indexOf(node.getID()));
+                double lower = taxonSamplingDate.getLower();
+                double upper = taxonSamplingDate.getUpper();
+                if (age > upper || age < lower) {
+                    err = true;
+                    Log.err("Node " + node.getID() + " has an age (" + age + ") outside the sampling date range (" + lower + ", " + upper + ").");
+                }
+            }
+        }
+        if (err) {
+            throw new RuntimeException("Error: Stopping because nodes found out of sampling date range.");
+        }
+    }
+
+    private List<Node> getNodesToOperateOn() {
+        Tree tree = treeInput.get();
+
+        ArrayList<Node> nodeList = new ArrayList<>();
+
+        if (useNodeNumbers) {
+            int leafNodeCount = tree.getLeafNodeCount();
+        }  else {
+            for (int i = 0; i < taxonIndices.length; i++) {
+                nodeList.add(tree.getNode(taxonIndices[i]));
+            }
+        }
+        return nodeList;
     }
 
     @Override
@@ -70,8 +186,18 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
             int i = Randomizer.nextInt(leafNodeCount);
             node = tree.getNode(i);
         }  else {
-            int i = Randomizer.nextInt(taxonIndices.length);
-            node = tree.getNode(taxonIndices[i]);
+
+            if (relativeWeights != null) {
+                double X = Randomizer.nextDouble();
+                int i = 0;
+                while (relativeWeights[i] < X) {
+                    i += 1;
+                }
+                node = tree.getNode(taxonIndices[i]);
+            } else {
+                int i = Randomizer.nextInt(taxonIndices.length);
+                node = tree.getNode(taxonIndices[i]);
+            }
         }
 
         double value = node.getHeight();
@@ -98,7 +224,7 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
         Node fake = null;
         double lower, upper;
 
-        if (((ZeroBranchSANode)node).isDirectAncestor()) {
+        if (node.isDirectAncestor()) {
             fake = node.getParent();
             lower = getOtherChild(fake, node).getHeight();
             if (fake.getParent() != null) {
