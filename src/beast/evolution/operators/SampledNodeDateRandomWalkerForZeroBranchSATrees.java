@@ -12,10 +12,7 @@ import beast.math.distributions.*;
 import beast.math.distributions.Uniform;
 import beast.util.Randomizer;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,9 +23,12 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
     public Input<List<SamplingDate>> samplingDatesInput = new Input<>("samplingDates",
             "List of sampling dates", new ArrayList<>());
 
-    public Input<String> essFileInput = new Input<>("essFile", "tab-delimited file containing relative weights and ESS values for sampling dates from previous run. " +
-            "Used to calculate new relative weights. " +
-            "This is only used if a taxon set is also provided.");
+    public Input<String> weightFileInput = new Input<>("weightFile", "tab-delimited file (no header) containing relative weights to apply to each sampling date (and optionally ESS values for sampling dates from previous run.) " +
+            "If the ESSs are included then they are assumed to be from a previous run using the given weights. They are used to calculate a new set of weights to even out the ESSs. " +
+            "Each new relative weights is calculated to be proportional to old weight divided by corresponding ESS. " +
+            "The weight file is only used if a taxon set is also provided. ");
+
+    public Input<String> weightOutFileInput = new Input<>("weightOutFile", "tab-delimited file (no header) containing weights applied to each sampling date", (String)null);
 
     boolean useNodeNumbers;
     List<String> samplingDateTaxonNames = new ArrayList<>();
@@ -64,7 +64,7 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
                 taxonIndices[k++] = iTaxon;
             }
 
-            if (essFileInput.get() != null) {
+            if (weightFileInput.get() != null) {
                 relativeWeights = new double[nNrOfTaxa];
                 double[] ess = new double[nNrOfTaxa];
                 int count = 0;
@@ -75,17 +75,17 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
 
 
                 try {
-                    BufferedReader reader = new BufferedReader(new FileReader(essFileInput.get()));
+                    BufferedReader reader = new BufferedReader(new FileReader(weightFileInput.get()));
 
                     String line = reader.readLine();
                     while (line != null ) {
                         String[] parts = line.split("\t");
                         int index = set.indexOf(parts[0]);
                         if (index < 0) {
-                            Log.warning("taxon '" + parts[0] + "' in ESS file '" + essFileInput.get() + "' not found in taxa set.");
+                            Log.warning("taxon '" + parts[0] + "' in weight file '" + weightFileInput.get() + "' not found in taxa set.");
                         } else {
                             if (ess[index] > 0) {
-                                throw new RuntimeException("Taxon '" + parts[0] + "' is duplicated in ESS file '" + essFileInput.get() + "'");
+                                throw new RuntimeException("Taxon '" + parts[0] + "' is duplicated in ESS file '" + weightFileInput.get() + "'");
                             }
                             count += 1;
                             ess[index] = Double.parseDouble(parts[2]);
@@ -113,11 +113,30 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
                         relativeWeights[i] = prevWeights[i] / ess[i];
                         sum += relativeWeights[i];
                     }
+
+                    PrintWriter writer = null;
+                    if (weightOutFileInput.get() != null) {
+                        writer = new PrintWriter(new FileWriter(weightOutFileInput.get()));
+                    }
+
                     // normalize
                     for (int i = 0; i < relativeWeights.length; i++) {
                         relativeWeights[i] /= sum;
-                        Log.info(set.get(i) + "\t" + relativeWeights[i]);
+                        if (weightOutFileInput.get() != null) {
+
+                            if (writer != null) {
+                                writer.println(set.get(i) + "\t" + relativeWeights[i]);
+                            } else {
+                                Log.info(set.get(i) + "\t" + relativeWeights[i]);
+                            }
+                        }
                     }
+
+                    if (writer != null) {
+                        writer.flush();
+                        writer.close();
+                    }
+
                     //cumulative
                     for (int i = 1; i < relativeWeights.length; i++) {
                         relativeWeights[i] = relativeWeights[i-1] + relativeWeights[i];
@@ -125,10 +144,10 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
                     Log.info("Last relative weight = " + relativeWeights[relativeWeights.length-1]);
 
                 } catch (FileNotFoundException e) {
-                    Log.warning("ESS file named '" + essFileInput.get() + "' not found. Defaulting to equal weights.");
+                    Log.warning("Weight file named '" + weightFileInput.get() + "' not found. Defaulting to equal weights.");
                     relativeWeights = null;
                 } catch (IOException e) {
-                    Log.warning("IO exception reading file named '" + essFileInput.get() + "'. Defaulting to equal weights.");
+                    Log.warning("IO exception reading file named '" + weightFileInput.get() + "'. Defaulting to equal weights.");
                     relativeWeights = null;
                 }
             }
