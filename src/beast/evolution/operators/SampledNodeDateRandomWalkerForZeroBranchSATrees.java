@@ -30,6 +30,8 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
 
     public Input<String> weightOutFileInput = new Input<>("weightOutFile", "tab-delimited file (no header) containing weights applied to each sampling date", (String)null);
 
+    public Input<Boolean> useWindowSizeWithSamplingDates = new Input<>("useWindowSizeWithSamplingDates", "if true, use window size even when sampling date range is specified.", Boolean.FALSE);
+
     boolean useNodeNumbers;
     List<String> samplingDateTaxonNames = new ArrayList<>();
 
@@ -141,7 +143,8 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
                     for (int i = 1; i < relativeWeights.length; i++) {
                         relativeWeights[i] = relativeWeights[i-1] + relativeWeights[i];
                     }
-                    Log.info("Last relative weight = " + relativeWeights[relativeWeights.length-1]);
+                    //protect from rounding errors.
+                    relativeWeights[relativeWeights.length-1] = 1.0;
 
                 } catch (FileNotFoundException e) {
                     Log.warning("Weight file named '" + weightFileInput.get() + "' not found. Defaulting to equal weights.");
@@ -226,7 +229,7 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
         }
         double newValue = value;
 
-        boolean drawFromDistribution = samplingDateTaxonNames.contains(node.getID());
+        boolean drawFromDistribution = (samplingDateTaxonNames.contains(node.getID()) && !useWindowSizeWithSamplingDates.get());
         if (drawFromDistribution) {
             SamplingDate taxonSamplingDate = samplingDatesInput.get().get(samplingDateTaxonNames.indexOf(node.getID()));
             double range = taxonSamplingDate.getUpper() - taxonSamplingDate.getLower();
@@ -237,8 +240,13 @@ public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRan
             } else {
                 newValue += Randomizer.nextDouble() * 2 * windowSize - windowSize;
             }
+            if (samplingDatesInput.get() != null) {
+                SamplingDate taxonSamplingDate = samplingDatesInput.get().get(samplingDateTaxonNames.indexOf(node.getID()));
+                if (newValue < taxonSamplingDate.getLower() || newValue > taxonSamplingDate.getUpper()) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+            }
         }
-
 
         Node fake = null;
         double lower, upper;
