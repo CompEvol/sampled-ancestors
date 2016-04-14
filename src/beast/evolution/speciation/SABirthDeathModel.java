@@ -10,11 +10,13 @@ import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.operators.Exchange;
 import beast.evolution.operators.SubtreeSlide;
 import beast.evolution.operators.TipDatesRandomWalker;
 import beast.evolution.operators.WilsonBalding;
 import beast.evolution.tree.*;
+import beast.math.distributions.Uniform;
 
 /**
  * @author Alexandra Gavryushkina
@@ -153,11 +155,13 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         			if (op.getClass().isAssignableFrom(TipDatesRandomWalker.class) || 
         					op.getClass().isAssignableFrom(SubtreeSlide.class) || 
         					op.getClass().isAssignableFrom(WilsonBalding.class) || 
+        					op.getClass().isAssignableFrom(Uniform.class) || 
         					op.getClass().isAssignableFrom(Exchange.class)) {
-        				throw new IllegalArgumentException(op.getClass().getSimpleName() + 
+        				Log.err.println("ERROR: " + op.getClass().getSimpleName() + 
         						" is not a valid operator for a sampled ancestor analysis.\n" + 
         						"Either remove the operator (id=" + op.getID() + ") or fix the " +
-        					    "removal probability to 1.0 so this is not a sampled ancestor analysis any more.");
+        					    "removal probability to 1.0 so this is not a sampled ancestor " +
+        					    "analysis any more. The current analysis is not valid.");
         			}
         		}
         	}
