@@ -1,11 +1,20 @@
 package beast.evolution.speciation;
 
+import java.util.List;
+
+
+import beast.core.BEASTInterface;
 import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.MCMC;
+import beast.core.Operator;
 import beast.core.parameter.RealParameter;
+import beast.evolution.operators.Exchange;
+import beast.evolution.operators.SubtreeSlide;
+import beast.evolution.operators.TipDatesRandomWalker;
+import beast.evolution.operators.WilsonBalding;
 import beast.evolution.tree.*;
-import beast.util.ZeroBranchSATreeParser;
 
 /**
  * @author Alexandra Gavryushkina
@@ -123,9 +132,53 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
 //        c1 = Math.sqrt((lambda - mu - psi) * (lambda - mu - psi) + 4 * lambda * psi);
 //        c2 = -(lambda - mu - 2*lambda*rho - psi) / c1;
 //        origin = originInput.get().getValue();
+        
+        // sanity check for sampled ancestor analysis
+    	boolean isSAAnalysis = false;
+    	if (removalProbability.get().getValue() >= 1.0 && removalProbability.get().isEstimatedInput.get()) {
+    		// default parameters have estimated=true by default.
+    		// check there is an operator on this parameter
+    		for (BEASTInterface o : removalProbability.get().getOutputs()) {
+    			if (o instanceof Operator) {
+    				isSAAnalysis = true;
+    			}
+    		}
+    	}
+        if (removalProbability.get().getValue() < 1.0 || isSAAnalysis) {
+        	// this is a sampled ancestor analysis
+        	// check that there are no invalid operators in this analysis
+        	List<Operator> operators = getOperators(this);
+        	if (operators != null) {
+        		for (Operator op : operators) {
+        			if (op.getClass().isAssignableFrom(TipDatesRandomWalker.class) || 
+        					op.getClass().isAssignableFrom(SubtreeSlide.class) || 
+        					op.getClass().isAssignableFrom(WilsonBalding.class) || 
+        					op.getClass().isAssignableFrom(Exchange.class)) {
+        				throw new IllegalArgumentException(op.getClass().getSimpleName() + 
+        						" is not a valid operator for a sampled ancestor analysis.\n" + 
+        						"Either remove the operator (id=" + op.getID() + ") or fix the " +
+        					    "removal probability to 1.0 so this is not a sampled ancestor analysis any more.");
+        			}
+        		}
+        	}
+        }
     }
 
-    private double p0s(double t, double c1, double c2) {
+    private List<Operator> getOperators(BEASTInterface o) {
+    	for (BEASTInterface out : o.getOutputs()) {		
+    		if (out instanceof MCMC) {
+    			return ((MCMC)out).operatorsInput.get();
+    		} else {
+    			List<Operator> list = getOperators(out);
+    			if (list != null) {
+    				return list;
+    			}
+    		}
+    	}
+		return null;
+	}
+
+	private double p0s(double t, double c1, double c2) {
         double p0 = (lambda + mu + psi - c1 * ((1 + c2) - Math.exp(-c1 * t) * (1 - c2)) / ((1 + c2) + Math.exp(-c1 * t) * (1 - c2))) / (2 * lambda);
         return r + (1 - r) * p0;
     }
