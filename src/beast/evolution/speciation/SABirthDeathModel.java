@@ -9,9 +9,11 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
+import beast.core.StateNode;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.operators.Exchange;
+import beast.evolution.operators.ScaleOperator;
 import beast.evolution.operators.SubtreeSlide;
 import beast.evolution.operators.TipDatesRandomWalker;
 import beast.evolution.operators.WilsonBalding;
@@ -137,7 +139,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         
         // sanity check for sampled ancestor analysis
     	boolean isSAAnalysis = false;
-    	if (removalProbability.get().getValue() >= 1.0 && removalProbability.get().isEstimatedInput.get()) {
+    	if (removalProbability.get() != null && removalProbability.get().getValue() >= 1.0 && removalProbability.get().isEstimatedInput.get()) {
     		// default parameters have estimated=true by default.
     		// check there is an operator on this parameter
     		for (BEASTInterface o : removalProbability.get().getOutputs()) {
@@ -146,17 +148,28 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     			}
     		}
     	}
-        if (removalProbability.get().getValue() < 1.0 || isSAAnalysis) {
+        if (removalProbability.get() != null && removalProbability.get().getValue() < 1.0 || isSAAnalysis) {
         	// this is a sampled ancestor analysis
         	// check that there are no invalid operators in this analysis
         	List<Operator> operators = getOperators(this);
         	if (operators != null) {
         		for (Operator op : operators) {
+        			boolean isOK = true;
         			if (op.getClass().isAssignableFrom(TipDatesRandomWalker.class) || 
         					op.getClass().isAssignableFrom(SubtreeSlide.class) || 
         					op.getClass().isAssignableFrom(WilsonBalding.class) || 
         					op.getClass().isAssignableFrom(Uniform.class) || 
         					op.getClass().isAssignableFrom(Exchange.class)) {
+        				isOK = false;
+        			} else if (op.getClass().isAssignableFrom(ScaleOperator.class)) {
+        				// scale operators on Trees should be replaced with SAScaleOperator
+        				for (StateNode o : op.listStateNodes()) {
+        					if (o instanceof Tree) {
+        						isOK = false;
+        					}
+        				}
+        			}        		 	
+        			if (!isOK) {
         				Log.err.println("ERROR: " + op.getClass().getSimpleName() + 
         						" is not a valid operator for a sampled ancestor analysis.\n" + 
         						"Either remove the operator (id=" + op.getID() + ") or fix the " +
