@@ -186,8 +186,9 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         System.out.println();
         System.out.println("Count \t Percent \t Clade");
         System.out.println();
+        int treeCount = getTotalTreesBurninRemoved();
         for (int i =0; i < clades.size(); i++) {
-            double percent = (double) (clades.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
+            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
             System.out.format("%-10d %-10.2f", clades.getFrequency(i), percent);
             System.out.println(clades.get(i));
         }
@@ -199,18 +200,72 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
             System.out.println("Count \t Percent \t Pair");
             System.out.println();
             for (int i =0; i < pairs.size(); i++) {
-                double percent = (double) (pairs.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
-                System.out.format("%-10d %-10.2f", pairs.getFrequency(i), percent);
+            	int freq = pairs.getFrequency(i);
+            	freq = pairs.getFrequency(i);
+                double percent = (double) (freq * 100)/(treeCount);
+                System.out.format("%-10d %-10.2f", freq, percent);
                 System.out.println(pairs.get(i));
             }
             System.out.println();
-            double a =  (double)dCladeCount/ getTotalTreesBurninRemoved();
+            double a =  (double)dCladeCount/ treeCount;
             System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
             System.out.println();
         }
 
     }
 
+    
+    String toHTML(boolean zeroBranchTrees, boolean countPairs) throws Exception {
+        FrequencySet<String> clades = new FrequencySet<String>();
+        ArrayList<String> tmp = new ArrayList<String>();
+
+        int dCladeCount = 0;
+
+        for (int i=0; i < getTotalTreesBurninRemoved(); i++) {
+            Tree tree = treeInTrace.get(i);
+            ArrayList<String> dClades =  extractAllDClades(tree.getRoot(),zeroBranchTrees);
+            tmp.addAll(dClades);
+            for (int j=0; j<tree.getNodeCount(); j++)
+                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && ((ZeroBranchSANode)tree.getNode(j)).isFake())) {
+                    dCladeCount++;
+                    break;
+                }
+        }
+
+        for (int i=0; i < tmp.size(); i++)
+            clades.add(tmp.get(i));
+
+        StringBuilder b = new StringBuilder();
+        
+        b.append("<table>\n");
+        b.append("<caption>Clade frequencies</caption>\n");
+        b.append("<tr><th>Count</th><th>Percent</th><th>Clade</th></tr>");
+        int treeCount = getTotalTreesBurninRemoved();
+        for (int i =0; i < clades.size(); i++) {
+            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
+            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", clades.getFrequency(i), percent));
+            b.append("<td style='text-align:left'>" + clades.get(i).replaceAll("<", "&lt;")  + "</td></tr>\n");
+        }
+        b.append("</table>\n");
+
+        if (countPairs) {
+            b.append("<table>\n");
+            b.append("<caption>Pair frequencies</caption>");
+            b.append("<tr><th>Count</th><th>Percent</th><th>Pair</th></tr>");
+            for (int i =0; i < pairs.size(); i++) {
+            	int freq = pairs.getFrequency(i);
+            	freq = pairs.getFrequency(i);
+                double percent = (double) (freq * 100)/(treeCount);
+                b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", freq, percent));
+                b.append("<td style='text-align:left'>" + pairs.get(i).replaceAll("<", " &lt; ") + "</td></tr>\n");
+            }
+            double a =  (double)dCladeCount/ treeCount;
+            b.append("</table>\n");
+            b.append(String.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100));
+        }
+        return b.toString();
+    }
+    
     /**
      * for each sampled node, it counts the number of trees in which this sampled node is a sampled ancestor
      * @param print  if is true then the counts are printed

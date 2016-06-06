@@ -1,8 +1,15 @@
 package beast.app.tools;
 
+import beast.app.BEASTVersion2;
+import beast.app.util.Application;
+import beast.core.Description;
+import beast.core.Param;
 import beast.evolution.tree.Tree;
+import beast.util.AddOnManager;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,66 +17,65 @@ import java.util.List;
  * @author Alexandra Gavryushkina
  */
 
-public class SampledAncestorTreeAnalyser {
+@Description("utility for creating a report of ancestral nodes in a tree set")
+/*
+ * Usage: /path/to/beast/appstore SampledAncestorTreeAnalyser -file <treefile.trees>
+ * Opens a report in a webbrowser containing statistics on how much support there is
+ * for an internal node to be ancestral.
+ *
+ */
+public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
+	
+	private File file;
+	
+	public SampledAncestorTreeAnalyser() {}
+	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file) {
+		this.file = file;
+	}
 
-    public static void main(String[] args) throws IOException, Exception {
+	public File getFile() {
+		return file;
+	}
 
-        int percentCredSet = 95;
-        boolean useNumbers = false;
-
-//        BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
-//        String a;
-//        try {
-//            System.out.println("Type the size of credible set in percents: ");
-//            a = buf.readLine();
-//            percentCredSet = Integer.parseInt(a);
-//            System.out.println("Would you like to use taxa names for tip labels? If so type 'yes'. Otherwise numbers will be used.");
-//            a = buf.readLine();
-//            if (a.equals("yes")) {
-//                useNumbers = false;
-//            }
-//        } catch (IOException err) {
-//            System.out.println("Error");
-//        }
+	public void setFile(File file) {
+		this.file = file;
+	}
 
 
-//        if (0 >= percentCredSet || percentCredSet > 100) {
-//            System.out.println("The percent for credible set is out of the interval (0,100]" + " 95% credible set will be shown");
-//            percentCredSet = 95;
-//        }
-
-        java.io.File file;
-
-        if (args != null && args.length > 0) {
-            file = new java.io.File(args[0]);
-        } else {
-            String message = "Choose file .trees";
-            java.awt.Frame frame = new java.awt.Frame();
-            java.awt.FileDialog chooser = new java.awt.FileDialog(frame, message,
-                    java.awt.FileDialog.LOAD);
-            chooser.setVisible(true);
-            if (chooser.getFile() == null) {
-                System.out.println("The file was not chosen.");
-                System.exit(0);
-            }
-            file = new java.io.File(chooser.getDirectory(), chooser.getFile());
-            chooser.dispose();
-            frame.dispose();
-        }
-
+	
+    public void run() throws Exception {
+ 
         FileReader reader = null;
 
         try {
             System.out.println("Reading file " + file.getName());
             reader = new FileReader(file);
-//            SANexusParser parser = new SANexusParser();
-//            parser.parseFile(file);
-//            SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
-//            SampledAncestorTreeAnalysis analysis = new SampledAncestorTreeAnalysis(trace, percentCredSet);
-//            analysis.perform(useNumbers);
             List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
             SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0);
-            analysis.analyze();
+            //analysis.analyze();
+            String result = analysis.toHTML(true, true);
+            
+    		// create HTML file with results
+    		String html = "<html>\n" + 
+    		"<title>BEAST " + new BEASTVersion2().getVersionString() + ": miniTracer</title>\n" +
+    		"<head>  \n" +
+    		"<link rel='stylesheet' type='text/css' href='css/style.css'>\n" +
+    		"</head>\n" +
+    		"<body>\n" +
+    		"<h2>Sampled Ancestor Tree Trace Analysis from " + file.getPath() +"</h2>\n" +
+    		result +
+    		"</body>\n" +
+    		"</html>";		
+    		
+    		
+    		// write html file in package dir + "/js/minitracer.html"
+    		String jsPath = Application.getPackagePath("BeastApp.addon.jar") + "js";
+            FileWriter outfile = new FileWriter(jsPath + "/SATreeAnalysis.html");
+            outfile.write(html);
+            outfile.close();
+    		
+            // open html file in browser
+            Application.openUrl("file://" + jsPath + "/SATreeAnalysis.html");
 //            analysis.report(System.out);
         }
         catch (IOException e) {
@@ -82,4 +88,13 @@ public class SampledAncestorTreeAnalyser {
         }
     }
 
+	@Override
+	public void initAndValidate() {
+	}
+
+	
+	public static void main(String[] args) throws Exception {
+		AddOnManager.loadExternalJars();	
+		new Application(new SampledAncestorTreeAnalyser(), "SampledAncestorTreeAnalyser", args);
+	}
 }

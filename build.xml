@@ -17,7 +17,8 @@
 	<property name="libBeast2" location="${beast2path}/lib" />
 	<property name="srcBeast2" location="${beast2path}/src" />
 	<property name="beast2classpath" location="${beast2path}/build" />
-    <property name="beastiiclasspath" location="../beastii/build" />
+    <property name="beastiiclasspath" location="../BEASTLabs/build" />
+	<property name="bdskyclasspath" location="../bdsky/build" />
 	<!--<property name="bdskyclasspath" location="../bdssm-beast2-read-only/build" />
     property name="beastclassicclasspath" location="../beast-classic/build" /-->
 	<property name="Add_on_dir" value="${release_dir}/add-on" />
@@ -35,8 +36,8 @@
         <fileset dir="${libBeast2}" includes="beagle.jar"/>
         <pathelement path="${beast2classpath}"/>
         <pathelement path="${beastiiclasspath}"/>
-		<!--<pathelement path="${bdskyclasspath}"/>
-        pathelement path="${beastclassicclasspath}"/-->
+		<pathelement path="${bdskyclasspath}"/>
+        <!--pathelement path="${beastclassicclasspath}"/-->
 	</path>
 
 	<!-- start -->

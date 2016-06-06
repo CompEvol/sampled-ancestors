@@ -1,10 +1,13 @@
 package beast.app.tools;
 
+import beast.app.util.Application;
+import beast.app.util.TreeFile;
+import beast.core.Description;
+import beast.core.Input;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeTraceAnalysis;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +15,18 @@ import java.util.List;
 /**
  * @author Alexandra Gavryushkina
  */
-public class FullToExtantTreeConverter {
+@Description("utility for creating a tree set with extant nodes from a set of ancestral node trees")
+/*
+ * Usage: /path/to/beast/appstore FullToExtantTreeConverter -trees <treefile.trees> [-output <output.file>] [-threshold <threshold>]
+ * Opens a report in a webbrowser containing statistics on how much support there is
+ * for an internal node to be ancestral.
+ *
+ */
+
+public class FullToExtantTreeConverter extends beast.core.Runnable {
+	public Input<TreeFile> treesInput = new Input<>("trees","tree set file to be converted");
+	public Input<TreeFile> outputInput = new Input<>("output","file to store converted tree set. If not specified, _extant is aded to input file name");
+	public Input<Double> thresholdInput= new Input<>("threshold", "the threshold for identifying extant taxa. Ignored if negative.", -1.0);
 
     ArrayList<String> extantTaxa = new ArrayList<>();
 
@@ -119,70 +133,65 @@ public class FullToExtantTreeConverter {
     }
 
     public static void main(String[] args) throws Exception {
-
-        java.io.File file, file_out;
-        String outputFile = "";
-        double customThreshold = -1.;
-        ArrayList<String> taxa = null;
-        if (args != null && args.length > 0) {
-            file = new java.io.File(args[0]);
-            if (args.length == 2) {
-                outputFile = args[1];
-            }
-            if (args.length ==3) {
-                customThreshold = Double.parseDouble(args[2]);
-            }
-        } else {
-            String message = "Choose input file .trees";
-            java.awt.Frame frame = new java.awt.Frame();
-            java.awt.FileDialog chooser = new java.awt.FileDialog(frame, message,
-                    java.awt.FileDialog.LOAD);
-            chooser.setVisible(true);
-            if (chooser.getFile() == null) {
-                System.out.println("The file was not chosen.");
-                System.exit(0);
-            }
-            file = new java.io.File(chooser.getDirectory(), chooser.getFile());
-            chooser.dispose();
-            frame.dispose();
-            String strThreshold = JOptionPane.showInputDialog("Choose the threshold for identifying extant taxa", "1e-8");
-            customThreshold = Double.parseDouble(strThreshold);
-
-        }
-
-        if (outputFile.isEmpty()) {
-            String inputFileName = file.getName();
-            if (inputFileName.contains(".trees")) {
-                inputFileName = inputFileName.substring(0, inputFileName.indexOf(".trees"));
-            }
-            outputFile = inputFileName +"_extant.trees";
-        }
-
-        FileReader reader = null;
-
-        try {
-            System.err.println("Reading file " + file.getName());
-            reader = new FileReader(file);
-            List<Tree> trees = TreeTraceAnalysis.Utils.getTrees(file);
-            FullToExtantTreeConverter converter;
-            if (customThreshold >= 0.0) {
-                converter = new FullToExtantTreeConverter(customThreshold);
-            } else if (taxa != null) {
-                converter = new FullToExtantTreeConverter(taxa);
-            } else {
-                converter = new FullToExtantTreeConverter();
-            }
-            converter.printConvertedTrees(trees, outputFile);
-        }
-        catch (IOException e) {
-            //
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-
+    	new Application(new FullToExtantTreeConverter(), "FullToExtantTreeConverter", args);
     }
+
+	@Override
+	public void initAndValidate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void run() throws Exception {
+	       java.io.File file, file_out;
+	        String outputFile = "";
+	        double customThreshold = -1.;
+//	        ArrayList<String> taxa = null;
+	      
+	        file = treesInput.get();
+	        if (file == null || !file.exists()) {
+	        	throw new IllegalArgumentException("tree file must be specified and file must exist");
+	        }
+	        if (outputInput.get() != null) {
+	        	outputFile = outputInput.get().getPath();
+	        }
+	        customThreshold = thresholdInput.get();
+
+	        if (outputFile.isEmpty()) {
+	            String inputFileName = file.getPath();
+	            if (inputFileName.contains(".trees")) {
+	                inputFileName = inputFileName.substring(0, inputFileName.indexOf(".trees"));
+	            }
+	            outputFile = inputFileName +"_extant.trees";
+	        }
+
+	        FileReader reader = null;
+
+	        try {
+	            System.err.println("Reading file " + file.getName());
+	            reader = new FileReader(file);
+	            List<Tree> trees = TreeTraceAnalysis.Utils.getTrees(file);
+	            FullToExtantTreeConverter converter;
+	            if (customThreshold >= 0.0) {
+	                converter = new FullToExtantTreeConverter(customThreshold);
+//	            } else if (taxa != null) {
+//	                converter = new FullToExtantTreeConverter(taxa);
+	            } else {
+	                converter = new FullToExtantTreeConverter();
+	            }
+	            System.err.println("Writing file " + outputFile);
+	            converter.printConvertedTrees(trees, outputFile);
+	            System.err.println("Done");
+	        }
+	        catch (IOException e) {
+	            //
+	        }
+	        finally {
+	            if (reader != null) {
+	                reader.close();
+	            }
+	        }		
+	}
 
 }
