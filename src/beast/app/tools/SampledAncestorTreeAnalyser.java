@@ -68,7 +68,7 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
     		
     		
     		// write html file in package dir + "/js/minitracer.html"
-    		String jsPath = Application.getPackagePath("BeastApp.addon.jar") + "js";
+    		String jsPath = Application.getPackagePath("SA.addon.jar") + "js";
             FileWriter outfile = new FileWriter(jsPath + "/SATreeAnalysis.html");
             outfile.write(html);
             outfile.close();
