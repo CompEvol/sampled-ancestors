@@ -51,9 +51,8 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
             System.out.println("Reading file " + file.getName());
             reader = new FileReader(file);
             List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
-            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0);
-            //analysis.analyze();
-            String result = analysis.toHTML(true, true);
+            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0.1);
+            String result = analysis.toHTML();
             
     		// create HTML file with results
     		String html = "<html>\n" + 

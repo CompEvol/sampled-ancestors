@@ -1,7 +1,7 @@
 package test.beast.evolution.speciation;
 
 import beast.core.parameter.RealParameter;
-import beast.evolution.speciation.BirthDeathSkylineModel;
+//import beast.evolution.speciation.BirthDeathSkylineModel;
 import beast.evolution.speciation.SABDSamplingThroughTimeModel;
 import beast.evolution.tree.Tree;
 
@@ -79,24 +79,24 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
 
     }
 
-    @Test
-     public void testLikelihoodCalculationWithoutAncestors() throws Exception {
-         BirthDeathSkylineModel model = new BirthDeathSkylineModel();
-         Tree tree = new ZeroBranchSATreeParser("((3 : 1.5, 4 : 0.5) : 1 , (1 : 2, 2 : 1) : 3);",false);
-
-         model.setInputValue("tree", tree);
-         model.setInputValue("origin", new RealParameter("10."));
-         model.setInputValue("R0", new RealParameter("1.5"));
-         model.setInputValue("becomeUninfectiousRate", new RealParameter("1.5"));
-         model.setInputValue("samplingProportion", new RealParameter("0.3") );
-         model.setInputValue("removalProbability", new RealParameter("1") );
-         model.setInputValue("conditionOnSurvival", true);
-         model.initAndValidate();
-
-         // likelihood conditioning on at least one sampled individual    - "true" result from BEAST 09 June 2015 (DK)
-         assertEquals(-25.671303367076007, model.calculateTreeLogLikelihood(tree), 1e-5);
-
-     }
+//    @Test
+//     public void testLikelihoodCalculationWithoutAncestors() throws Exception {
+//         BirthDeathSkylineModel model = new BirthDeathSkylineModel();
+//         Tree tree = new ZeroBranchSATreeParser("((3 : 1.5, 4 : 0.5) : 1 , (1 : 2, 2 : 1) : 3);",false);
+//
+//         model.setInputValue("tree", tree);
+//         model.setInputValue("origin", new RealParameter("10."));
+//         model.setInputValue("R0", new RealParameter("1.5"));
+//         model.setInputValue("becomeUninfectiousRate", new RealParameter("1.5"));
+//         model.setInputValue("samplingProportion", new RealParameter("0.3") );
+//         model.setInputValue("removalProbability", new RealParameter("1") );
+//         model.setInputValue("conditionOnSurvival", true);
+//         model.initAndValidate();
+//
+//         // likelihood conditioning on at least one sampled individual    - "true" result from BEAST 09 June 2015 (DK)
+//         assertEquals(-25.671303367076007, model.calculateTreeLogLikelihood(tree), 1e-5);
+//
+//     }
 
 
 

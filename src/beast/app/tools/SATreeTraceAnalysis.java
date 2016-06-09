@@ -3,9 +3,7 @@ package beast.app.tools;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeTraceAnalysis;
-import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.FrequencySet;
-import beast.util.Randomizer;
 import beast.util.SANexusParser;
 
 import java.io.File;
@@ -16,29 +14,20 @@ import java.util.*;
  * @author Alexandra Gavryushkina
  * @author Walter Xie
  */
-//TODO labeledTrees
+
 public class SATreeTraceAnalysis extends TreeTraceAnalysis {
 
     FrequencySet<String> pairs = new FrequencySet<String>();
-
-    public SATreeTraceAnalysis(List<Tree> posteriorTreeList) {
-        super(posteriorTreeList);
-    }
 
     public SATreeTraceAnalysis(List<Tree> posteriorTreeList, double burninFraction) {
         super(posteriorTreeList, burninFraction);
     }
 
+    // This should calculate a credible set for the trees obtained after removing all fossils
+    // WARNING this procedure needs testing.
     @Override
     public void analyze(double credSetProbability) {
-        try {
-            countClades(true, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//        removeFossils();
-
-        // this should be after removeFossils
+        removeFossilsFromAllTrees();
         super.analyze(credSetProbability);
 
     }
@@ -78,103 +67,143 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         return getNewickTrees(false);
     }
 
-    public List<String> getTaxaLabelTrees () {
-        // why toSortedNewick not in Tree class to make it easy, instead to use labelNr + 1
-        throw new UnsupportedOperationException("toSortedNewick not support taxa label");
-    }
 
+    String toHTML() throws Exception {
+        FrequencySet<String> clades = new FrequencySet<String>();
+        ArrayList<String> tmp = new ArrayList<String>();
+
+        int treeWithSACount = 0;
+
+        for (int i=0; i < getTotalTreesBurninRemoved(); i++) {
+            Tree tree = treeInTrace.get(i);
+            ArrayList<String> saClades =  extractAllSAClades(tree.getRoot());
+            tmp.addAll(saClades);
+            for (int j=0; j<tree.getNodeCount(); j++)
+                if (tree.getNode(j).isFake()) {
+                    treeWithSACount++;
+                    break;
+                }
+        }
+
+        for (int i=0; i < tmp.size(); i++)
+            clades.add(tmp.get(i));
+
+        StringBuilder b = new StringBuilder();
+
+        b.append("<table>\n");
+        b.append("<caption>Clade frequencies</caption>\n");
+        b.append("<tr><th>Count</th><th>Percent</th><th>Clade</th></tr>");
+        int treeCount = getTotalTreesBurninRemoved();
+        for (int i =0; i < clades.size(); i++) {
+            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
+            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", clades.getFrequency(i), percent));
+            b.append("<td style='text-align:left'>" + clades.get(i).replaceAll("<", "&lt;")  + "</td></tr>\n");
+        }
+        b.append("</table>\n");
+
+
+        b.append("<table>\n");
+        b.append("<caption>Pair frequencies</caption>");
+        b.append("<tr><th>Count</th><th>Percent</th><th>Pair</th></tr>");
+        for (int i =0; i < pairs.size(); i++) {
+            int freq = pairs.getFrequency(i);
+            double percent = (double) (freq * 100)/(treeCount);
+            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", freq, percent));
+            b.append("<td style='text-align:left'>" + pairs.get(i).replaceAll("<", " &lt; ") + "</td></tr>\n");
+        }
+        double a =  (double)treeWithSACount/ treeCount;
+        b.append("</table>\n");
+        b.append(String.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100));
+
+        FrequencySet<String> sampledAncestors = new FrequencySet<String>();
+        tmp = new ArrayList<String>();
+
+        for (int i=0; i < getTotalTreesBurninRemoved(); i++) {
+            Tree tree = treeInTrace.get(i);
+            tmp.addAll(listSA(tree, false));
+        }
+
+        for (int i=0; i < tmp.size(); i++) {
+            sampledAncestors.add(tmp.get(i));
+        }
+
+        b.append("<table>\n");
+        b.append("<caption>SA frequencies</caption>");
+        b.append("<tr><th>Count</th><th>Percent</th><th>SA</th></tr>");
+        for (int i =0; i < sampledAncestors.size(); i++) {
+            double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
+            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", sampledAncestors.getFrequency(i), percent));
+            b.append("<td style='text-align:left'>" + sampledAncestors.get(i) + "</td></tr>\n");
+        }
+
+        return b.toString();
+    }
 
     /**
-     * @parameter isTaxaLabel is false if the indices of sampled nodes should be use as labels
-     * and taxa names are used otherwise
+     * prints the number of trees with sampled ancestors
+     * to the standard output
      */
-    @Deprecated
-    public void perform(boolean isTaxaLabel) throws Exception {
-        countClades(true, true);
-        countSampledAncestors(true);
-        countSAFrequencies(true, false, 0.445);
-        printTreeHeights();
-        countTopologies(false);
-    }
+    public void countTreesWithSA() throws Exception {
 
-
-    public void countTreesWithDClades() throws Exception {
-
-        int dCladeCount = 0;
+        int treeWithSACount = 0;
         Tree tree;
 
         for (int i =0; i < getTotalTreesBurninRemoved(); i++) {
             tree = treeInTrace.get(i);
             int j;
             for (j=0; j<tree.getNodeCount(); j++)
-                if (tree.getNode(j).getChildCount() == 1) {
-                    dCladeCount++;
+                if (tree.getNode(j).isFake()) {
+                    treeWithSACount++;
                     break;
                 }
         }
 
-        double a =  (double)dCladeCount/ getTotalTreesBurninRemoved();
-        System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
+        double a =  (double)treeWithSACount/ getTotalTreesBurninRemoved();
+        System.out.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
         System.out.println();
     }
 
     /**
-     * print the number of sampled ancestor in each tree
-     *
-     * @param zeroBranchTrees
+     * print the average number of sampled ancestors in all trees
+     * to the standard output
      */
-    public void countSampledAncestors(boolean zeroBranchTrees){
+    public void countAverageSampledAncestorNumber(){
         Tree tree;
-        int sAcount;
-        int totalsAcount = 0;
+        int totalSACount = 0;
 
-        if (zeroBranchTrees) {
-            //System.out.println("Sample \t Prior \t Posterior");
-            for (int i =0; i < getTotalTreesBurninRemoved()-1; i++) {
-                tree = treeInTrace.get(i);
-                sAcount=0;
-                for (int j=0; j<tree.getNodeCount(); j++) {
-                    if (((ZeroBranchSANode)tree.getNode(j)).isFake()) sAcount++;
-                }
-                totalsAcount += sAcount;
-                //System.out.println(i + "\t" + sAcount + "\t" + Randomizer.nextDouble());
-            }
 
-            tree = treeInTrace.get(getTotalTreesBurninRemoved()-1);
-            sAcount=0;
+        for (int i =0; i < getTotalTreesBurninRemoved(); i++) {
+            tree = treeInTrace.get(i);
             for (int j=0; j<tree.getNodeCount(); j++) {
-                if (((ZeroBranchSANode)tree.getNode(j)).isFake()) sAcount++;
+                if (tree.getNode(j).isFake()) totalSACount++;
             }
-            totalsAcount += sAcount;
-            //System.out.println(getTotalTreesBurninRemoved()-1 + "\t" + sAcount + "\t" + Randomizer.nextDouble());
-            System.out.format("The average number of sampled ancestors per tree is %2.2f", ((double) totalsAcount / getTotalTreesBurninRemoved()));
-            System.out.println();
-
         }
+
+        System.out.format("The average number of sampled ancestors per tree is %2.2f", ((double) totalSACount / getTotalTreesBurninRemoved()));
+        System.out.println();
 
     }
 
     /**
-     * print the quantity of each sampled ancestor clade encountered in trees
+     * prints the frequency of each sampled ancestor clade to the standard output
      *
-     * @param zeroBranchTrees  if true then beast trees are treated as zero branch SA trees
-     * @param countPairs       if true then sampled ancestors pairs are also counted and printed
+     * @param countPairs if true then the frequencies of sampled ancestors pairs are also counted
      * @throws Exception
      */
-    public void countClades(boolean zeroBranchTrees, boolean countPairs) throws Exception {
+    public void countSAClades(boolean countPairs) throws Exception {
 
         FrequencySet<String> clades = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
 
-        int dCladeCount = 0;
+        int treesWithSACount = 0;
 
         for (int i=0; i < getTotalTreesBurninRemoved(); i++) {
             Tree tree = treeInTrace.get(i);
-            ArrayList<String> dClades =  extractAllDClades(tree.getRoot(),zeroBranchTrees);
-            tmp.addAll(dClades);
+            ArrayList<String> saClades =  extractAllSAClades(tree.getRoot());
+            tmp.addAll(saClades);
             for (int j=0; j<tree.getNodeCount(); j++)
-                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && ((ZeroBranchSANode)tree.getNode(j)).isFake())) {
-                    dCladeCount++;
+                if (tree.getNode(j).isFake()) {
+                    treesWithSACount++;
                     break;
                 }
         }
@@ -201,88 +230,35 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
             System.out.println();
             for (int i =0; i < pairs.size(); i++) {
             	int freq = pairs.getFrequency(i);
-            	freq = pairs.getFrequency(i);
                 double percent = (double) (freq * 100)/(treeCount);
                 System.out.format("%-10d %-10.2f", freq, percent);
                 System.out.println(pairs.get(i));
             }
             System.out.println();
-            double a =  (double)dCladeCount/ treeCount;
-            System.out.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
+            double a =  (double)treesWithSACount/ treeCount;
+            System.out.format(treesWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
             System.out.println();
         }
 
     }
 
     
-    String toHTML(boolean zeroBranchTrees, boolean countPairs) throws Exception {
-        FrequencySet<String> clades = new FrequencySet<String>();
-        ArrayList<String> tmp = new ArrayList<String>();
 
-        int dCladeCount = 0;
-
-        for (int i=0; i < getTotalTreesBurninRemoved(); i++) {
-            Tree tree = treeInTrace.get(i);
-            ArrayList<String> dClades =  extractAllDClades(tree.getRoot(),zeroBranchTrees);
-            tmp.addAll(dClades);
-            for (int j=0; j<tree.getNodeCount(); j++)
-                if ((!zeroBranchTrees && tree.getNode(j).getChildCount() == 1) || (zeroBranchTrees && ((ZeroBranchSANode)tree.getNode(j)).isFake())) {
-                    dCladeCount++;
-                    break;
-                }
-        }
-
-        for (int i=0; i < tmp.size(); i++)
-            clades.add(tmp.get(i));
-
-        StringBuilder b = new StringBuilder();
-        
-        b.append("<table>\n");
-        b.append("<caption>Clade frequencies</caption>\n");
-        b.append("<tr><th>Count</th><th>Percent</th><th>Clade</th></tr>");
-        int treeCount = getTotalTreesBurninRemoved();
-        for (int i =0; i < clades.size(); i++) {
-            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
-            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", clades.getFrequency(i), percent));
-            b.append("<td style='text-align:left'>" + clades.get(i).replaceAll("<", "&lt;")  + "</td></tr>\n");
-        }
-        b.append("</table>\n");
-
-        if (countPairs) {
-            b.append("<table>\n");
-            b.append("<caption>Pair frequencies</caption>");
-            b.append("<tr><th>Count</th><th>Percent</th><th>Pair</th></tr>");
-            for (int i =0; i < pairs.size(); i++) {
-            	int freq = pairs.getFrequency(i);
-            	freq = pairs.getFrequency(i);
-                double percent = (double) (freq * 100)/(treeCount);
-                b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", freq, percent));
-                b.append("<td style='text-align:left'>" + pairs.get(i).replaceAll("<", " &lt; ") + "</td></tr>\n");
-            }
-            double a =  (double)dCladeCount/ treeCount;
-            b.append("</table>\n");
-            b.append(String.format(dCladeCount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100));
-        }
-        return b.toString();
-    }
     
     /**
-     * for each sampled node, it counts the number of trees in which this sampled node is a sampled ancestor
-     * @param print  if is true then the counts are printed
+     * for each sampled node, it counts the percentage of trees in which this sampled node is a sampled ancestor
+     * @param print  if is true then the percentages are printed
      * @param useRanking if is true then sampled nodes are distinguished by the time order of sampling
      *                   (that is, for each n in {1,..., #SampledNodes} it counts the number of
      *                   trees in which nth sampled node is a sampled ancestor)
      *                   if is false, labels are used
      * @return a set of sampled nodes with assigned frequencies
      */
-    public FrequencySet<String> countSAFrequencies(boolean print, boolean useRanking, double cutoff) {
+    public FrequencySet<String> countSAFrequencies(boolean print, boolean useRanking) {
         FrequencySet<String> sampledAncestors = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
-        ArrayList<String> predictedSA = new ArrayList<String>();
 
-        int burnIn = getTotalTreesBurninRemoved()/10;
-
-        for (int i=burnIn; i < getTotalTreesBurninRemoved(); i++) {
+        for (int i=0; i < getTotalTreesBurninRemoved(); i++) {
             Tree tree = treeInTrace.get(i);
             tmp.addAll(listSA(tree, useRanking));
         }
@@ -292,87 +268,35 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         }
 
         if (print) {
-            System.out.println("There are " + getTotalTreesBurninRemoved() + " trees in the file. The first " + burnIn + " are removed as a burn-in. " +
+            System.out.println("There are " + getTotalTreesBurninRemoved() + " trees in the file. " +
+                    "The first " + getBurnin() + " are removed as a burn-in. " +
                     "Then sampled ancestors are counted");
             System.out.println();
             System.out.println("Count \t Percent \t SA");
-            System.out.println("flag1");
             for (int i =0; i < sampledAncestors.size(); i++) {
-                double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(getTotalTreesBurninRemoved() - burnIn);
-                if (percent >= cutoff*100) {
-                    predictedSA.add(sampledAncestors.get(i));
-                }
+                double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
                 System.out.format("%-10d %-10.2f", sampledAncestors.getFrequency(i), percent);
                 System.out.println(sampledAncestors.get(i));
             }
-            System.out.println("flag2");
         }
-
-        int trueSACount;
-        boolean falseSADetected;
-        Tree randomTree;
-        int randomIndex;
-        do {
-            randomIndex = Randomizer.nextInt(getTotalTreesBurninRemoved());
-            randomTree = treeInTrace.get(randomIndex);
-            trueSACount=0;
-            falseSADetected = false;
-            for (int i=0; i<randomTree.getExternalNodes().size(); i++){
-                if (((ZeroBranchSANode)randomTree.getNode(i)).isDirectAncestor()) {
-                    if (predictedSA.contains(randomTree.getNode(i).getID())){
-                        trueSACount++;
-                    }  else {
-                        falseSADetected = true;
-                        break;
-                    }
-                }
-            }
-        } while (falseSADetected || trueSACount != predictedSA.size());
-
-        System.out.println("Random tree with all the predicted sampled ancestors and no other sampled ancestors ");
-        System.out.println(randomTree.getRoot().toShortNewick(false));
-        System.out.println("Random tree index " + randomIndex);
 
         return sampledAncestors;
     }
 
     /**
      *
-     * @param isTaxaLabel  false if the indices of sampled nodes should be use as labels and taxa names are used otherwise
      */
-    public void countTopologies(boolean isTaxaLabel) {
+    public void countTopologies() {
         FrequencySet<String> topologies = new FrequencySet<String>();
         List<String> trees;
-        if (isTaxaLabel) {
-            trees = getTaxaLabelTrees();
-        } else {
-            trees = getNewickTrees(true);
-        }
+        trees = getNewickTrees(true);
+
 
         for (int i=0; i < trees.size(); i++) {
             topologies.add(trees.get(i));
         }
 
-//        Double[] numericTrees = new Double[trees.size()];
-//
-//        Arrays.fill(numericTrees, 0.0);
-//
-//        for (int i=0; i< topologies.size(); i++) {
-//            for (int j=0; j < trees.size(); j++) {
-//                if (trees.get(j).equals(topologies.get(i))) {
-//                    numericTrees[j] = (double)i+1;
-//                }
-//            }
-//        }
-//
-//        int nSampleInterval = 100;
-//        // calc effective sample size
-//        double ACT = ESS.ACT(numericTrees, nSampleInterval);
-//        double ESS = numericTrees.length / (ACT / nSampleInterval);
-//
         System.out.println("The number of trees in the file = " + trees.size() + ".");
-//        System.out.println("ESS = " + ESS);
-//        System.out.println();
 
         double sumPercentage = 0;
         System.out.println(getCredSetProbability()*100 + "% credible set: ");
@@ -398,36 +322,39 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
 
     }
 
-    public ArrayList<String> extractAllDClades(Node node, boolean zeroBranchTrees) {
+
+    /**
+     *
+     * @param node
+     * @return all sampled ancestor clades descendant from node
+     */
+    public ArrayList<String> extractAllSAClades(Node node) {
         ArrayList<String> tmp = new ArrayList<String>();
 
-        if ((!zeroBranchTrees && node.getChildCount() < 2) || (zeroBranchTrees && node.isLeaf()))
-            tmp.add(extractDClade(node, zeroBranchTrees));
+        if (node.isLeaf())
+            tmp.add(extractSAClade(node));
         if (node.getLeft() != null)
-            tmp.addAll(extractAllDClades(node.getLeft(), zeroBranchTrees));
+            tmp.addAll(extractAllSAClades(node.getLeft()));
         if (node.getRight() != null)
-            tmp.addAll(extractAllDClades(node.getRight(), zeroBranchTrees));
+            tmp.addAll(extractAllSAClades(node.getRight()));
 
         return tmp;
     }
 
+
     /**
-     * retern the list of sampled ancestors, WARNING works only for zeroBranchTrees
+     * retern the list of sampled ancestors
      * @param tree
      * @return
      */
     public ArrayList<String> listSA(Tree tree, boolean useRanking){
         ArrayList<String> sampledAncestors = new ArrayList<String>();
-        int count = 0;
         for (int i=0; i<tree.getLeafNodeCount(); i++){
-            if (((ZeroBranchSANode)tree.getNode(i)).isDirectAncestor()) {
+            if (tree.getNode(i).isDirectAncestor()) {
                 if (useRanking) {
                     sampledAncestors.add(Integer.toString(getRank(tree, tree.getNode(i))));
                 } else {
                     sampledAncestors.add(tree.getNode(i).getID());
-                    if (tree.getNode(i).getID().equals("0")) {
-                        count++;
-                    }
                 }
             }
         }
@@ -467,30 +394,6 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         System.out.println(tree.getRoot().getHeight() + ")");
     }
 
-//    public void removeFossils(){
-//        Tree tree;
-//
-//        for (int i =0; i < getTotalTreesBurninRemoved(); i++) {
-//            tree = treeInTrace.get(i);
-//            for (int j=0; j<tree.getNodeCount(); j++) {
-//                Node fake = tree.getNode(j);
-//                if (((ZeroBranchSANode)fake).isFake()) {
-//                    Node parent = fake.getParent();
-//                    Node otherChild = ((ZeroBranchSANode)fake.getLeft()).isDirectAncestor()?fake.getRight():fake.getLeft();
-//                    parent.removeChild(fake);
-//                    parent.addChild(otherChild);
-//                } else if (!fake.isLeaf() && ((fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005) || (fake.getRight().isLeaf() && fake.getRight().getHeight() > 0.0000000005))) {
-//                    Node parent = fake.getParent();
-//                    Node otherChild= (fake.getLeft().isLeaf() && fake.getLeft().getHeight()>0.0000000005)?fake.getRight():fake.getLeft();
-//                    parent.removeChild(fake);
-//                    parent.addChild(otherChild);
-//                }
-//            }
-//            System.out.println("tree STATE_"+ i*1000 + " = "+tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
-//        }
-//
-//    }
-
     public void removeFossilsFromAllTrees() {
         Tree tree;
         for (int i =0; i < getTotalTreesBurninRemoved(); i++) {
@@ -513,12 +416,6 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
             Node right = node.getRight();
             removeFossils(left, tree, removedNodes);
             removeFossils(right, tree, removedNodes);
-//            if (!removedNodes.contains(left)) {
-//                removeFossils(left, tree, removedNodes);
-//            }
-//            if (!removedNodes.contains(right)) {
-//                removeFossils(right, tree, removedNodes);
-//            }
 
 
             if (node.isLeaf()) {
@@ -547,60 +444,53 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
 
     //********* private ***********
 
-    private ArrayList<Integer> listNodesUnder(Node node) {
+    /**
+     *
+     * @param node
+     * @return a sampled ancestor clade in the format:
+     * [SA < A_1, A_n], where SA is the MRCA of (SA, A_1,..., A_n)
+     */
 
-        ArrayList<Integer> tmp = new ArrayList<Integer>();
-        if (node.getChildCount() < 2)
-            tmp.add(node.getNr()+1);
-        if (node.getLeft() != null)
-            tmp.addAll(listNodesUnder(node.getLeft()));
-        if (node.getRight() != null)
-            tmp.addAll(listNodesUnder(node.getRight()));
+    private String extractSAClade(Node node) {
+        String tmp = new String();
+        String ancestor = node.getID();
+        tmp += ancestor + '<';
+        if (node.isDirectAncestor()) {
+            ArrayList<String> descendants = listSampledNodeIDsUnder(node.getParent());
+            tmp+= descendants;
+            for (String des:descendants) {
+                if (!des.equals(ancestor)) {
+                    pairs.add(ancestor + "<" + des);
+                }
+            }
+        }
         return tmp;
     }
 
-    private ArrayList<String> listNodesUnder(Node node, boolean useID) {
+    private ArrayList<String> listSampledNodeIDsUnder(Node node) {
         ArrayList<String> tmp = new ArrayList<String>();
         if (!node.isLeaf()) {
             for (Node child : node.getChildren()) {
-                tmp.addAll(listNodesUnder(child, useID));
+                tmp.addAll(listSampledNodeIDsUnder(child));
             }
         } else tmp.add(node.getID());
         Collections.sort(tmp);
         return tmp;
     }
 
-    private String extractDClade(Node node, boolean zeroBranchTrees) {
-        String tmp = new String();
-        if (zeroBranchTrees) {
-            String ancestor = node.getID();
-            tmp += ancestor + '<';
-            if (((ZeroBranchSANode)node).isDirectAncestor()) {
-                ArrayList<String> descendants = listNodesUnder(node.getParent(), true);
-                tmp+= descendants;
-                for (String des:descendants) {
-                    if (!des.equals(ancestor)) {
-                        pairs.add(ancestor + "<" + des);
-                    }
-                }
-            }
-        } else {
-            String ancestor = Integer.toString(node.getNr() + 1);
-            tmp += ancestor + '<';
-            if (node.getChildCount() == 1) {
-                Integer[] descendants = listNodesUnder(node.getLeft()).toArray(new Integer[0]);
-                Arrays.sort(descendants);
-                for (int i=0; i < descendants.length; i++){
-                    String pair = ancestor + '<' + descendants[i];
-                    pairs.add(pair);
-                }
-                tmp += Arrays.toString(descendants);
-            }
-        }
+    private ArrayList<Integer> listSampledNodeNumbersUnder(Node node) {
 
-
+        ArrayList<Integer> tmp = new ArrayList<Integer>();
+        if (node.isLeaf())
+            tmp.add(node.getNr()+1);
+        if (node.getLeft() != null)
+            tmp.addAll(listSampledNodeNumbersUnder(node.getLeft()));
+        if (node.getRight() != null)
+            tmp.addAll(listSampledNodeNumbersUnder(node.getRight()));
         return tmp;
     }
+
+
 
     /**
      * static Utils
