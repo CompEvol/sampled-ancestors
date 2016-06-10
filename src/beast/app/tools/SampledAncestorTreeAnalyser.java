@@ -27,23 +27,47 @@ import java.util.List;
 public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	
 	private File file;
+	private Boolean printFrequencies = true;
+	private Boolean printPairs = false;
+	private Boolean printCladeFrequencies = false;
 	
 	public SampledAncestorTreeAnalyser() {}
-	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file) {
+	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file,
+			@Param(name="printFrequencies", description="show frequencies in output table", defaultValue="true") Boolean printFrequencies,
+			@Param(name="printPairs", description="show node pairs in output table", defaultValue="false") Boolean printPairs,
+			@Param(name="printCladeFrequencies", description="show calde frequencies in output table", defaultValue="false") Boolean printCladeFrequencies) {
 		this.file = file;
+		this.printFrequencies = printFrequencies;
+		this.printPairs = printPairs;
+		this.printCladeFrequencies = printCladeFrequencies;
 	}
 
 	public File getFile() {
 		return file;
 	}
-
 	public void setFile(File file) {
 		this.file = file;
 	}
-
-
+    public Boolean getPrintFrequencies() {
+		return printFrequencies;
+	}
+	public void setPrintFrequencies(Boolean printFrequencies) {
+		this.printFrequencies = printFrequencies;
+	}
+	public Boolean getPrintPairs() {
+		return printPairs;
+	}
+	public void setPrintPairs(Boolean printPairs) {
+		this.printPairs = printPairs;
+	}
+	public Boolean getPrintCladeFrequencies() {
+		return printCladeFrequencies;
+	}
+	public void setPrintCladeFrequencies(Boolean printCladeFrequencies) {
+		this.printCladeFrequencies = printCladeFrequencies;
+	}
 	
-    public void run() throws Exception {
+	public void run() throws Exception {
  
         FileReader reader = null;
 
@@ -52,11 +76,11 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
             reader = new FileReader(file);
             List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
             SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0.1);
-            String result = analysis.toHTML();
+            String result = analysis.toHTML(printCladeFrequencies, printPairs, printFrequencies);
             
     		// create HTML file with results
     		String html = "<html>\n" + 
-    		"<title>BEAST " + new BEASTVersion2().getVersionString() + ": miniTracer</title>\n" +
+    		"<title>BEAST " + new BEASTVersion2().getVersionString() + ": Sampled Ancestor Tree Analyser</title>\n" +
     		"<head>  \n" +
     		"<link rel='stylesheet' type='text/css' href='css/style.css'>\n" +
     		"</head>\n" +

@@ -68,7 +68,7 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
     }
 
 
-    String toHTML() throws Exception {
+	public String toHTML(boolean printCladeFrequencies, boolean printPairs, boolean printFrequencies) throws Exception {
         FrequencySet<String> clades = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
 
@@ -90,30 +90,33 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
 
         StringBuilder b = new StringBuilder();
 
-        b.append("<table>\n");
-        b.append("<caption>Clade frequencies</caption>\n");
-        b.append("<tr><th>Count</th><th>Percent</th><th>Clade</th></tr>");
         int treeCount = getTotalTreesBurninRemoved();
-        for (int i =0; i < clades.size(); i++) {
-            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
-            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", clades.getFrequency(i), percent));
-            b.append("<td style='text-align:left'>" + clades.get(i).replaceAll("<", "&lt;")  + "</td></tr>\n");
+        if (printCladeFrequencies) {
+	        b.append("<table>\n");
+	        b.append("<caption>Clade frequencies</caption>\n");
+	        b.append("<tr><th>Count</th><th>Percent</th><th>Clade</th></tr>");
+	        for (int i =0; i < clades.size(); i++) {
+	            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
+	            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", clades.getFrequency(i), percent));
+	            b.append("<td style='text-align:left'>" + clades.get(i).replaceAll("<", "&lt;")  + "</td></tr>\n");
+	        }
+	        b.append("</table>\n");
         }
-        b.append("</table>\n");
 
-
-        b.append("<table>\n");
-        b.append("<caption>Pair frequencies</caption>");
-        b.append("<tr><th>Count</th><th>Percent</th><th>Pair</th></tr>");
-        for (int i =0; i < pairs.size(); i++) {
-            int freq = pairs.getFrequency(i);
-            double percent = (double) (freq * 100)/(treeCount);
-            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", freq, percent));
-            b.append("<td style='text-align:left'>" + pairs.get(i).replaceAll("<", " &lt; ") + "</td></tr>\n");
+        if (printPairs) {
+	        b.append("<table>\n");
+	        b.append("<caption>Pair frequencies</caption>");
+	        b.append("<tr><th>Count</th><th>Percent</th><th>Pair</th></tr>");
+	        for (int i =0; i < pairs.size(); i++) {
+	            int freq = pairs.getFrequency(i);
+	            double percent = (double) (freq * 100)/(treeCount);
+	            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", freq, percent));
+	            b.append("<td style='text-align:left'>" + pairs.get(i).replaceAll("<", " &lt; ") + "</td></tr>\n");
+	        }
+	        double a =  (double)treeWithSACount/ treeCount;
+	        b.append("</table>\n");
+	        b.append(String.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100));
         }
-        double a =  (double)treeWithSACount/ treeCount;
-        b.append("</table>\n");
-        b.append(String.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100));
 
         FrequencySet<String> sampledAncestors = new FrequencySet<String>();
         tmp = new ArrayList<String>();
@@ -127,15 +130,16 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
             sampledAncestors.add(tmp.get(i));
         }
 
-        b.append("<table>\n");
-        b.append("<caption>SA frequencies</caption>");
-        b.append("<tr><th>Count</th><th>Percent</th><th>SA</th></tr>");
-        for (int i =0; i < sampledAncestors.size(); i++) {
-            double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
-            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", sampledAncestors.getFrequency(i), percent));
-            b.append("<td style='text-align:left'>" + sampledAncestors.get(i) + "</td></tr>\n");
+        if (printFrequencies) {
+	        b.append("<table>\n");
+	        b.append("<caption>SA frequencies</caption>");
+	        b.append("<tr><th>Count</th><th>Percent</th><th>SA</th></tr>");
+	        for (int i =0; i < sampledAncestors.size(); i++) {
+	            double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
+	            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", sampledAncestors.getFrequency(i), percent));
+	            b.append("<td style='text-align:left'>" + sampledAncestors.get(i) + "</td></tr>\n");
+	        }
         }
-
         return b.toString();
     }
 
@@ -547,6 +551,8 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
 
 
     }
+
+
 
 }
 
