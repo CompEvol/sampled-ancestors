@@ -33,9 +33,9 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	
 	public SampledAncestorTreeAnalyser() {}
 	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file,
-			@Param(name="printFrequencies", description="show frequencies in output table", defaultValue="true") Boolean printFrequencies,
-			@Param(name="printPairs", description="show node pairs in output table", defaultValue="false") Boolean printPairs,
-			@Param(name="printCladeFrequencies", description="show calde frequencies in output table", defaultValue="false") Boolean printCladeFrequencies) {
+			@Param(name="printFrequencies", description="show sampled ancestor frequencies in output table", defaultValue="true") Boolean printFrequencies,
+			@Param(name="printPairs", description="show ancestor-descendant pair frequencies in output table", defaultValue="false") Boolean printPairs,
+			@Param(name="printCladeFrequencies", description="show sampled ancesor calde frequencies in output table", defaultValue="false") Boolean printCladeFrequencies) {
 		this.file = file;
 		this.printFrequencies = printFrequencies;
 		this.printPairs = printPairs;
