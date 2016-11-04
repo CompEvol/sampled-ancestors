@@ -38,7 +38,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
 
     //'direct' parameters
     public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The time when the process started", Input.Validate.REQUIRED);
+            new Input<RealParameter>("origin", "The time when the process started", (RealParameter)null);
     public Input<RealParameter> birthRateInput =
             new Input<RealParameter>("birthRate", "Birth rate", Input.Validate.REQUIRED);
     public Input<RealParameter> deathRateInput =
@@ -289,6 +289,10 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         int nodeCount = tree.getNodeCount();
         updateParameters();
         if (lambdaExceedsMu && lambda <= mu) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        if (lambda < 0 || mu < 0 || psi < 0) {
             return Double.NEGATIVE_INFINITY;
         }
         //double x0 = tree.getRoot().getHeight() + origToRootDistance;
