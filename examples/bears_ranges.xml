@@ -210,7 +210,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
 
     <operator id="SATreeScalerFBD.t:bears" spec="SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:bears" weight="3.0"/>
     
-    <!-- ADD FOSSIL OCCURANCE DATE RANGES HERE AS FOLLOWS -->
+    <!-- ADD FOSSIL OCCURRENCE DATE RANGES HERE AS FOLLOWS -->
     
     <!-- this operator allows to sample dates of fossil samples. The dates will be variable for all the
      taxa listed in the taxonset input and in the samplingDates inputs -->
