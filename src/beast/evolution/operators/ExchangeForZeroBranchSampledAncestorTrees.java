@@ -11,7 +11,11 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
-
+/**
+ * @deprecated Use SAExchange instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 @Description("Implement Narrow and Wide Exchange for sampled ancestor trees." +
         "Narrow move chooses a random internal node (not a fake node) with two non-leaf children." +
         "Then it takes the older child of this node and exchange one of its children (or just a child" +

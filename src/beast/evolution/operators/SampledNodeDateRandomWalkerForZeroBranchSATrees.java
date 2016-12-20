@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @deprecated Use SampledNodeDateRandomWalker instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
 public class SampledNodeDateRandomWalkerForZeroBranchSATrees extends TipDatesRandomWalker {
 

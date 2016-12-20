@@ -13,6 +13,11 @@ import beast.util.ZeroBranchSATreeParser;
 
 //The tree density is from: Tanja Stadler et al. "Estimating the Basic Reproductive Number from Viral Sequence Data"
 
+/**
+ * @deprecated Use SABirthDeathModel instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 @Description("Calculate tree density under Birth Death Sampling Through Time Model for Epidemics " +
         "that is the BDM where an individual is sampled at a time with a constant rate psi" +
         " and where an individual becomes noninfectious immediately after the sampling" +

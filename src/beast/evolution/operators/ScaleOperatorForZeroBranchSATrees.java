@@ -11,6 +11,12 @@ import beast.evolution.tree.ZeroBranchSATree;
 /**
  * @author Alexandra Gavryushkina
  */
+
+/**
+ * @deprecated Use SAScaleOperator instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 @Description("")
 public class ScaleOperatorForZeroBranchSATrees extends ScaleOperator {
 

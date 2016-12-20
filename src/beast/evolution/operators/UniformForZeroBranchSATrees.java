@@ -10,6 +10,12 @@ import beast.util.Randomizer;
 /**
  * @author Alexandra Gavryushkina
  */
+
+/**
+ * @deprecated Use SAUniform instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 @Description("Randomly selects true internal node (i.e. not the root and not a fake node) and move node height uniformly in interval " +
         "restricted by the node's parent and children.")
 public class UniformForZeroBranchSATrees extends TreeOperator {

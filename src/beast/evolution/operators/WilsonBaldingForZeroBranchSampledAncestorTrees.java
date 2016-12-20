@@ -11,6 +11,12 @@ import beast.util.Randomizer;
 /**
  *@author Alexandra Gavryushkina
  */
+
+/**
+ * @deprecated Use SAWilsonBalding instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 public class WilsonBaldingForZeroBranchSampledAncestorTrees extends TreeOperator {
 
     public Input<RealParameter> rInput =

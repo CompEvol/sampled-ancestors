@@ -8,6 +8,12 @@ import java.util.List;
 /**
  *@author Alexandra Gavryushkina
  */
+
+/**
+ * @deprecated Use Tree instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 public class ZeroBranchSATree extends Tree {
 
     public boolean logWithZeroBranches=false;

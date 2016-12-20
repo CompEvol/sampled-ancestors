@@ -43,8 +43,11 @@ import java.util.List;
 
 
 
-
-
+/**
+ * @deprecated Use RandomTree instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
+@Deprecated
 @Description("This class provides the basic engine for coalescent simulation of a given demographic model over a given time period. ")
 public class ZeroBranchSARandomTree extends ZeroBranchSATree implements StateNodeInitialiser {
     public Input<Alignment> taxaInput = new Input<Alignment>("taxa", "set of taxa to initialise tree specified by alignment");

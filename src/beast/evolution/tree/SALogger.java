@@ -10,6 +10,11 @@ import java.io.PrintStream;
 /**
  * @author Alexandra Gavryushkina
  */
+
+/**
+ * @deprecated Use SampledAncestorLogger instead. Starting from v.1.1.1 Tree class supports sampled ancestors and
+ * all the classes that contain ZeroBranch in their names (and some others) are replaced by similar classes.
+ */
 public class SALogger extends CalculationNode implements Loggable, Function {
     public Input<Tree> treeInput = new Input<Tree>("tree", "tree to report height for.", Input.Validate.REQUIRED);
 
