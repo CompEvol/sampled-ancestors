@@ -10,8 +10,10 @@ import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
 import beast.core.StateNode;
+import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
+import beast.evolution.alignment.Taxon;
 import beast.evolution.operators.Exchange;
 import beast.evolution.operators.ScaleOperator;
 import beast.evolution.operators.SubtreeSlide;
@@ -73,6 +75,13 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     public Input<Boolean> conditionOnRootInput = new Input<Boolean>("conditionOnRoot", "the tree " +
             "likelihood is conditioned on the root height otherwise on the time of origin", false);
 
+    public Input<Taxon> taxonInput = new Input<Taxon>("taxon", "a name of the taxon for which to calculate the prior probability of" +
+            "being sampled ancestor under the model", (Taxon) null);
+
+    public final Input<IntegerParameter> SATaxonInput = new Input<IntegerParameter>("SAtaxon", "A binary parameter is equal to zero " +
+            "if the taxon is not a sampled ancestor (that is, it does not have sampled descendants) and to one " +
+            "if it is a sampled ancestor (that is, it has sampled descendants)", (IntegerParameter)null);
+
     protected double r;
     protected double lambda;
     protected double mu;
@@ -87,6 +96,8 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     protected boolean originSpecified;
 
     private boolean lambdaExceedsMu = false;
+    protected String taxonName;
+    protected double taxonAge;
 
     public void initAndValidate() {
 
@@ -178,6 +189,25 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         			}
         		}
         	}
+        }
+
+        if (taxonInput.get() != null) {
+    	    if (SATaxonInput == null) {
+                throw new IllegalArgumentException("If the taxon input is specified SAInput also has to be specified");
+            }
+            if (conditionOnRootInput.get()) {
+                throw new RuntimeException("Calculate the prior probability of a taxon is not implemented under the model" +
+                        "with conditionOnTheRoot option!");
+            }
+    	    taxonName = taxonInput.get().getID();
+    	    TreeInterface tree = treeInput.get();
+    	    taxonAge = 0.0;
+    	    for (int i=0; i<tree.getLeafNodeCount(); i++) {
+    	        Node node=tree.getNode(i);
+    	        if (taxonName.equals(node.getID())) {
+    	            taxonAge = node.getHeight();
+                }
+            }
         }
     }
 
@@ -295,8 +325,34 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         if (lambda < 0 || mu < 0 || psi < 0) {
             return Double.NEGATIVE_INFINITY;
         }
+
         //double x0 = tree.getRoot().getHeight() + origToRootDistance;
         double x0 = origin;
+
+        if (taxonInput.get() != null) {
+
+            if (taxonAge > origin) {
+                return Double.NEGATIVE_INFINITY;
+            }
+            double logPost = 0.0;
+
+            if (conditionOnSamplingInput.get()) {
+                logPost -= Math.log(oneMinusP0(x0, c1, c2));
+            }
+
+            if (conditionOnRhoSamplingInput.get()) {
+                logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+            }
+
+            if (SATaxonInput.get().getValue() == 0) {
+                logPost += Math.log(1 - oneMinusP0(taxonAge, c1, c2));
+            } else {
+                logPost += Math.log(oneMinusP0(taxonAge, c1, c2));
+            }
+
+            return logPost;
+        }
+
         double x1=tree.getRoot().getHeight();
 
         if (x0 < x1 || r==1 && ((Tree)tree).getDirectAncestorNodeCount() > 0) {
