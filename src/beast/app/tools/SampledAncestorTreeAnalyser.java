@@ -4,6 +4,7 @@ import beast.app.BEASTVersion2;
 import beast.app.util.Application;
 import beast.core.Description;
 import beast.core.Param;
+import beast.core.util.Log;
 import beast.evolution.tree.Tree;
 import beast.util.AddOnManager;
 
@@ -35,7 +36,7 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file,
 			@Param(name="printFrequencies", description="show sampled ancestor frequencies in output table", defaultValue="true") Boolean printFrequencies,
 			@Param(name="printPairs", description="show ancestor-descendant pair frequencies in output table", defaultValue="false") Boolean printPairs,
-			@Param(name="printCladeFrequencies", description="show sampled ancesor calde frequencies in output table", defaultValue="false") Boolean printCladeFrequencies) {
+			@Param(name="printCladeFrequencies", description="show sampled ancesor clade frequencies in output table", defaultValue="false") Boolean printCladeFrequencies) {
 		this.file = file;
 		this.printFrequencies = printFrequencies;
 		this.printPairs = printPairs;
@@ -102,6 +103,7 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 //            analysis.report(System.out);
         }
         catch (IOException e) {
+        	Log.err.println(e.getMessage());
             //
         }
         finally {
