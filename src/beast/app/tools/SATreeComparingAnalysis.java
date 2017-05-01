@@ -39,12 +39,12 @@ public class SATreeComparingAnalysis {
 //            System.exit(0);
 //        }
 
-        SATreeComparingAnalysis.TreeSummary[] treeSummary1 = makeTreeSummeryForAllTrees(trees1, treeCount1);
-        SATreeComparingAnalysis.TreeSummary[] treeSummary2 = makeTreeSummeryForAllTrees(trees2, treeCount2);
+        SATreeComparingAnalysis.TreeSummary[] treeSummary1 = makeTreeSummaryForAllTrees(trees1, treeCount1);
+        SATreeComparingAnalysis.TreeSummary[] treeSummary2 = makeTreeSummaryForAllTrees(trees2, treeCount2);
 
     };
 
-    private SATreeComparingAnalysis.TreeSummary[] makeTreeSummeryForAllTrees(List<Tree> trees, int treeCount){
+    private SATreeComparingAnalysis.TreeSummary[] makeTreeSummaryForAllTrees(List<Tree> trees, int treeCount){
         SATreeComparingAnalysis.TreeSummary[] treeSummary = new TreeSummary[treeCount];
         for(int treeIndex=0; treeIndex < treeCount; treeIndex++) {
             Tree tree = trees.get(treeIndex);
@@ -128,10 +128,10 @@ public class SATreeComparingAnalysis {
             }
         }
 
-        SATreeComparingAnalysis.TreeSummary treeSummery = analysis.new TreeSummary(tree.getRoot().getHeight(), tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount(), dAPattern);
+        SATreeComparingAnalysis.TreeSummary treeSummary = analysis.new TreeSummary(tree.getRoot().getHeight(), tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount(), dAPattern);
 
-        System.out.println(treeSummery.dAPattern.toString());
+        System.out.println(treeSummary.dAPattern.toString());
         ArrayList<Integer> a = new ArrayList<Integer> (Arrays.asList(new Integer[]{1, 1}));
-        System.out.println(treeSummery.dAPattern.equals(a));
+        System.out.println(treeSummary.dAPattern.equals(a));
     }
 }

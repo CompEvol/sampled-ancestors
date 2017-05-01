@@ -6,8 +6,10 @@ import beast.evolution.tree.TreeTraceAnalysis;
 import beast.util.FrequencySet;
 import beast.util.SANexusParser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -67,8 +69,17 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         return getNewickTrees(false);
     }
 
-
-	public String toHTML(boolean printCladeFrequencies, boolean printPairs, boolean printFrequencies) throws Exception {
+    /**
+     *
+     * @param printCladeFrequencies
+     * @param printPairs
+     * @param printFrequencies
+     * @param printTopologyCredibleSet
+     * @param isHTML true if the report should be formatted as an HTML fragment
+     * @return a report string
+     * @throws Exception
+     */
+	public String toReportString(boolean printCladeFrequencies, boolean printPairs, boolean printFrequencies, boolean printTopologyCredibleSet, boolean isHTML) throws Exception {
         FrequencySet<String> clades = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
 
@@ -85,37 +96,50 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
                 }
         }
 
-        for (int i=0; i < tmp.size(); i++)
+        for (int i=0; i < tmp.size(); i++) {
             clades.add(tmp.get(i));
+        }
 
-        StringBuilder b = new StringBuilder();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        ResultsOutput output = null;
+
+        if (isHTML) {
+            output = new ResultsOutput.HTML(ps);
+        } else {
+            output = new ResultsOutput.TabDelimitedPlainText(ps);
+        }
+
 
         int treeCount = getTotalTreesBurninRemoved();
         if (printCladeFrequencies) {
-	        b.append("<table>\n");
-	        b.append("<caption>Clade frequencies</caption>\n");
-	        b.append("<tr><th>Count</th><th>Percent</th><th>Clade</th></tr>");
-	        for (int i =0; i < clades.size(); i++) {
+	        output.beginTableOutput("Clade frequencies", new String[]{"Count", "Percent", "Clade"});
+            for (int i =0; i < clades.size(); i++) {
 	            double percent = (double) (clades.getFrequency(i) * 100)/(treeCount);
-	            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", clades.getFrequency(i), percent));
-	            b.append("<td style='text-align:left'>" + clades.get(i).replaceAll("<", "&lt;")  + "</td></tr>\n");
+
+                output.outputRow(new String[] {
+                        String.format("%-10d", clades.getFrequency(i)),
+                        String.format("%-10.2f", percent),
+                        clades.get(i)});
+
 	        }
-	        b.append("</table>\n");
+            output.endTableOutput();
         }
 
         if (printPairs) {
-	        b.append("<table>\n");
-	        b.append("<caption>Pair frequencies</caption>");
-	        b.append("<tr><th>Count</th><th>Percent</th><th>Pair</th></tr>");
+            output.beginTableOutput("Pair frequencies", new String[]{"Count", "Percent", "Pair"});
 	        for (int i =0; i < pairs.size(); i++) {
 	            int freq = pairs.getFrequency(i);
 	            double percent = (double) (freq * 100)/(treeCount);
-	            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", freq, percent));
-	            b.append("<td style='text-align:left'>" + pairs.get(i).replaceAll("<", " &lt; ") + "</td></tr>\n");
+
+                output.outputRow(new String[] {
+                        String.format("%-10d", freq),
+                        String.format("%-10.2f", percent),
+                        pairs.get(i)});
 	        }
 	        double a =  (double)treeWithSACount/ treeCount;
-	        b.append("</table>\n");
-	        b.append(String.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100));
+            output.endTableOutput();
+            output.line(String.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.", a * 100));
         }
 
         FrequencySet<String> sampledAncestors = new FrequencySet<String>();
@@ -126,21 +150,31 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
             tmp.addAll(listSA(tree, false));
         }
 
-        for (int i=0; i < tmp.size(); i++) {
-            sampledAncestors.add(tmp.get(i));
+        for (String ancestor : tmp) {
+            sampledAncestors.add(ancestor);
         }
 
         if (printFrequencies) {
-	        b.append("<table>\n");
-	        b.append("<caption>SA frequencies</caption>");
-	        b.append("<tr><th>Count</th><th>Percent</th><th>SA</th></tr>");
+            output.beginTableOutput("SA frequencies", new String[]{"Count", "Percent", "SA"});
 	        for (int i =0; i < sampledAncestors.size(); i++) {
 	            double percent = (double) (sampledAncestors.getFrequency(i) * 100)/(getTotalTreesBurninRemoved());
-	            b.append(String.format("<tr><td>%-10d</td><td>%-10.2f</td>", sampledAncestors.getFrequency(i), percent));
-	            b.append("<td style='text-align:left'>" + sampledAncestors.get(i) + "</td></tr>\n");
-	        }
+
+                output.outputRow(new String[] {
+                        String.format("%-10d", sampledAncestors.getFrequency(i)),
+                        String.format("%-10.2f", percent),
+                        sampledAncestors.get(i)});
+            }
+            output.endTableOutput();
         }
-        return b.toString();
+
+        if (printTopologyCredibleSet) {
+            countTopologies(output);
+        }
+
+        ps.flush();
+        String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        ps.close();
+        return content;
     }
 
     /**
@@ -163,7 +197,7 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         }
 
         double a =  (double)treeWithSACount/ getTotalTreesBurninRemoved();
-        System.out.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a*100);
+        System.out.format(treeWithSACount + " trees (or %2.2f%%) have sampled internal nodes.%n", a * 100);
         System.out.println();
     }
 
@@ -290,42 +324,39 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
     /**
      *
      */
-    public void countTopologies() {
+    public void countTopologies(ResultsOutput output) {
         FrequencySet<String> topologies = new FrequencySet<String>();
         List<String> trees;
         trees = getNewickTrees(true);
-
 
         for (int i=0; i < trees.size(); i++) {
             topologies.add(trees.get(i));
         }
 
-        System.out.println("The number of trees in the file = " + trees.size() + ".");
+        output.line("The number of trees in the file = " + trees.size() + ".");
 
         double sumPercentage = 0;
-        System.out.println(getCredSetProbability()*100 + "% credible set: ");
-        System.out.println();
-        System.out.println("Count \t Percent \t Topology");
-        System.out.println();
+        output.beginTableOutput(topologies.getCredSetProbability()*100 + "% credible set:", new String[] {"Count", "Percent", "Topology"});
+
         int i;
 
-        for (i =0; i < topologies.size(); i++)
-            if (sumPercentage < getCredSetProbability()*100) {
+        for (i = 0; i < topologies.size(); i++)
+            if (sumPercentage < topologies.getCredSetProbability()*100) {
                 double percent = (double) (topologies.getFrequency(i) * 100)/(trees.size());
-                System.out.format("%-10d %-10f ", topologies.getFrequency(i), percent);
-                System.out.println(topologies.get(i));
+
+                output.outputRow(new String[] {
+                        String.format("%-10d", topologies.getFrequency(i)),
+                        String.format("%-10.2f", percent),
+                        topologies.get(i)});
+
                 sumPercentage += percent;
             } else {
                 break;
             }
-        System.out.println();
-        System.out.println("Total \t" + Math.round(sumPercentage) + "%");
-        System.out.println();
-        System.out.println(getCredSetProbability()*100 + "% credible set has " + i + " trees.");
-        System.out.println();
-
+        output.endTableOutput();
+        output.line("Total \t" + Math.round(sumPercentage) + "%");
+        output.line(topologies.getCredSetProbability()*100 + "% credible set has " + i + " trees.");
     }
-
 
     /**
      *
