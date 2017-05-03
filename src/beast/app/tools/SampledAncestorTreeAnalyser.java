@@ -33,8 +33,8 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	private Boolean printCladeFrequencies = false;
 	private Boolean printTopologyCredibleSet = false;
 	private Boolean toStandardOutput = true;
-	private Double credSetProbability = 0.95;
-	private Double burnin = 0.1;
+	private Double credibleSetProportion = 0.95;
+	private Double burninProportion = 0.1;
 
 	public SampledAncestorTreeAnalyser() {}
 	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file,
@@ -43,15 +43,15 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 			@Param(name="printPairs", description="show ancestor-descendant pair frequencies in output table", defaultValue="false") Boolean printPairs,
 			@Param(name="printCladeFrequencies", description="show sampled ancestor clade frequencies in output table", defaultValue="false") Boolean printCladeFrequencies,
 			@Param(name="printTopologyCredibleSet", description="show sampled ancestor tree topology frequencies in output table", defaultValue="false") Boolean printTopologyCredibleSet,
-			@Param(name="credSetProbability", description="size of the credible set (used for printTopologyCredibleSet)", defaultValue="0.95") Double credSetProbability,
+			@Param(name="credibleSet", description="percent coverage of the credible set (used for printTopologyCredibleSet)", defaultValue="95.0") Double credibleSetPercentage,
 			@Param(name="toStandardOutput", description="print to standard output", defaultValue="true") Boolean toStdOut) {
 		this.file = file;
-		this.burnin = burninPercentage / 100.0;
+		this.burninProportion = burninPercentage / 100.0;
 		this.printFrequencies = printFrequencies;
 		this.printPairs = printPairs;
 		this.printCladeFrequencies = printCladeFrequencies;
 		this.printTopologyCredibleSet = printTopologyCredibleSet;
-		this.credSetProbability = credSetProbability;
+		this.credibleSetProportion = credibleSetPercentage / 100.0;
 		this.toStandardOutput = toStdOut;
 	}
 
@@ -95,19 +95,19 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	}
 
 	public Double getBurnin() {
-		return this.burnin * 100.0;
+		return this.burninProportion * 100.0;
 	}
 	
 	public void setBurnin(Double burnin) {
-		this.burnin = burnin / 100.0;
+		this.burninProportion = burnin / 100.0;
 	}
 
-	public Double getCredSetProbability() {
-		return this.credSetProbability;
+	public Double getCredibleSet() {
+		return this.credibleSetProportion * 100.0;
 	}
-	
-	public void setCredSetProbability(Double credSetProbability) {
-		this.credSetProbability = credSetProbability;
+
+	public void setCredibleSet(Double credibleSet) {
+		this.credibleSetProportion = credibleSet / 100.0;
 	}
 
 	public void run() throws Exception {
@@ -118,9 +118,9 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
             System.out.println("Reading file " + file.getName());
             reader = new FileReader(file);
             List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
-            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, burnin);
+            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, burninProportion);
 
-			String result = analysis.toReportString(printCladeFrequencies, printPairs, printFrequencies, printTopologyCredibleSet, credSetProbability, !toStandardOutput);
+			String result = analysis.toReportString(printCladeFrequencies, printPairs, printFrequencies, printTopologyCredibleSet, credibleSetProportion, !toStandardOutput);
 
 			if (toStandardOutput) {
 				System.out.println(result);
