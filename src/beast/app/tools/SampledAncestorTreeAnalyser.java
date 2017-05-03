@@ -38,7 +38,7 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 
 	public SampledAncestorTreeAnalyser() {}
 	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file,
-			@Param(name="burnin", description="fraction of trees to be discarded as burn-in", defaultValue="0.1") Double burnin,
+			@Param(name="burnin", description="percentage of trees to be discarded as burn-in", defaultValue="10.0") Double burninPercentage,
 			@Param(name="printFrequencies", description="show sampled ancestor frequencies in output table", defaultValue="true") Boolean printFrequencies,
 			@Param(name="printPairs", description="show ancestor-descendant pair frequencies in output table", defaultValue="false") Boolean printPairs,
 			@Param(name="printCladeFrequencies", description="show sampled ancestor clade frequencies in output table", defaultValue="false") Boolean printCladeFrequencies,
@@ -46,7 +46,7 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 			@Param(name="credSetProbability", description="size of the credible set (used for printTopologyCredibleSet)", defaultValue="0.95") Double credSetProbability,
 			@Param(name="toStandardOutput", description="print to standard output", defaultValue="true") Boolean toStdOut) {
 		this.file = file;
-		this.burnin = burnin;
+		this.burnin = burninPercentage / 100.0;
 		this.printFrequencies = printFrequencies;
 		this.printPairs = printPairs;
 		this.printCladeFrequencies = printCladeFrequencies;
@@ -95,11 +95,11 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	}
 
 	public Double getBurnin() {
-		return this.burnin;
+		return this.burnin * 100.0;
 	}
 	
 	public void setBurnin(Double burnin) {
-		this.burnin = burnin;
+		this.burnin = burnin / 100.0;
 	}
 
 	public Double getCredSetProbability() {
