@@ -33,19 +33,25 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	private Boolean printCladeFrequencies = false;
 	private Boolean printTopologyCredibleSet = false;
 	private Boolean toStandardOutput = true;
+	private Double credSetProbability = 0.95;
+	private Double burnin = 0.1;
 
 	public SampledAncestorTreeAnalyser() {}
 	public SampledAncestorTreeAnalyser(@Param(name="file", description="tree file containing set of ancestral ancestor trees") File file,
+			@Param(name="burnin", description="fraction of trees to be discarded as burn-in", defaultValue="0.1") Double burnin,
 			@Param(name="printFrequencies", description="show sampled ancestor frequencies in output table", defaultValue="true") Boolean printFrequencies,
 			@Param(name="printPairs", description="show ancestor-descendant pair frequencies in output table", defaultValue="false") Boolean printPairs,
 			@Param(name="printCladeFrequencies", description="show sampled ancestor clade frequencies in output table", defaultValue="false") Boolean printCladeFrequencies,
 			@Param(name="printTopologyCredibleSet", description="show sampled ancestor tree topology frequencies in output table", defaultValue="false") Boolean printTopologyCredibleSet,
+			@Param(name="credSetProbability", description="size of the credible set (used for printTopologyCredibleSet)", defaultValue="0.95") Double credSetProbability,
 			@Param(name="toStandardOutput", description="print to standard output", defaultValue="true") Boolean toStdOut) {
 		this.file = file;
+		this.burnin = burnin;
 		this.printFrequencies = printFrequencies;
 		this.printPairs = printPairs;
 		this.printCladeFrequencies = printCladeFrequencies;
 		this.printTopologyCredibleSet = printTopologyCredibleSet;
+		this.credSetProbability = credSetProbability;
 		this.toStandardOutput = toStdOut;
 	}
 
@@ -87,7 +93,23 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	public void setPrintTopologyCredibleSet(Boolean printTopologyCredibleSet) {
 		this.printTopologyCredibleSet = printTopologyCredibleSet;
 	}
+
+	public Double getBurnin() {
+		return this.burnin;
+	}
 	
+	public void setBurnin(Double burnin) {
+		this.burnin = burnin;
+	}
+
+	public Double getCredSetProbability() {
+		return this.credSetProbability;
+	}
+	
+	public void setCredSetProbability(Double credSetProbability) {
+		this.credSetProbability = credSetProbability;
+	}
+
 	public void run() throws Exception {
  
         FileReader reader = null;
@@ -96,9 +118,9 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
             System.out.println("Reading file " + file.getName());
             reader = new FileReader(file);
             List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
-            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0.1);
+            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, burnin);
 
-			String result = analysis.toReportString(printCladeFrequencies, printPairs, printFrequencies, printTopologyCredibleSet, !toStandardOutput);
+			String result = analysis.toReportString(printCladeFrequencies, printPairs, printFrequencies, printTopologyCredibleSet, credSetProbability, !toStandardOutput);
 
 			if (toStandardOutput) {
 				System.out.println(result);

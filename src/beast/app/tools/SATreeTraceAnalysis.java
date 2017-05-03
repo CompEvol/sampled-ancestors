@@ -18,7 +18,6 @@ import java.util.*;
  */
 
 public class SATreeTraceAnalysis extends TreeTraceAnalysis {
-
     FrequencySet<String> pairs = new FrequencySet<String>();
 
     public SATreeTraceAnalysis(List<Tree> posteriorTreeList, double burninFraction) {
@@ -79,7 +78,7 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
      * @return a report string
      * @throws Exception
      */
-	public String toReportString(boolean printCladeFrequencies, boolean printPairs, boolean printFrequencies, boolean printTopologyCredibleSet, boolean isHTML) throws Exception {
+	public String toReportString(boolean printCladeFrequencies, boolean printPairs, boolean printFrequencies, boolean printTopologyCredibleSet, Double credSetProbability, boolean isHTML) throws Exception {
         FrequencySet<String> clades = new FrequencySet<String>();
         ArrayList<String> tmp = new ArrayList<String>();
 
@@ -168,7 +167,7 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
         }
 
         if (printTopologyCredibleSet) {
-            countTopologies(output);
+            countTopologies(output, credSetProbability);
         }
 
         ps.flush();
@@ -324,8 +323,9 @@ public class SATreeTraceAnalysis extends TreeTraceAnalysis {
     /**
      *
      */
-    public void countTopologies(ResultsOutput output) {
+    public void countTopologies(ResultsOutput output, Double credSetProbability) {
         FrequencySet<String> topologies = new FrequencySet<String>();
+        topologies.setCredSetProbability(credSetProbability);
         List<String> trees;
         trees = getNewickTrees(true);
 
