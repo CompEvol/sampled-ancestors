@@ -1,4 +1,4 @@
 sampled-ancestors
 =================
 
-Beast 2 package for handling phylogenetic time trees with direct ancestors
+This BEAST2 package provides MCMC proposals and post-processing tools for samples of trees containing sampled ancestors.
