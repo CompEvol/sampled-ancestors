@@ -1,6 +1,8 @@
 sampled-ancestors
 =================
 
+[![Build Status](https://travis-ci.org/CompEvol/sampled-ancestors.svg?branch=master)](https://travis-ci.org/CompEvol/sampled-ancestors)
+
 This [BEAST 2](http://www.beast2.org) package provides MCMC proposals and post-processing tools for samples of trees containing sampled ancestors. 
 It relies on the support for sampled-ancestor trees built into the `beast.evolution.tree.Tree` class (https://github.com/CompEvol/beast2/blob/master/src/beast/evolution/tree/Tree.java).
 
