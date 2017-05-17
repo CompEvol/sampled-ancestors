@@ -9,7 +9,7 @@ primary interest to programmers.
 
 The paper describing this package is:
 
-Alexandra Gavryushkina, David Welch, Tanja Stadler, Alexei J. Drummond (20140 Bayesian Inference of Sampled Ancestor Trees for Epidemiology and Fossil Calibration. PLoS Computational Biology https://doi.org/10.1371/journal.pcbi.1003919
+Alexandra Gavryushkina, David Welch, Tanja Stadler, Alexei J. Drummond (2014) Bayesian Inference of Sampled Ancestor Trees for Epidemiology and Fossil Calibration. _PLoS Computational Biology_ https://doi.org/10.1371/journal.pcbi.1003919
 
 Currently the sampled-ancestors package uses `beast.*` Java package namespace, which is now deprecated because the `beast.*` package namespace is reserved for the beast2 core (https://github.com/CompEvol/beast2).
 
