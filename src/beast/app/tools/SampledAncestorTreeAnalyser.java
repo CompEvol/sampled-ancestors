@@ -5,14 +5,12 @@ import beast.app.util.Application;
 import beast.core.Description;
 import beast.core.Param;
 import beast.core.util.Log;
-import beast.evolution.tree.Tree;
 import beast.util.AddOnManager;
+import beast.util.NexusParser;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Alexandra Gavryushkina
@@ -90,13 +88,13 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	
 	public void run() throws Exception {
  
-        FileReader reader = null;
 
         try {
             System.out.println("Reading file " + file.getName());
-            reader = new FileReader(file);
-            List<Tree> trees = SATreeTraceAnalysis.Utils.getTrees(file);
-            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(trees, 0.1);
+			NexusParser nexusParser = new NexusParser();
+			nexusParser.parseFile(file);
+            SATreeTraceAnalysis analysis = new SATreeTraceAnalysis(nexusParser.trees, 0.1);
+            analysis.computeCredibleSet();
 
 			String result = analysis.toReportString(printCladeFrequencies, printPairs, printFrequencies, printTopologyCredibleSet, !toStandardOutput);
 
@@ -132,18 +130,12 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
         	Log.err.println(e.getMessage());
             //
         }
-        finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
     }
 
 	@Override
 	public void initAndValidate() {
 	}
 
-	
 	public static void main(String[] args) throws Exception {
 		AddOnManager.loadExternalJars();	
 		new Application(new SampledAncestorTreeAnalyser(), "SampledAncestorTreeAnalyser", args);
