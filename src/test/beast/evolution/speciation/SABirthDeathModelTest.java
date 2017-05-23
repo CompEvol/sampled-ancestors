@@ -33,7 +33,8 @@ public class SABirthDeathModelTest extends TestCase {
 
         sabdm.initAndValidate();
 
-        assertEquals(-33.7573, sabdm.calculateTreeLogLikelihood(tree), 1e-4);
+        // the true values is as calculated in beast on 23 May 2017
+        assertEquals(-25.6651, sabdm.calculateTreeLogLikelihood(tree), 1e-4);
     }
 
     @Test

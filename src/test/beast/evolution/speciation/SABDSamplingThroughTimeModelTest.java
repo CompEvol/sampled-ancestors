@@ -26,6 +26,7 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
         bdssm.setInputValue("tree", tree);
         bdssm.setInputValue("origin", new RealParameter("10."));
         bdssm.setInputValue("removalProbability", "1");
+        bdssm.setInputValue("conditionOnSampling", true);
 
         bdssm.setInputValue("birthRate", new RealParameter("2.25"));
         bdssm.setInputValue("deathRate", new RealParameter("1.05"));
@@ -33,7 +34,8 @@ public class SABDSamplingThroughTimeModelTest extends TestCase {
 
         bdssm.initAndValidate();
 
-        assertEquals(-33.7573, bdssm.calculateTreeLogLikelihood(tree), 1e-4);
+        // the true values is as calculated in beast on 23 May 2017
+        assertEquals(-25.6651, bdssm.calculateTreeLogLikelihood(tree), 1e-4);
     }
 
     @Test
