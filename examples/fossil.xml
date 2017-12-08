@@ -80,7 +80,7 @@
     </trait>
 
     <!-- tree prior model -->
-    <BirthDeathSkylineModel spec="SABDSamplingThroughTimeModel" id="birthDeath" tree="@tree" conditionOnRhoSampling="true" conditionOnRoot="true">
+    <BirthDeathSkylineModel spec="beast.evolution.speciation.SABirthDeathModel" id="birthDeath" tree="@tree" conditionOnRhoSampling="true" conditionOnRoot="true">
         <parameter name="diversificationRate" id="diversificationRate" value="1."/>
         <parameter name="turnover" id="turnover" value=".5"/>
         <parameter name="samplingProportion" id="samplingProportion" value="0.7"/>
@@ -242,7 +242,7 @@
             it makes all the clades that encounter as taxonsetIn inputs of clade constraints monophyletic. Make sure
              that every pair of taxonsetIn inputs is consistent, that is, the taxa sets in the two taxonsetIn inputs
              either don't intersect or one is a strict  subset of another. -->
-        <init spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree' nodetype="beast.evolution.tree.ZeroBranchSANode" initial='@tree'>
+        <init spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree' initial='@tree'>
             <cladeConstraint idref="whole_group_1.prior"/>
             <cladeConstraint idref="bears_3.prior"/>
             <cladeConstraint idref="bears_6.prior"/>
@@ -256,7 +256,7 @@
         <state id="state" storeEvery="1000000">
             <!-- If the tree is initialized with newick tree then use this stateNode: <stateNode idref="tree"/>
                  instead the following one   -->
-            <stateNode id="tree" trait='@tipDates' spec='beast.evolution.tree.ZeroBranchSATree' nodetype='beast.evolution.tree.ZeroBranchSANode'>
+            <stateNode id="tree" trait='@tipDates' spec='beast.evolution.tree.Tree'>
                 <taxonset idref="taxonSet"/>
             </stateNode>
             <stateNode idref="diversificationRate"/>
@@ -279,18 +279,18 @@
         <operator id='samplingProportionOperator' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@samplingProportion"/>
         <operator id='rhoOperator' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@rho"/>
 
-        <operator spec='TreeDimensionJump' weight="20" tree="@tree"/>
-        <operator spec='WilsonBaldingForZeroBranchSampledAncestorTrees' weight="20" tree="@tree"/>
-        <operator spec='ExchangeForZeroBranchSampledAncestorTrees' isNarrow="false" weight="20" tree="@tree"/>
-        <operator spec='ExchangeForZeroBranchSampledAncestorTrees' weight="20" tree="@tree"/>
-        <operator spec='UniformForZeroBranchSATrees' weight="20" tree="@tree"/>
-        <operator id='treeScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="10.0" tree="@tree"/>
-        <operator id='rootScaler' spec='ScaleOperatorForZeroBranchSATrees' scaleFactor=".95" weight="5.0" tree="@tree" rootOnly='true'/>
+        <operator id='LeafToSA' spec='LeafToSampledAncestorJump' weight="20" tree="@tree"/>
+        <operator id='SAWilsonBalding' spec='SAWilsonBalding' weight="20" tree="@tree"/>
+        <operator id='SAWide' spec='SAExchange' isNarrow="false" weight="20" tree="@tree"/>
+        <operator id='SANarrow' spec='SAExchange' weight="20" tree="@tree"/>
+        <operator id='SAUniform' spec='SAUniform' weight="20" tree="@tree"/>
+        <operator id='treeScaler' spec='SAScaleOperator' scaleFactor=".95" weight="10.0" tree="@tree"/>
+        <operator id='rootScaler' spec='SAScaleOperator' scaleFactor=".95" weight="5.0" tree="@tree" rootOnly='true'/>
         <operator id="updownTree" spec="UpDownOperator" scaleFactor=".95" weight="30" up="@clock.rate" down="@tree"/>
 
         <!-- this operator allows to sample dates of sampled nodes. The dates will be variable for all the
          taxa listed in the taxonset input and in the samplingDates inputs -->
-        <operator spec='SampledNodeDateRandomWalkerForZeroBranchSATrees' windowSize="1"  tree="@tree" weight="10">
+        <operator spec='SampledNodeDateRandomWalker' windowSize="1"  tree="@tree" weight="10">
             <!-- this input specify the taxa with variable dates. In this example only one taxon has a variably sampling date.
                 If this input is not specified then all the leaves except the most recent are assumed to have
                 variable sampling dates. -->
@@ -323,7 +323,7 @@
             <!-- logs the heights of monophyletic clades (the height of the most recent common ancestor of in-taxa) -->
             <log idref="bears_3.prior"/>
             <log idref="bears_6.prior"/>
-            <log id="SACount" spec="beast.evolution.tree.SALogger" tree="@tree"/>
+            <log id="SACount" spec="beast.evolution.tree.SampledAncestorLogger" tree="@tree"/>
             <log idref="diversificationRate"/>
             <log idref="turnover"/>
             <log idref="samplingProportion"/>
@@ -349,8 +349,8 @@
             <log idref="treeHeight"/>
         </logger>
 
-        <logger spec="beast.evolution.tree.SATreeLogger" fileName="fossil_example.$(seed).trees" id="treelog" logEvery="500000" mode="tree" logWithZeroBranches="true">
-            <tree idref="tree" name="log"/>
+        <logger id="treeLogger" fileName="fossil_example.$(seed).trees"  logEvery="10000" mode="tree">
+            <log spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@tree"/>
         </logger>
     </run>
 
