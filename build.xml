@@ -149,7 +149,7 @@
         <delete dir="${build-beastlabs}" />
     </target>
 
-    <target name="build-local-beastlabs" depends="find-beast" if="localBeastAvailable">
+    <target name="build-local-beastlabs" depends="find-beastlabs" if="localBeastLabsAvailable">
         <echo>Compiling against local BEASTLabs source found at ${beastLabsDir}.</echo>
 
         <property name="build-beastlabs" location="build-beastlabs"/>
