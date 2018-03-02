@@ -1,26 +1,17 @@
 package beast.evolution.speciation;
 
-import java.util.List;
-
-
-import beast.core.BEASTInterface;
-import beast.core.Citation;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.MCMC;
-import beast.core.Operator;
-import beast.core.StateNode;
+import beast.core.*;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.alignment.Taxon;
-import beast.evolution.operators.Exchange;
-import beast.evolution.operators.ScaleOperator;
-import beast.evolution.operators.SubtreeSlide;
-import beast.evolution.operators.TipDatesRandomWalker;
-import beast.evolution.operators.WilsonBalding;
-import beast.evolution.tree.*;
+import beast.evolution.operators.*;
+import beast.evolution.tree.Node;
+import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
 import beast.math.distributions.Uniform;
+
+import java.util.List;
 
 /**
  * @author Alexandra Gavryushkina
@@ -43,8 +34,8 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             new Input<RealParameter>("origin", "The time when the process started", (RealParameter)null);
     public Input<RealParameter> birthRateInput =
             new Input<RealParameter>("birthRate", "Birth rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> deathRateInput =
-            new Input<RealParameter>("deathRate", "Death rate", Input.Validate.REQUIRED);
+    public Input<Function> deathRateInput =
+            new Input<Function>("deathRate", "Death rate", Input.Validate.REQUIRED);
     public Input<RealParameter> samplingRateInput =
             new Input<RealParameter>("samplingRate", "Sampling rate per individual", Input.Validate.REQUIRED);
 
@@ -53,8 +44,8 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             new Input<RealParameter>("expectedN", "The expected-N-at-present parameterisation of T",(RealParameter)null);
     public Input<RealParameter> diversificationRateInput =
             new Input<RealParameter>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.XOR, birthRateInput);
-    public Input<RealParameter> turnoverInput =
-            new Input<RealParameter>("turnover", "Turnover. Death rate/birth rate", Input.Validate.XOR, deathRateInput);
+    public Input<Function> turnoverInput =
+            new Input<Function>("turnover", "Turnover. Death rate/birth rate", Input.Validate.XOR, deathRateInput);
     public Input<RealParameter> samplingProportionInput =
             new Input<RealParameter>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.XOR, samplingRateInput);
 
@@ -271,17 +262,17 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
      * @return the current turnover, regardless of parametrization.
      */
     private double turnover() {
-        if (transform) return turnoverInput.get().getValue();
+        if (transform) return turnoverInput.get().getArrayValue();
 
         double lambda = birthRateInput.get().getValue();
-        double mu = deathRateInput.get().getValue();
+        double mu = deathRateInput.get().getArrayValue();
 
         return mu/lambda;
     }
 
     private void transformParameters() {
         double d = diversificationRateInput.get().getValue();
-        double r_turnover = turnoverInput.get().getValue();
+        double r_turnover = turnoverInput.get().getArrayValue();
         double s = samplingProportionInput.get().getValue();
         lambda = d/(1-r_turnover);
         mu = r_turnover*lambda;
@@ -294,7 +285,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             transformParameters();
         } else {
             lambda = birthRateInput.get().getValue();
-            mu = deathRateInput.get().getValue();
+            mu = deathRateInput.get().getArrayValue();
             psi = samplingRateInput.get().getValue();
         }
 
