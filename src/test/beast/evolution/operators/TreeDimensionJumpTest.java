@@ -41,7 +41,7 @@ public class TreeDimensionJumpTest extends TestCase {
         System.out.println("Tree was = " + tree.getRoot().toShortNewick(false));
 
         TreeDimensionJump operator = new TreeDimensionJump();
-        operator.initByName("tree", tree);
+        operator.initByName("tree", tree, "weight", 1.0);
         double logHastingsRatio = operator.proposal();
 
         System.out.println("Proposed tree = " + tree.getRoot().toShortNewick(false));
@@ -78,7 +78,7 @@ public class TreeDimensionJumpTest extends TestCase {
         System.out.println("Tree was = " + tree.getRoot().toShortNewick(false));
 
         TreeDimensionJump operator = new TreeDimensionJump();
-        operator.initByName("tree", tree);
+        operator.initByName("tree", tree, "weight", 1.0);
         double logHastingsRatio = operator.proposal();
 
         System.out.println("Proposed tree = " + tree.getRoot().toShortNewick(false));

@@ -28,7 +28,7 @@ public class ZeroBranchSATreeScalerTest  extends TestCase {
         double oldLeftLeftHeight = tree.getRoot().getLeft().getLeft().getHeight();
 
         ScaleOperatorForZeroBranchSATrees operator = new ScaleOperatorForZeroBranchSATrees();
-        operator.initByName("tree", tree);
+        operator.initByName("tree", tree, "weight", 1.0);
         operator.initByName("scaleFactor", 0.95);
         operator.initAndValidate();
 
