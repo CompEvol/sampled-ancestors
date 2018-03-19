@@ -145,7 +145,7 @@ public class CladeConstraint  extends Distribution {
     }
 
     @Override
-    public void log(final int nSample, final PrintStream out) {
+    public void log(final long nSample, final PrintStream out) {
         out.print(mrcaHeight + "\t");
     }
 

@@ -34,7 +34,7 @@ public class SALogger extends CalculationNode implements Loggable, Function {
     }
 
     @Override
-    public void log(int nSample, PrintStream out) {
+    public void log(long nSample, PrintStream out) {
         final Tree tree = treeInput.get();
         out.print(((ZeroBranchSATree)tree).getDirectAncestorNodeCount() + "\t");
     }

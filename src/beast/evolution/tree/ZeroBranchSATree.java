@@ -113,7 +113,7 @@ public class ZeroBranchSATree extends Tree {
     }
 
     @Override
-    public void log(int nSample, PrintStream out) {
+    public void log(long nSample, PrintStream out) {
         ZeroBranchSATree tree = (ZeroBranchSATree) getCurrent();
         out.print("tree STATE_" + nSample + " = ");
         final int[] dummy = new int[1];

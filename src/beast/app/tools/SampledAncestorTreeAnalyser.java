@@ -5,7 +5,7 @@ import beast.app.util.Application;
 import beast.core.Description;
 import beast.core.Param;
 import beast.core.util.Log;
-import beast.util.AddOnManager;
+import beast.util.PackageManager;
 import beast.util.NexusParser;
 
 import java.io.File;
@@ -137,7 +137,7 @@ public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AddOnManager.loadExternalJars();	
+		PackageManager.loadExternalJars();
 		new Application(new SampledAncestorTreeAnalyser(), "SampledAncestorTreeAnalyser", args);
 	}
 }

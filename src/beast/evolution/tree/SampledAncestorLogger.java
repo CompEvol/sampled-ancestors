@@ -29,7 +29,7 @@ public class SampledAncestorLogger extends CalculationNode implements Loggable, 
     }
 
     @Override
-    public void log(int nSample, PrintStream out) {
+    public void log(long nSample, PrintStream out) {
         final Tree tree = treeInput.get();
         out.print(tree.getDirectAncestorNodeCount() + "\t");
     }
