@@ -1,10 +1,11 @@
 package beast.app.tools;
 
-import java.io.*;
-
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.NexusParser;
+
+import java.io.*;
+import java.util.List;
 
 /**
  * @author Alexandra Gavryushkina
@@ -12,17 +13,13 @@ import beast.util.NexusParser;
 public class ConvertZBTreeToSATree {
 
 
-    ConvertZBTreeToSATree(String fileName) throws Exception {
+    public ConvertZBTreeToSATree(String fileName) throws Exception {
         File file = new File(fileName);
-
 
         NexusParser parser = new NexusParser();
         parser.parseFile(file);
 
         PrintStream writer = null;
-
-
-
 
         FileReader reader = null;
 
@@ -42,16 +39,22 @@ public class ConvertZBTreeToSATree {
         fin = new BufferedReader(reader);
 
         try {
-            String name = fileName.substring(0, fileName.indexOf(".tree")-1);
+            String name = fileName.contains(".tree") ?
+                    fileName.substring(0, fileName.indexOf(".tree")-1) : fileName;
             writer = new PrintStream(new File(fileName+"SA.tree"));
 
+            int sa = 0;
             while (fin.ready()) {
                 final String line = fin.readLine();
 
-                if (line.contains("tree TREE")) {
-                    for (Tree tree : parser.trees) {
+                if (line.contains("tree TREE") || line.contains("tree STATE")) {
+                    List<Tree> trees = parser.trees;
+                    for (int i = 0; i < trees.size(); i++) {
+                        Tree tree = trees.get(i);
                         convertTree(tree.getRoot());
-                        writer.println("tree TREE1 = " + tree.getRoot().toSortedNewick(new int[] {0}, false) + ";");
+                        writer.println("tree SA_TREE_" + (i+1) + " = " +
+                                tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
+                        sa++;
                     }
 
                 } else {
@@ -60,9 +63,7 @@ public class ConvertZBTreeToSATree {
 
             }
 
-
-
-
+            System.out.println("Convert " + sa + " zero-branch trees into SA trees.");
 
 
         } catch (IOException e) {
