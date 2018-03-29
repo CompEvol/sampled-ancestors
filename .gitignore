@@ -1,0 +1,6 @@
+# Build output
+/out
+
+# IntelliJ cruft
+/.idea
+/sampled-ancestors.iml
