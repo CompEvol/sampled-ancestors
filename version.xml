@@ -1,6 +1,6 @@
-<addon name='SA' version='1.1.7'>
-	<depends on='beast2' atleast='2.4'/>
-	<depends on='BEASTLabs' atleast='1.5.3'/>
+<addon name='SA' version='2.0.0'>
+	<depends on='beast2' atleast='2.5.0' atmost="2.5.9"/>
+	<depends on='BEASTLabs' atleast='1.8.0'/>
 	
 	<addonapp description="SampledAncestorTreeAnalyser"
               class="beast.app.tools.SampledAncestorTreeAnalyser"
