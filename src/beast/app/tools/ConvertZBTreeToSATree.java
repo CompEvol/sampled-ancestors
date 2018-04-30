@@ -40,9 +40,11 @@ public class ConvertZBTreeToSATree {
         fin = new BufferedReader(reader);
 
         try {
+            // including .tree .trees
             String name = fileName.contains(".tree") ?
-                    fileName.substring(0, fileName.indexOf(".tree")) : fileName;
-            writer = new PrintStream(new File(name + ".SA.tree"));
+                    fileName.substring(0, fileName.indexOf(".tree")) + ".SA" +
+                            fileName.substring(fileName.indexOf(".tree"), fileName.length()) : fileName;
+            writer = new PrintStream(new File(name));
 
             int treeline = 0;
             while (fin.ready()) {
