@@ -18,9 +18,11 @@ public class ConvertZBTreeToSATree {
 
         NexusParser parser = new NexusParser();
         parser.parseFile(file);
+        List<Tree> trees = parser.trees;
+
+        System.out.println("Parse " + trees.size() + " zero-branch trees.");
 
         PrintStream writer = null;
-
         FileReader reader = null;
 
         try {
@@ -30,8 +32,7 @@ public class ConvertZBTreeToSATree {
         }
         finally {
             if (reader != null) {
-            }
-            if (reader != null) {
+                //TODO anything here
             }
         }
 
@@ -40,30 +41,35 @@ public class ConvertZBTreeToSATree {
 
         try {
             String name = fileName.contains(".tree") ?
-                    fileName.substring(0, fileName.indexOf(".tree")-1) : fileName;
-            writer = new PrintStream(new File(fileName+"SA.tree"));
+                    fileName.substring(0, fileName.indexOf(".tree")) : fileName;
+            writer = new PrintStream(new File(name + ".SA.tree"));
 
-            int sa = 0;
+            int treeline = 0;
             while (fin.ready()) {
                 final String line = fin.readLine();
 
                 if (line.contains("tree TREE") || line.contains("tree STATE")) {
-                    List<Tree> trees = parser.trees;
-                    for (int i = 0; i < trees.size(); i++) {
-                        Tree tree = trees.get(i);
-                        convertTree(tree.getRoot());
-                        writer.println("tree SA_TREE_" + (i+1) + " = " +
-                                tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
-                        sa++;
+                    // start to write tree
+                    if (treeline == 0) {
+                        for (int i = 0; i < trees.size(); i++) {
+                            Tree tree = trees.get(i);
+                            convertTree(tree.getRoot());
+                            writer.println("tree SA_TREE_" + (i + 1) + " = " +
+                                    tree.getRoot().toSortedNewick(new int[]{0}, false) + ";");
+                        }
                     }
-
+                    treeline ++;
                 } else {
+                    // write other lines
                     writer.println(line);
                 }
-
             }
 
-            System.out.println("Convert " + sa + " zero-branch trees into SA trees.");
+            if (treeline != trees.size())
+                throw new RuntimeException("There are " + treeline + " trees in log file, but " +
+                        trees.size() + " found !");
+
+            System.out.println("Convert " + treeline + " zero-branch trees into SA trees.");
 
 
         } catch (IOException e) {
