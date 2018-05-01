@@ -8,19 +8,25 @@ import java.io.*;
 import java.util.List;
 
 /**
+ * Convert zero-branch tree(s) to "real" SA trees.
+ *
+ * usage: ConvertZBTreeToSATree(filePath)
+ * keywords "tree TREE" or "tree STATE" in the tree log
+ * are used to trigger writing SA trees.
+ *
  * @author Alexandra Gavryushkina
  */
 public class ConvertZBTreeToSATree {
 
 
-    public ConvertZBTreeToSATree(String fileName) throws Exception {
-        File file = new File(fileName);
+    public ConvertZBTreeToSATree(String filePath) throws Exception {
+        File file = new File(filePath);
 
         NexusParser parser = new NexusParser();
         parser.parseFile(file);
         List<Tree> trees = parser.trees;
 
-        System.out.println("Parse " + trees.size() + " zero-branch trees.");
+        System.out.println("Parsed " + trees.size() + " zero-branch trees.");
 
         PrintStream writer = null;
         FileReader reader = null;
@@ -32,7 +38,7 @@ public class ConvertZBTreeToSATree {
         }
         finally {
             if (reader != null) {
-                //TODO anything here
+                //TODO anything here ?
             }
         }
 
@@ -40,16 +46,17 @@ public class ConvertZBTreeToSATree {
         fin = new BufferedReader(reader);
 
         try {
-            // including .tree .trees
-            String name = fileName.contains(".tree") ?
-                    fileName.substring(0, fileName.indexOf(".tree")) + ".SA" +
-                            fileName.substring(fileName.indexOf(".tree"), fileName.length()) : fileName;
+            // add .SA before postfix .tree .trees
+            String name = filePath.contains(".tree") ?
+                    filePath.substring(0, filePath.indexOf(".tree")) + ".SA" +
+                            filePath.substring(filePath.indexOf(".tree"), filePath.length()) : filePath;
             writer = new PrintStream(new File(name));
 
             int treeline = 0;
             while (fin.ready()) {
                 final String line = fin.readLine();
 
+                // keywords to trigger writing SA trees
                 if (line.contains("tree TREE") || line.contains("tree STATE")) {
                     // start to write tree
                     if (treeline == 0) {
@@ -69,9 +76,9 @@ public class ConvertZBTreeToSATree {
 
             if (treeline != trees.size())
                 throw new RuntimeException("There are " + treeline + " trees in log file, but " +
-                        trees.size() + " found !");
+                        trees.size() + " parsed !");
 
-            System.out.println("Convert " + treeline + " zero-branch trees into SA trees.");
+            System.out.println("Convert " + trees.size() + " zero-branch trees into SA trees.");
 
 
         } catch (IOException e) {
