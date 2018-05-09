@@ -4,15 +4,19 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeTraceAnalysis;
 import beast.util.FrequencySet;
-import beast.util.SANexusParser;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
+ * Parser cannot parse SA trees, so that input has to be zero-branch trees.
+ * usage: SATreeTraceAnalysis(filePath, outputFilePath)
+ *
  * @author Alexandra Gavryushkina
  * @author Walter Xie
  */
