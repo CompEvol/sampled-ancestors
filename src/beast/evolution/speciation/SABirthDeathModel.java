@@ -86,7 +86,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     protected boolean transformT = false;
     protected boolean originSpecified;
 
-    private boolean lambdaExceedsMu = false;
+    protected boolean lambdaExceedsMu = false;
     protected String taxonName;
     protected double taxonAge;
 
@@ -221,20 +221,37 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         return r + (1 - r) * p0;
     }
 
-    private double oneMinusP0(double t, double c1, double c2) {
+    protected double log_p0s(double t, double c1, double c2) {
+        double p0 = (lambda + mu + psi - c1 * ((1 + c2) - Math.exp(-c1 * t) * (1 - c2)) / ((1 + c2) + Math.exp(-c1 * t) * (1 - c2))) / (2 * lambda);
+        return Math.log(r + (1 - r) * p0);
+    }
+
+    protected double oneMinusP0(double t, double c1, double c2) {
         return 1 - (lambda + mu + psi - c1 * ((1 + c2) - Math.exp(-c1 * t) * (1 - c2)) / ((1 + c2) + Math.exp(-c1 * t) * (1 - c2))) / (2 * lambda);
     }
 
-    private double oneMinusP0Hat(double t, double c1, double c2) {
+    protected double log_oneMinusP0(double t, double c1, double c2) {
+        return Math.log(1 - (lambda + mu + psi - c1 * ((1 + c2) - Math.exp(-c1 * t) * (1 - c2)) / ((1 + c2) + Math.exp(-c1 * t) * (1 - c2))) / (2 * lambda));
+    }
+
+    protected double oneMinusP0Hat(double t, double c1, double c2) {
         return rho*(lambda-mu)/(lambda*rho + (lambda*(1-rho) - mu)* Math.exp((mu-lambda) * t)) ;
     }
 
-    private double pS(double t) {
+    protected double log_oneMinusP0Hat(double t, double c1, double c2) {
+        return Math.log(rho) + Math.log(lambda-mu)- Math.log(lambda*rho + (lambda*(1-rho) - mu)* Math.exp((mu-lambda) * t)) ;
+    }
+
+    protected double pS(double t) {
         return psi*Math.exp((lambda - mu - psi*r) * t);
     }
 
-    private double q(double t, double c1, double c2) {
+    protected double q(double t, double c1, double c2) {
         return Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2);
+    }
+
+    protected double log_q(double t, double c1, double c2) {
+        return Math.log(Math.exp(c1 * t) * (1 + c2) * (1 + c2) + Math.exp(-c1 * t) * (1 - c2) * (1 - c2) + 2 * (1 - c2 * c2));
     }
 
     /**
@@ -279,7 +296,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         psi = mu*s/(1-s);
     }
 
-    private void updateParameters() {
+    protected void updateParameters() {
 
         if (transform) {
             transformParameters();
