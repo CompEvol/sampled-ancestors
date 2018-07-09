@@ -3,7 +3,6 @@ package beast.evolution.tree;
 import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.evolution.alignment.Taxon;
-import beast.math.distributions.ParametricDistribution;
 import beast.util.Randomizer;
 
 /**
@@ -18,7 +17,8 @@ public class SamplingDate extends BEASTObject {
 
     private double upper, lower;
 
-    public void initAndValidate() {
+    @Override
+	public void initAndValidate() {
         upper=Double.parseDouble(upperInput.get());
         lower=Double.parseDouble(lowerInput.get());
         if (upper < 0 || lower < 0 || upper < lower) {

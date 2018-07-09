@@ -1,6 +1,11 @@
 # Build output
 /out
+/bin
 
 # IntelliJ cruft
 /.idea
 /sampled-ancestors.iml
+
+# Eclipse files
+.classpath
+.project

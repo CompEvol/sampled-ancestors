@@ -1,11 +1,14 @@
 package test.beast.evolution.speciation;
 
+import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import beast.core.parameter.RealParameter;
 import beast.evolution.speciation.SABirthDeathModel;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeWOffset;
 import beast.util.ZeroBranchSATreeParser;
-import junit.framework.TestCase;
-import org.junit.Test;
 
 /**
  * @author Alexei Drummond
@@ -20,8 +23,12 @@ public class SABirthDeathModelTest extends TestCase {
         Tree tree = new ZeroBranchSATreeParser("((3 : 1.5, 4 : 0.5) : 1 , (1 : 2, 2 : 1) : 3);", false, true, 0);
 
         System.out.println(tree.toString());
+        
+        TreeWOffset tree2 = new TreeWOffset();
+        tree2.setInputValue("tree", tree);
+        tree2.initAndValidate();
 
-        sabdm.setInputValue("tree", tree);
+        sabdm.setInputValue("treeWOffset", tree2);
         sabdm.setInputValue("origin", new RealParameter("10."));
         sabdm.setInputValue("removalProbability", "1");
         sabdm.setInputValue("conditionOnSampling", true);
@@ -34,7 +41,7 @@ public class SABirthDeathModelTest extends TestCase {
         sabdm.initAndValidate();
 
         // the true values is as calculated in beast on 23 May 2017
-        assertEquals(-25.6651, sabdm.calculateTreeLogLikelihood(tree), 1e-4);
+        assertEquals(-25.6651, sabdm.calculateLogP(), 1e-4);
     }
 
     @Test
@@ -44,7 +51,11 @@ public class SABirthDeathModelTest extends TestCase {
 
         System.out.println(tree.toString());
 
-        model.setInputValue("tree", tree);
+        TreeWOffset tree2 = new TreeWOffset();
+        tree2.setInputValue("tree", tree);
+        tree2.initAndValidate();
+
+        model.setInputValue("treeWOffset", tree2);
         model.setInputValue("origin", new RealParameter("10."));
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
@@ -55,7 +66,7 @@ public class SABirthDeathModelTest extends TestCase {
 
         // these values ate calculated with Mathematica
         //assertEquals(-25.3707, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning only on parameters and origin time
-        assertEquals(-24.92987, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning on at least one sampled individual
+        assertEquals(-24.92987, model.calculateLogP(), 1e-5); // likelihood conditioning on at least one sampled individual
 
     }
 
@@ -65,7 +76,11 @@ public class SABirthDeathModelTest extends TestCase {
         SABirthDeathModel model = new SABirthDeathModel();
         Tree tree = new ZeroBranchSATreeParser("((1:1.5,2:0.5):0.5)3:0.0", true, false, 1);
 
-        model.setInputValue("tree", tree);
+        TreeWOffset tree2 = new TreeWOffset();
+        tree2.setInputValue("tree", tree);
+        tree2.initAndValidate();
+
+        model.setInputValue("treeWOffset", tree2);
         model.setInputValue("origin", new RealParameter("10."));
         model.setInputValue("birthRate", new RealParameter("2."));
         model.setInputValue("deathRate", new RealParameter("0.99"));
@@ -77,7 +92,7 @@ public class SABirthDeathModelTest extends TestCase {
         System.out.println(tree.toString());
 
         // this value is calculated with Mathematica
-        assertEquals(-22.08332, model.calculateTreeLogLikelihood(tree), 1e-5); // likelihood conditioning on at least one sampled individual
+        assertEquals(-22.08332, model.calculateLogP(), 1e-5); // likelihood conditioning on at least one sampled individual
 
     }
 }
