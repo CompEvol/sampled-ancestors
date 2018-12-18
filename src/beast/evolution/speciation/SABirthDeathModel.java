@@ -23,9 +23,10 @@ import java.util.List;
         "that is the BDM where an individual is sampled at a time with a constant rate psi" +
         " and where an individual becomes noninfectious immediately after the sampling" +
         "with a constant probability r")
-@Citation("Gavryushkina A, Welch D, Stadler T, Drummond AJ (2014) \n" +
+@Citation(value = "Gavryushkina A, Welch D, Stadler T, Drummond AJ (2014) \n" +
         "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration. \n" +
-        "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919")
+        "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919",
+        year = 2014, firstAuthorSurname = "Gavryushkina", DOI="10.1371/journal.pcbi.1003919")
 public class SABirthDeathModel extends SpeciesTreeDistribution {
 
 
