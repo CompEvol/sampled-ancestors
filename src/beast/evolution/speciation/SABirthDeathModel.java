@@ -59,9 +59,9 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
 
     // if the tree likelihood is condition on sampling at least one individual then set to true one of the inputs:
     public Input<Boolean> conditionOnSamplingInput = new Input<Boolean>("conditionOnSampling", "the tree " +
-            "likelihood is conditioned on sampling at least one individual", false);
+            "likelihood is conditioned on sampling at least one individual if condition on origin or at least one individual on both sides of the root if condition on root", false);
     public Input<Boolean> conditionOnRhoSamplingInput = new Input<Boolean>("conditionOnRhoSampling", "the tree " +
-            "likelihood is conditioned on sampling at least one individual in present", false);
+            "likelihood is conditioned on sampling at least one individual in present if condition on origin or at lease one extant individual on both sides of the root if condition on root", false);
 
     public Input<Boolean> conditionOnRootInput = new Input<Boolean>("conditionOnRoot", "the tree " +
             "likelihood is conditioned on the root height otherwise on the time of origin", false);
@@ -126,6 +126,11 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         double rootHeight = treeInput.get().getRoot().getHeight();
         if (originSpecified && origin() < rootHeight){
             throw new IllegalArgumentException("Initial value of origin (" + origin() + ") should be greater than initial root height (" +rootHeight + ")");
+        }
+
+        if (conditionOnRootInput.get() && !conditionOnRhoSamplingInput.get() && !conditionOnSamplingInput.get()) {
+            throw new IllegalArgumentException("When conditioning on the root, we always assume that both sides of the initial bifurcation event are sampled. Please set either " +
+                    "conditionOnSampling or conditionOnRhoSampling to true.");
         }
 
 
@@ -371,7 +376,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         if (!conditionOnRootInput.get()){
             logPost = -Math.log(q(x0, c1, c2));
         } else {
-            if (tree.getRoot().isFake()){   //when conditioning on the root we assume the process
+            if (tree.getRoot().isFake()){ //when conditioning on the root we assume the process
                 //starts at the time of the first branching event and
                 //that means that the root can not be a sampled ancestor
                 return Double.NEGATIVE_INFINITY;
@@ -381,7 +386,12 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         }
 
         if (conditionOnSamplingInput.get()) {
-            logPost -= Math.log(oneMinusP0(x0, c1, c2));
+            if (conditionOnRootInput.get()) {
+                logPost -= Math.log(lambda*oneMinusP0(x0, c1, c2)* oneMinusP0(x1, c1, c2));
+            } else {
+                logPost -= Math.log(oneMinusP0(x0, c1, c2));
+            }
+
         }
 
         if (conditionOnRhoSamplingInput.get()) {
