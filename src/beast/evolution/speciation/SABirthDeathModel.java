@@ -388,7 +388,7 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
 
         if (conditionOnSamplingInput.get()) {
             if (conditionOnRootInput.get()) {
-                logPost -= Math.log(lambda*oneMinusP0(x0, c1, c2)* oneMinusP0(x1, c1, c2));
+                logPost -= Math.log(lambda*oneMinusP0(x1, c1, c2)* oneMinusP0(x1, c1, c2));
             } else {
                 logPost -= Math.log(oneMinusP0(x0, c1, c2));
             }
