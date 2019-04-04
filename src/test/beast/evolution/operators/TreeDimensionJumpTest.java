@@ -3,7 +3,6 @@ package test.beast.evolution.operators;
 import beast.evolution.operators.TreeDimensionJump;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
-import beast.evolution.tree.ZeroBranchSANode;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -20,20 +19,20 @@ public class TreeDimensionJumpTest extends TestCase {
         int taxaSize = 3;
 
         // make a caterpillar
-        Node left = new ZeroBranchSANode();
+        Node left = new Node();
         left.setNr(0);
         left.setHeight(0.0);
         for (int i = 1; i < taxaSize; i++) {
-            Node right = new ZeroBranchSANode(); 
+            Node right = new Node(); 
             right.setNr(i);
             right.setHeight(i);
-            Node parent = new ZeroBranchSANode(); 
+            Node parent = new Node(); 
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
             left.setParent(parent);
-            parent.setLeft(left);
+            parent.addChild(left);
             right.setParent(parent);
-            parent.setRight(right);
+            parent.addChild(right);
             left = parent;
         }
         tree = new Tree(left);
@@ -56,20 +55,20 @@ public class TreeDimensionJumpTest extends TestCase {
         int taxaSize = 3;
 
         // make a caterpillar
-        Node left = new ZeroBranchSANode(); 
+        Node left = new Node(); 
         left.setNr(0);
         left.setHeight(0.0);
         for (int i = 1; i < taxaSize; i++) {
-            Node right = new ZeroBranchSANode(); 
+            Node right = new Node(); 
             right.setNr(i);
             right.setHeight(i);
-            Node parent = new ZeroBranchSANode(); 
+            Node parent = new Node(); 
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
             left.setParent(parent);
-            parent.setLeft(left);
+            parent.addChild(left);
             right.setParent(parent);
-            parent.setRight(right);
+            parent.addChild(right);
             left = parent;
         }
         left.setHeight(left.getRight().getHeight()+2);

@@ -10,8 +10,6 @@ import beast.evolution.alignment.distance.Distance;
 import beast.evolution.alignment.distance.JukesCantorDistance;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
-import beast.evolution.tree.ZeroBranchSATree;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -31,7 +29,7 @@ import java.util.*;
         "<br/>o adjusted complete link " +
         "<br/>o neighborjoining " +
         "<br/>o neighborjoining2 - corrects tree for tip data, unlike plain neighborjoining")
-public class ClusterZBSATree extends ZeroBranchSATree implements StateNodeInitialiser {
+public class ClusterZBSATree extends Tree implements StateNodeInitialiser {
     final static String M_SINGLE = "single";
     final static String M_AVERAGE = "average";
     final static String M_COMPLETE = "complete";
@@ -88,9 +86,9 @@ public class ClusterZBSATree extends ZeroBranchSATree implements StateNodeInitia
                 parent.setNr(taxaNames.size() + i - 1);
                 parent.setHeight(i);
                 left.setParent(parent);
-                parent.setLeft(left);
+                parent.addChild(left);
                 right.setParent(parent);
-                parent.setRight(right);
+                parent.addChild(right);
                 left = parent;
             }
             root = left;

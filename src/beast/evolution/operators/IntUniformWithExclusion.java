@@ -5,7 +5,6 @@ import beast.core.Input;
 import beast.core.Operator;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.Parameter;
-import beast.core.parameter.RealParameter;
 import beast.util.Randomizer;
 
 /**

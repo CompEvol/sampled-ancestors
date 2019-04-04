@@ -9,3 +9,5 @@
 # Eclipse files
 .classpath
 .project
+/build
+/build-lib

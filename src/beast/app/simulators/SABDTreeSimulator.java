@@ -1,7 +1,6 @@
 package beast.app.simulators;
 
 import beast.evolution.tree.Node;
-import beast.evolution.tree.ZeroBranchSANode;
 import beast.math.distributions.LogNormalDistributionModel;
 import beast.util.Randomizer;
 
@@ -77,7 +76,7 @@ public class SABDTreeSimulator {
      */
     public int simulate(PrintStream writer) {
         //create an initial node (origin of tree)
-        Node initial = new ZeroBranchSANode();
+        Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
@@ -145,7 +144,7 @@ public class SABDTreeSimulator {
         }
 
         //the unique node remained in the array is the root of the sampled tree
-        Node root = new ZeroBranchSANode();
+        Node root = new Node();
         for (Node node:children) {
             root=node;
         }
@@ -170,7 +169,7 @@ public class SABDTreeSimulator {
     }
 
     public int simulateWithRho(PrintStream writer, double[] rootHeight) {
-        Node initial = new ZeroBranchSANode();
+        Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
@@ -261,7 +260,7 @@ public class SABDTreeSimulator {
         }
 
         //the unique node remained in the array is the root of the sampled tree
-        Node root = new ZeroBranchSANode();
+        Node root = new Node();
         for (Node node:children) {
             root=node;
         }
@@ -295,7 +294,7 @@ public class SABDTreeSimulator {
      */
     public int simulateWithRhoSamplingTime(PrintStream treeWriter, PrintStream writer, int[] leafCount) {
         //create an initial node (origin of tree)
-        Node initial = new ZeroBranchSANode();
+        Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
@@ -345,7 +344,7 @@ public class SABDTreeSimulator {
         }
 
         //the unique node remained in the array is the root of the sampled tree
-        Node root = new ZeroBranchSANode();
+        Node root = new Node();
         for (Node node:children) {
             root=node;
         }
@@ -426,9 +425,9 @@ public class SABDTreeSimulator {
         node.setHeight(height);
         switch (typeOfEvent) {
             case BIRTH: {
-                Node left = new ZeroBranchSANode();
+                Node left = new Node();
                 left.setNr(-1);
-                Node right = new ZeroBranchSANode();
+                Node right = new Node();
                 right.setNr(-1);
                 left.setHeight(height);
                 right.setHeight(height);
@@ -444,9 +443,9 @@ public class SABDTreeSimulator {
             case SAMPLING: {
                 double remain = Randomizer.nextDouble();
                 if (r < remain) {
-                    Node left = new ZeroBranchSANode();
+                    Node left = new Node();
                     left.setNr(-1);
-                    Node right = new ZeroBranchSANode();
+                    Node right = new Node();
                     right.setNr(sampleCount);
                     left.setHeight(height);
                     right.setHeight(height);
@@ -723,7 +722,7 @@ public class SABDTreeSimulator {
         if (!node.isLeaf()) {
             return countSA(node.getLeft()) + countSA(node.getRight());
         } else {
-            if (((ZeroBranchSANode)node).isDirectAncestor()) {
+            if (node.isDirectAncestor()) {
                 return 1;
             } else return 0;
         }
@@ -749,7 +748,7 @@ public class SABDTreeSimulator {
 
     private double printSAWithRhoSamplingTime(Node node, PrintStream writer){
         if (node.isLeaf()){
-            if (((ZeroBranchSANode)node).isDirectAncestor()) {
+            if (node.isDirectAncestor()) {
                 writer.println(node.getNr() + "=1");
             }   else {
                 writer.println(node.getNr() + "=0");

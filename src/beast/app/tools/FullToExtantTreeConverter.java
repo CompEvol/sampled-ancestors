@@ -64,7 +64,7 @@ public class FullToExtantTreeConverter extends beast.core.Runnable {
 
         tree.init(out);
         out.println();
-        tree.log(0, out);
+        tree.log((long) 0, out);
         out.println();
 
         for (int i=1; i< trees.size(); i++) {
@@ -72,7 +72,7 @@ public class FullToExtantTreeConverter extends beast.core.Runnable {
             removeFossils(oldTree.getRoot(), oldTree, new ArrayList<>());
             numberNodes(oldTree.getRoot(), new int[] {extantTaxa.size()});
             tree = new Tree(oldTree.getRoot());
-            tree.log(i, out);
+            tree.log((long) i, out);
             out.println();
         }
         out.println("End;");
@@ -144,7 +144,7 @@ public class FullToExtantTreeConverter extends beast.core.Runnable {
 
 	@Override
 	public void run() throws Exception {
-	       java.io.File file, file_out;
+	       java.io.File file;
 	        String outputFile = "";
 	        double customThreshold = -1.;
 //	        ArrayList<String> taxa = null;

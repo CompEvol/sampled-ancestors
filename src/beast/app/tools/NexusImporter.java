@@ -3,7 +3,6 @@ package beast.app.tools;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * @author Alexandra Gavryushkina

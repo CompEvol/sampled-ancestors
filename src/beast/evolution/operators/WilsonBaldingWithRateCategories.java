@@ -3,11 +3,8 @@ package beast.evolution.operators;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
-import beast.evolution.tree.ZeroBranchSANode;
-import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.Randomizer;
 
 /**
@@ -53,7 +50,7 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
         do {
             i = tree.getNode(Randomizer.nextInt(nodeCount));
             iP = i.getParent();
-        } while (i.isRoot() || ((ZeroBranchSANode)i).isDirectAncestor() || iP.isRoot());
+        } while (i.isRoot() || i.isDirectAncestor() || iP.isRoot());
 
 
         Node CiP;
@@ -83,7 +80,7 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
                 if (jP != null)
                     newParentHeight = jP.getHeight();
                 else newParentHeight = Double.POSITIVE_INFINITY;
-                if (!((ZeroBranchSANode)CiP).isDirectAncestor())
+                if (!CiP.isDirectAncestor())
                     adjacentEdge = (CiP.getNr() == j.getNr() || iP.getNr() == j.getNr());
                 attachingToLeaf = false;
             } else {
@@ -93,7 +90,7 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
                 attachingToLeaf = true;
                 //adjacentLeaf = (iP.getNr() == j.getNr());
             }
-        } while (jP == null || ((ZeroBranchSANode)j).isDirectAncestor() || (newParentHeight <= i.getHeight()) || (i.getNr() == j.getNr()) || adjacentEdge /*|| adjacentLeaf */);
+        } while (jP == null || j.isDirectAncestor() || (newParentHeight <= i.getHeight()) || (i.getNr() == j.getNr()) || adjacentEdge /*|| adjacentLeaf */);
 
 
         if (attachingToLeaf && iP.getNr() == j.getNr()) {
@@ -106,10 +103,10 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        if (((ZeroBranchSANode)tree.getRoot()).isFake()) {
-            oldDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 2;
+        if (tree.getRoot().isFake()) {
+            oldDimension = nodeCount - tree.getDirectAncestorNodeCount() - 2;
         }  else {
-            oldDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 3;
+            oldDimension = nodeCount - tree.getDirectAncestorNodeCount() - 3;
         }
 
         int iPCategory = categoriesInput.get().getValue(iP.getNr()),
@@ -135,7 +132,7 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
 
 
         //Hastings denominator calculation
-        if (((ZeroBranchSANode)CiP).isDirectAncestor()) {
+        if (CiP.isDirectAncestor()) {
             oldRange = (double) 1;
             categoriesInput.get().setValue(CiP.getNr(), iPCategory);
         }
@@ -160,10 +157,10 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
         }
         iP.setHeight(newAge);
 
-        if (((ZeroBranchSANode)tree.getRoot()).isFake()) {
-            newDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 2;
+        if (tree.getRoot().isFake()) {
+            newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 2;
         } else {
-            newDimension = nodeCount - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount() - 3;
+            newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 3;
 
         }
         DimensionCoefficient = (double) oldDimension / newDimension;

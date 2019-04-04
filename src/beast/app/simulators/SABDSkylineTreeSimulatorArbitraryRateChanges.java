@@ -2,7 +2,6 @@ package beast.app.simulators;
 
 import beast.core.Description;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 import java.util.*;
@@ -65,7 +64,7 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
     public int simulate() {
 
         //create an initial node (origin of tree)
-        Node initial = new ZeroBranchSANode();
+        Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of nodes at the previous stage of simulation
@@ -171,7 +170,7 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
         }
 
         //the unique node remained in the array is the root of the sampled tree
-        Node root = new ZeroBranchSANode();
+        Node root = new Node();
         for (Node node:children) {
             root=node;
         }
@@ -266,9 +265,9 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
         node.setHeight(height);
         switch (typeOfEvent) {
             case BIRTH: {
-                Node left = new ZeroBranchSANode();
+                Node left = new Node();
                 left.setNr(-1);
-                Node right = new ZeroBranchSANode();
+                Node right = new Node();
                 right.setNr(-1);
                 left.setHeight(height);
                 right.setHeight(height);
@@ -284,9 +283,9 @@ public class SABDSkylineTreeSimulatorArbitraryRateChanges {
             case SAMPLING: {
                 double remain = Randomizer.nextDouble();
                 if (r[currentInterval] < remain) {
-                    Node left = new ZeroBranchSANode();
+                    Node left = new Node();
                     left.setNr(-1);
-                    Node right = new ZeroBranchSANode();
+                    Node right = new Node();
                     right.setNr(sampleCount);
                     left.setHeight(height);
                     right.setHeight(height);

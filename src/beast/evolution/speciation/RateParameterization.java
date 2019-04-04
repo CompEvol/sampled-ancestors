@@ -1,10 +1,7 @@
 package beast.evolution.speciation;
 
-import beast.core.BEASTInterface;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-
-import java.util.Set;
 
 /**
  * Created by alexei on 7/09/15.
