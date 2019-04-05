@@ -136,6 +136,9 @@ public class SABirthDeathModel extends TreeDistribution {
         	combinedTree.setInputValue("tree", treeInput.get());
         	combinedTree.initAndValidate();
         }
+        else if(treeInput.get() != null) {
+        	System.err.println("Both tree and treeWOffset specified as inputs, using treeWOffset.");
+        }
         double rootHeight = combinedTree.getTree().getRoot().getHeight();
         if (originSpecified && origin() < rootHeight){
             throw new IllegalArgumentException("Initial value of origin (" + origin() + ") should be greater than initial root height (" +rootHeight + ")");
