@@ -71,6 +71,11 @@ public class TreeWOffset extends CalculationNode {
 		n.setHeight(height - offset);
 	}
 	
+	// for testing purposes
+	public double getStoredHeightOfLeaf(int nr) {
+		return leaves_heights[nr];
+	}
+	
 	/* This entire section is to work around the fact that this class is modified DURING the operator proposal of SampledNodeDateRandomWalker
 	 * whereas Beast2 assumes that only state nodes are modified, and that calculation nodes are only updated afterwards
 	 * So, using the default mechanic will store/restore the modified state not the original one
@@ -83,7 +88,7 @@ public class TreeWOffset extends CalculationNode {
 		if(stored) return;
 		oldMin_leaf = min_leaf;
 		oldOffset = offset;
-		oldHeights = leaves_heights;
+		oldHeights = leaves_heights.clone();
 		stored = true;
 	}
 	
@@ -92,7 +97,7 @@ public class TreeWOffset extends CalculationNode {
 		super.restore();
 		min_leaf = oldMin_leaf;
 		offset = oldOffset;
-		leaves_heights = oldHeights;
+		leaves_heights = oldHeights.clone();
 		stored = false;
 	}
 	
