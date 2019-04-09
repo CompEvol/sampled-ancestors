@@ -8,7 +8,9 @@ import beast.evolution.alignment.Taxon;
 import beast.evolution.operators.*;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
+import beast.evolution.tree.TreeWOffset;
 import beast.math.distributions.Uniform;
 
 import java.util.List;
@@ -27,9 +29,11 @@ import java.util.List;
         "Bayesian inference of sampled ancestor trees for epidemiology and fossil calibration. \n" +
         "PLoS Comput Biol 10(12): e1003919. doi:10.1371/journal.pcbi.1003919",
         year = 2014, firstAuthorSurname = "Gavryushkina", DOI="10.1371/journal.pcbi.1003919")
-public class SABirthDeathModel extends SpeciesTreeDistribution {
+public class SABirthDeathModel extends TreeDistribution {
 
-
+	public Input<TreeWOffset> treeWOffsetInput =
+            new Input<TreeWOffset>("treeWOffset", "Optional fully extinct tree", (TreeWOffset)null);
+	
     //'direct' parameters
     public Input<RealParameter> originInput =
             new Input<RealParameter>("origin", "The time when the process started", (RealParameter)null);
@@ -90,6 +94,8 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     protected boolean lambdaExceedsMu = false;
     protected String taxonName;
     protected double taxonAge;
+    
+    TreeWOffset combinedTree;
 
     public void initAndValidate() {
 
@@ -123,8 +129,17 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
         } else {
             throw new IllegalArgumentException("Either specify birthRate, deathRate and samplingRate OR specify diversificationRate, turnover and samplingProportion!");
         }
-
-        double rootHeight = treeInput.get().getRoot().getHeight();
+        
+        combinedTree = treeWOffsetInput.get();
+        if(combinedTree == null) {
+        	combinedTree = new TreeWOffset();
+        	combinedTree.setInputValue("tree", treeInput.get());
+        	combinedTree.initAndValidate();
+        }
+        else if(treeInput.get() != null) {
+        	System.err.println("Both tree and treeWOffset specified as inputs, using treeWOffset.");
+        }
+        double rootHeight = combinedTree.getTree().getRoot().getHeight();
         if (originSpecified && origin() < rootHeight){
             throw new IllegalArgumentException("Initial value of origin (" + origin() + ") should be greater than initial root height (" +rootHeight + ")");
         }
@@ -328,8 +343,9 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
     }
 
     @Override
-    public double calculateTreeLogLikelihood(TreeInterface tree)
-    {
+    public double calculateLogP() {
+    	Tree tree = combinedTree.getTree(); 
+    	
         int nodeCount = tree.getNodeCount();
         updateParameters();
         if (lambdaExceedsMu && lambda <= mu) {
@@ -348,72 +364,72 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
             if (taxonAge > origin) {
                 return Double.NEGATIVE_INFINITY;
             }
-            double logPost = 0.0;
+            logP = 0.0;
 
             if (conditionOnSamplingInput.get()) {
-                logPost -= Math.log(oneMinusP0(x0, c1, c2));
+                logP -= Math.log(oneMinusP0(x0, c1, c2));
             }
 
             if (conditionOnRhoSamplingInput.get()) {
-                logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+                logP -= Math.log(oneMinusP0Hat(x0, c1, c2));
             }
 
             if (SATaxonInput.get().getValue() == 0) {
-                logPost += Math.log(1 - oneMinusP0(taxonAge, c1, c2));
+                logP += Math.log(1 - oneMinusP0(taxonAge, c1, c2));
             } else {
-                logPost += Math.log(oneMinusP0(taxonAge, c1, c2));
+                logP += Math.log(oneMinusP0(taxonAge, c1, c2));
             }
 
-            return logPost;
+            return logP;
         }
 
-        double x1=tree.getRoot().getHeight();
+        double x1 = combinedTree.getHeightOfNode(tree.getRoot().getNr());
 
-        if (x0 < x1 || r==1 && ((Tree)tree).getDirectAncestorNodeCount() > 0) {
+        if (x0 < x1 || r==1 && tree.getDirectAncestorNodeCount() > 0) {
             return Double.NEGATIVE_INFINITY;
         }
-
-        double logPost;
+        
+        logP = 0;
         if (!conditionOnRootInput.get()){
-            logPost = -Math.log(q(x0, c1, c2));
+            logP = -Math.log(q(x0, c1, c2));
         } else {
             if (tree.getRoot().isFake()){ //when conditioning on the root we assume the process
                 //starts at the time of the first branching event and
                 //that means that the root can not be a sampled ancestor
                 return Double.NEGATIVE_INFINITY;
             } else {
-                logPost = -Math.log(q(x1, c1, c2));
+                logP = -Math.log(q(x1, c1, c2));
             }
         }
 
         if (conditionOnSamplingInput.get()) {
             if (conditionOnRootInput.get()) {
-                logPost -= Math.log(lambda*oneMinusP0(x1, c1, c2)* oneMinusP0(x1, c1, c2));
+                logP -= Math.log(lambda*oneMinusP0(x1, c1, c2)* oneMinusP0(x1, c1, c2));
             } else {
-                logPost -= Math.log(oneMinusP0(x0, c1, c2));
+                logP -= Math.log(oneMinusP0(x0, c1, c2));
             }
 
         }
 
         if (conditionOnRhoSamplingInput.get()) {
             if (conditionOnRootInput.get()) {
-                logPost -= Math.log(lambda*oneMinusP0Hat(x1, c1, c2)* oneMinusP0Hat(x1, c1, c2));
+                logP -= Math.log(lambda*oneMinusP0Hat(x1, c1, c2)* oneMinusP0Hat(x1, c1, c2));
             }  else {
-                logPost -= Math.log(oneMinusP0Hat(x0, c1, c2));
+                logP -= Math.log(oneMinusP0Hat(x0, c1, c2));
             }
         }
 
-        int internalNodeCount = tree.getLeafNodeCount() - ((Tree)tree).getDirectAncestorNodeCount() - 1;
+        int internalNodeCount = tree.getLeafNodeCount() - tree.getDirectAncestorNodeCount() - 1;
 
-        logPost += internalNodeCount*Math.log(2);
-
+        logP += internalNodeCount*Math.log(2);
+        
         for (int i = 0; i < nodeCount; i++) {
             if (tree.getNode(i).isLeaf()) {
                 if  (!tree.getNode(i).isDirectAncestor())  {
-                    if (tree.getNode(i).getHeight() > 0.000000000005 || rho == 0.) {
-                        logPost += Math.log(psi) + Math.log(q(tree.getNode(i).getHeight(), c1, c2)) + Math.log(p0s(tree.getNode(i).getHeight(), c1, c2));
+                    if (combinedTree.getHeightOfNode(i) > 0.000000000005 || rho == 0.) {
+                        logP += Math.log(psi) + Math.log(q(combinedTree.getHeightOfNode(i), c1, c2)) + Math.log(p0s(combinedTree.getHeightOfNode(i), c1, c2));
                     } else {
-                        logPost += Math.log(4*rho);
+                        logP += Math.log(4*rho);
                     }
                 }
             } else {
@@ -422,14 +438,14 @@ public class SABirthDeathModel extends SpeciesTreeDistribution {
                         System.out.println("r = 1 but there are sampled ancestors in the tree");
                         System.exit(0);
                     }
-                    logPost += Math.log(psi) + Math.log(1 - r);
+                    logP += Math.log(psi) + Math.log(1 - r);
                 } else {
-                    logPost += Math.log(lambda) - Math.log(q(tree.getNode(i).getHeight(), c1, c2));
+                    logP += Math.log(lambda) - Math.log(q(combinedTree.getHeightOfNode(i), c1, c2));
                 }
             }
         }
 
-        return logPost;
+        return logP;
     }
 
     @Override

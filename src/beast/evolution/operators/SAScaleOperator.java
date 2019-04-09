@@ -39,15 +39,7 @@ public class SAScaleOperator extends ScaleOperator {
                         return Double.NEGATIVE_INFINITY;
                     }
 
-                    if ((root).isFake() && scaleSNodes) {
-                        Node directAncestor = root.getLeft();
-                        if (!(directAncestor).isDirectAncestor())
-                            directAncestor = root.getRight();
-                        root.setHeight(fNewHeight);
-                        directAncestor.setHeight(fNewHeight);
-                    } else {
-                        root.setHeight(fNewHeight);
-                    }
+                    root.setHeight(fNewHeight);
 
                     return -Math.log(scale);
                 } else {

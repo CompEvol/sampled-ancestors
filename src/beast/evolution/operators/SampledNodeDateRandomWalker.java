@@ -1,28 +1,38 @@
 package beast.evolution.operators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.SamplingDate;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeWOffset;
 import beast.util.Randomizer;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
 public class SampledNodeDateRandomWalker extends TipDatesRandomWalker {
+	
+	public Input<TreeWOffset> treeWOffsetInput =
+            new Input<TreeWOffset>("treeWOffset", "Optional fully extinct tree", (TreeWOffset)null);
 
     public Input<List<SamplingDate>> samplingDatesInput = new Input<>("samplingDates",
             "List of sampling dates", new ArrayList<SamplingDate>());
 
     boolean useNodeNumbers;
     List<String> samplingDateTaxonNames = new ArrayList<>();
-
+    TreeWOffset combinedTree;
 
     @Override
     public void initAndValidate() {
+    	combinedTree = treeWOffsetInput.get();
+        if(combinedTree == null) {
+        	combinedTree = new TreeWOffset();
+        	combinedTree.setInputValue("tree", treeInput.get());
+        	combinedTree.initAndValidate();
+        }
+    	
         windowSize = windowSizeInput.get();
         useGaussian = useGaussianInput.get();
 
@@ -58,7 +68,7 @@ public class SampledNodeDateRandomWalker extends TipDatesRandomWalker {
     public double proposal() {
 
         // randomly select a leaf node
-        Tree tree = treeInput.get();
+        Tree tree = combinedTree.getTree();
 
         Node node;
         if (useNodeNumbers) {
@@ -70,7 +80,7 @@ public class SampledNodeDateRandomWalker extends TipDatesRandomWalker {
             node = tree.getNode(taxonIndices[i]);
         }
 
-        double value = node.getHeight();
+        double value = combinedTree.getHeightOfNode(node.getNr());
 
         if (value == 0.0) {
             return Double.NEGATIVE_INFINITY;
@@ -96,14 +106,14 @@ public class SampledNodeDateRandomWalker extends TipDatesRandomWalker {
 
         if ((node).isDirectAncestor()) {
             fake = node.getParent();
-            lower = getOtherChild(fake, node).getHeight();
+            lower = combinedTree.getHeightOfNode(getOtherChild(fake, node).getNr());
             if (fake.getParent() != null) {
-                upper = fake.getParent().getHeight();
+                upper = combinedTree.getHeightOfNode(fake.getParent().getNr());
             } else upper = Double.POSITIVE_INFINITY;
         } else {
             //lower = Double.NEGATIVE_INFINITY;
             lower = 0.0;
-            upper = node.getParent().getHeight();
+            upper = combinedTree.getHeightOfNode(node.getParent().getNr());
         }
 
         if (newValue < lower || newValue > upper) {
@@ -116,10 +126,10 @@ public class SampledNodeDateRandomWalker extends TipDatesRandomWalker {
         }
 
         if (fake != null) {
-            fake.setHeight(newValue);
+        	combinedTree.setHeightOfNode(fake.getNr(), newValue);
         }
-        node.setHeight(newValue);
-
+        combinedTree.setHeightOfNode(node.getNr(), newValue);
+        
         return 0.0;
     }
 

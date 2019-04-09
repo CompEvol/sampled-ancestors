@@ -1,6 +1,5 @@
 package beast.app.tools;
 
-import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.SANexusParser;
 
 import java.io.BufferedOutputStream;
@@ -19,14 +18,14 @@ import java.io.PrintStream;
  * **/
 public class SATreeToBinaryTreeConverter {
 
-    public static void perform(SampledAncestorTreeTrace trace, boolean useNumbers, String outputFile) throws Exception {
+    public static void perform(SANexusParser trace, boolean useNumbers, String outputFile) throws Exception {
     	PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
     	
-    	trace.beastTrees.get(0).init(out);
+    	trace.trees.get(0).init(out);
     	out.println();
-    	for (int i=0; i< trace.beastTrees.size(); i++) {
+    	for (int i=0; i< trace.trees.size(); i++) {
     		out.print("tree STATE_" + i + " = ");
-    	    out.print(((ZeroBranchSANode)trace.beastTrees.get(i).getRoot()).toSortedNewickWithZeroBranches(new int[]{0}));
+    	    out.print(trace.trees.get(i).getRoot().toSortedNewick(new int[]{0}, false));
     	    out.println(";");
     	}
     	out.println("End;");
@@ -66,8 +65,7 @@ public class SATreeToBinaryTreeConverter {
             reader = new FileReader(file);
             SANexusParser parser = new SANexusParser();
             parser.parseFile(file);
-            SampledAncestorTreeTrace trace = new SampledAncestorTreeTrace(parser);
-            perform(trace, useNumbers, outputFile);
+            perform(parser, useNumbers, outputFile);
         }
         catch (IOException e) {
             //

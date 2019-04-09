@@ -8,8 +8,6 @@ import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
-import beast.evolution.tree.ZeroBranchSATree;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,7 @@ import java.util.Vector;
 @Description("Create beast.tree by parsing from a specification of a beast.tree (which is a fake SA tree) in Newick" +
         " format (includes parsing of any meta data in the Newick string).")
 
-public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNodeInitialiser {
+public class ZeroBranchSATreeParser extends Tree implements StateNodeInitialiser {
 
     /**
      * default beast.tree branch length, used when that info is not in the Newick beast.tree
@@ -125,12 +123,9 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
      */
     List<Boolean> m_bTaxonIndexInUse = new ArrayList<Boolean>();
 
-    public ZeroBranchSATreeParser() throws Exception {
-        nodeTypeInput.setValue("beast.evolution.tree.ZeroBranchSANode", this);
-    }
+    public ZeroBranchSATreeParser() throws Exception {}
 
     public ZeroBranchSATreeParser(Alignment alignment, String newick) throws Exception {
-        nodeTypeInput.setValue("beast.evolution.tree.ZeroBranchSANode", this);
         dataInput.setValue(alignment, this);
         newickInput.setValue(newick, this);
         initAndValidate();
@@ -150,7 +145,6 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
     public ZeroBranchSATreeParser(List<String> taxaNames,
                                   String newick,
                                   int offset) throws Exception {
-        nodeTypeInput.setValue("beast.evolution.tree.ZeroBranchSANode", this);
         if (taxaNames == null) {
             isLabelledNewickInput.setValue(true, this);
         } else {
@@ -195,7 +189,6 @@ public class ZeroBranchSATreeParser extends ZeroBranchSATree implements StateNod
                                   boolean allowSingleChildNodes,
                                   boolean isLabeled,
                                   int offset) throws Exception {
-        nodeTypeInput.setValue("beast.evolution.tree.ZeroBranchSANode", this);
         newickInput.setValue(newick, this);
         isLabelledNewickInput.setValue(isLabeled, this);
         allowSingleChildInput.setValue(allowSingleChildNodes, this);

@@ -32,7 +32,6 @@ public class CladeConstraint  extends Distribution {
     private double storedMrcaHeight;
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initAndValidate() {
         tree = treeInput.get();

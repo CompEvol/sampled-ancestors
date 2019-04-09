@@ -2,7 +2,6 @@ package beast.app.simulators;
 
 import beast.core.Description;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.ZeroBranchSANode;
 import beast.util.Randomizer;
 
 import java.io.File;
@@ -60,7 +59,7 @@ public class SABDSkylineTreeSimulator {
     public int simulate(PrintStream writer) {
 
         //create an initial node (origin of tree)
-        Node initial = new ZeroBranchSANode();
+        Node initial = new Node();
         initial.setNr(-1);
         initial.setHeight(0.0);
         ArrayList<Node> tipNodes = new ArrayList<Node>();    // an array of temporary tip nodes sorted by their heights
@@ -160,7 +159,7 @@ public class SABDSkylineTreeSimulator {
         }
 
         //the unique node remains in the array is the root of the sampled tree
-        Node root = new ZeroBranchSANode();
+        Node root = new Node();
         for (Node node:children) {
             root=node;
         }
@@ -214,9 +213,9 @@ public class SABDSkylineTreeSimulator {
 
         switch (typeOfEvent) {
             case BIRTH: {
-                Node left = new ZeroBranchSANode();
+                Node left = new Node();
                 left.setNr(-1);
-                Node right = new ZeroBranchSANode();
+                Node right = new Node();
                 right.setNr(-1);
                 left.setHeight(height);
                 right.setHeight(height);
@@ -238,9 +237,9 @@ public class SABDSkylineTreeSimulator {
 
                 double remain = Randomizer.nextDouble();
                 if (r < remain) {
-                    Node left = new ZeroBranchSANode();
+                    Node left = new Node();
                     left.setNr(-1);
-                    Node right = new ZeroBranchSANode();
+                    Node right = new Node();
                     right.setNr(sampleCount);
                     left.setHeight(height);
                     right.setHeight(height);
@@ -434,7 +433,7 @@ public class SABDSkylineTreeSimulator {
         if (!node.isLeaf()) {
             return countSA(node.getLeft()) + countSA(node.getRight());
         } else {
-            if (((ZeroBranchSANode)node).isDirectAncestor()) {
+            if (node.isDirectAncestor()) {
                 return 1;
             } else return 0;
         }

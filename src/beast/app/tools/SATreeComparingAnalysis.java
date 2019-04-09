@@ -2,8 +2,6 @@ package beast.app.tools;
 
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
-import beast.evolution.tree.ZeroBranchSANode;
-import beast.evolution.tree.ZeroBranchSATree;
 import beast.util.NexusParser;
 
 import java.util.ArrayList;
@@ -50,7 +48,7 @@ public class SATreeComparingAnalysis {
             Tree tree = trees.get(treeIndex);
             ArrayList<Integer> dAPattern = new ArrayList<Integer>();
             for (int i=tree.getLeafNodeCount(); i< tree.getNodeCount(); i++){
-                if (((ZeroBranchSANode)tree.getNode(i)).isFake()) {
+                if (tree.getNode(i).isFake()) {
                     int descendantsCount = tree.getNode(i).getLeafNodeCount() - 1;
                     if (descendantsCount > 0) {
                         for(int j=dAPattern.size(); j<descendantsCount; j++){
@@ -62,7 +60,7 @@ public class SATreeComparingAnalysis {
                     }
                 }
             }
-            treeSummary[treeIndex] = new TreeSummary(tree.getRoot().getHeight(), tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount(), dAPattern);
+            treeSummary[treeIndex] = new TreeSummary(tree.getRoot().getHeight(), tree.getLeafNodeCount() - tree.getDirectAncestorNodeCount(), dAPattern);
         }
         return treeSummary;
     }
@@ -115,7 +113,7 @@ public class SATreeComparingAnalysis {
         //process tree. consider Fake SA trees
         ArrayList<Integer> dAPattern = new ArrayList<Integer>();
         for (int i=tree.getLeafNodeCount(); i< tree.getNodeCount(); i++){
-            if (((ZeroBranchSANode)tree.getNode(i)).isFake()) {
+            if (tree.getNode(i).isFake()) {
                 int descendantsCount = tree.getNode(i).getLeafNodeCount() - 1;
                 if (descendantsCount > 0) {
                     for(int j=dAPattern.size(); j<descendantsCount; j++){
@@ -128,7 +126,7 @@ public class SATreeComparingAnalysis {
             }
         }
 
-        SATreeComparingAnalysis.TreeSummary treeSummary = analysis.new TreeSummary(tree.getRoot().getHeight(), tree.getLeafNodeCount() - ((ZeroBranchSATree)tree).getDirectAncestorNodeCount(), dAPattern);
+        SATreeComparingAnalysis.TreeSummary treeSummary = analysis.new TreeSummary(tree.getRoot().getHeight(), tree.getLeafNodeCount() - tree.getDirectAncestorNodeCount(), dAPattern);
 
         System.out.println(treeSummary.dAPattern.toString());
         ArrayList<Integer> a = new ArrayList<Integer> (Arrays.asList(new Integer[]{1, 1}));

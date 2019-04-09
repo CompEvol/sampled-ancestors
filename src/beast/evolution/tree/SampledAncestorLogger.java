@@ -1,17 +1,17 @@
 package beast.evolution.tree;
 
+import java.io.PrintStream;
+
 import beast.core.CalculationNode;
 import beast.core.Function;
 import beast.core.Input;
 import beast.core.Loggable;
 
-import java.io.PrintStream;
-
 /**
  * @author Alexandra Gavryushkina
  */
 public class SampledAncestorLogger extends CalculationNode implements Loggable, Function {
-    public Input<Tree> treeInput = new Input<Tree>("tree", "tree to report height for.", Input.Validate.REQUIRED);
+    public Input<Tree> treeInput = new Input<Tree>("tree", "tree to report SA count for.", Input.Validate.REQUIRED);
 
     @Override
     public void initAndValidate() {

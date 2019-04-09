@@ -54,7 +54,8 @@ public class ParameterizedSABirthDeathModel extends SpeciesTreeDistribution {
 
     private boolean lambdaExceedsMu = false;
 
-    public void initAndValidate() {
+    @Override
+	public void initAndValidate() {
 
         updateParameters();
 
