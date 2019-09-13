@@ -11,7 +11,6 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
 import beast.evolution.tree.TreeWOffset;
-import beast.math.distributions.Uniform;
 
 import java.util.List;
 
@@ -179,15 +178,17 @@ public class SABirthDeathModel extends TreeDistribution {
         		for (Operator op : operators) {
         			boolean isOK = true;
         			if (op.getClass().isAssignableFrom(TipDatesRandomWalker.class) || 
-        					op.getClass().isAssignableFrom(SubtreeSlide.class) || 
-        					op.getClass().isAssignableFrom(WilsonBalding.class) || 
-        					op.getClass().isAssignableFrom(Uniform.class) || 
-        					op.getClass().isAssignableFrom(Exchange.class)) {
-        				isOK = false;
+                            (op.getClass().isAssignableFrom(SubtreeSlide.class) && ((SubtreeSlide)op).treeInput.get() == treeInput.get()) ||
+                            (op.getClass().isAssignableFrom(WilsonBalding.class) && ((WilsonBalding)op).treeInput.get() == treeInput.get()) ||
+                            (op.getClass().isAssignableFrom(Uniform.class) && ((Uniform)op).treeInput.get() == treeInput.get()) ||
+                            (op.getClass().isAssignableFrom(Exchange.class) && ((Exchange)op).treeInput.get() == treeInput.get())) {
+
+                                isOK = false;
+
         			} else if (op.getClass().isAssignableFrom(ScaleOperator.class)) {
         				// scale operators on Trees should be replaced with SAScaleOperator
         				for (StateNode o : op.listStateNodes()) {
-        					if (o instanceof Tree) {
+        					if (o == treeInput.get()) {
         						isOK = false;
         					}
         				}
