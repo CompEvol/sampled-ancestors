@@ -18,7 +18,7 @@ public class DegenerateBeta extends ParametricDistribution {
     public Input<Double> pointInput = new Input<Double>("point", "the point on which the probability mass is put", 1.0);
 
     DegenerateBetaImpl distr  = new DegenerateBetaImpl();
-    static org.apache.commons.math.distribution.BetaDistribution betaDistr = new BetaDistributionImpl(1, 1);
+    org.apache.commons.math.distribution.BetaDistribution betaDistr = new BetaDistributionImpl(1, 1);
 
     double alpha, beta, point, mass, density;
 
