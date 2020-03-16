@@ -26,7 +26,7 @@ public class OffsetLogger extends BEASTObject implements Loggable {
 	}
 
 	@Override
-	public void log(int sample, PrintStream out) {
+	public void log(long sample, PrintStream out) {
 		final TreeWOffset tree = treeWOffsetInput.get();
         out.print(tree.getOffset() + "\t");
 	}
