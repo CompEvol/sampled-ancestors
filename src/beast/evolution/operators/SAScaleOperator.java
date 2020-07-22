@@ -21,7 +21,7 @@ public class SAScaleOperator extends ScaleOperator {
 
         try {
 
-            if (m_bIsTreeScaler) {
+            if (isTreeScaler()) {
                 Tree tree = treeInput.get(this);
                 if (rootOnlyInput.get()) {
                     Node root = tree.getRoot();
