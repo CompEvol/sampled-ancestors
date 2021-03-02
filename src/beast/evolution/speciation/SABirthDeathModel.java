@@ -194,7 +194,7 @@ public class SABirthDeathModel extends TreeDistribution {
         				}
         			}        		 	
         			if (!isOK) {
-        				Log.err.println("ERROR: " + op.getClass().getSimpleName() + 
+                        throw new RuntimeException("ERROR: " + op.getClass().getSimpleName() +
         						" is not a valid operator for a sampled ancestor analysis.\n" + 
         						"Either remove the operator (id=" + op.getID() + ") or fix the " +
         					    "removal probability to 1.0 so this is not a sampled ancestor " +
