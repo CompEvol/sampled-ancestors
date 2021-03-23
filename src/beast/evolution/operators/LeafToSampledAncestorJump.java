@@ -1,9 +1,13 @@
 package beast.evolution.operators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
+import beast.evolution.alignment.Taxon;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
@@ -24,9 +28,35 @@ public class LeafToSampledAncestorJump extends TreeOperator {
 
     public Input<RealParameter> rInput =
             new Input<RealParameter>("removalProbability", "The probability of an individual to be removed from the process immediately after the sampling");
+    public Input<List<Taxon>> sampledTaxa =
+    		new Input<List<Taxon>>("sampledTaxa", "Taxa that this operator should be allowed to let jump between sampled ancestor and leaf. Default: All non-recent leaves.");
 
+    protected List<Integer> validLeaves;
+    
     @Override
     public void initAndValidate() {
+    	if (sampledTaxa.get() == null) {
+    		validLeaves = new ArrayList<Integer>(treeInput.get().getLeafNodeCount());
+            for (Node leaf: treeInput.get().getExternalNodes()) {
+            	if (leaf.getHeight() > 1e-6) {
+            		validLeaves.add(leaf.getNr());
+            	}
+            }
+    	} else {
+    		List<Taxon> taxa = sampledTaxa.get();
+    		List<String> taxaNames = new ArrayList<String>(taxa.size());
+    		for (Taxon taxon: taxa) {
+    			taxaNames.add(taxon.getID());
+    		}
+        	validLeaves = new ArrayList<Integer>(taxa.size());
+        	Integer i = 0;
+            for (String leaf: treeInput.get().getTaxaNames()) {
+            	if (taxaNames.contains(leaf)) {
+            		validLeaves.add(i);
+            	}
+        		i += 1;
+            }
+    	}
     }
 
     @Override
@@ -41,9 +71,9 @@ public class LeafToSampledAncestorJump extends TreeOperator {
 
         Tree tree = treeInput.get();
 
-        int leafNodeCount = tree.getLeafNodeCount();
+        int leafNodeCount = validLeaves.size();
 
-        Node leaf = tree.getNode(Randomizer.nextInt(leafNodeCount));
+        Node leaf = tree.getNode(validLeaves.get(Randomizer.nextInt(leafNodeCount)));
         Node parent = leaf.getParent();
 
         if (leaf.isDirectAncestor()) {
