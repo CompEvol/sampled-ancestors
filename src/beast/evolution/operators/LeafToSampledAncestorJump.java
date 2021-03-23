@@ -32,7 +32,7 @@ public class LeafToSampledAncestorJump extends TreeOperator {
     @Override
     public double proposal() {
 
-        double newHeight, newRange, oldRange;
+        double newHeight, logNewRange, logOldRange;
         int categoryCount = 1;
         if (categoriesInput.get() != null) {
 
@@ -47,14 +47,15 @@ public class LeafToSampledAncestorJump extends TreeOperator {
         Node parent = leaf.getParent();
 
         if (leaf.isDirectAncestor()) {
-            oldRange = (double) 1;
+            logOldRange = (double) 0;
             if (parent.isRoot()) {
                 final double randomNumber = Randomizer.nextExponential(1);
                 newHeight = parent.getHeight() + randomNumber;
-                newRange = Math.exp(randomNumber);
+                logNewRange = randomNumber;
             } else {
-                newRange = parent.getParent().getHeight() - parent.getHeight();
+                double newRange = parent.getParent().getHeight() - parent.getHeight();
                 newHeight = parent.getHeight() + Randomizer.nextDouble() * newRange;
+                logNewRange = Math.log(newRange);
             }
 
             if (categoriesInput.get() != null) {
@@ -63,15 +64,15 @@ public class LeafToSampledAncestorJump extends TreeOperator {
                 categoriesInput.get().setValue(index, newValue);
             }
         } else {
-            newRange = (double) 1;
+            logNewRange = (double) 0;
             //make sure that the branch where a new sampled node to appear is not above that sampled node
             if (getOtherChild(parent, leaf).getHeight() >= leaf.getHeight())  {
                 return Double.NEGATIVE_INFINITY;
             }
             if (parent.isRoot()) {
-                oldRange = Math.exp(parent.getHeight() - leaf.getHeight());
+                logOldRange = parent.getHeight() - leaf.getHeight();
             } else {
-                oldRange = parent.getParent().getHeight() - leaf.getHeight();
+                logOldRange = Math.log(parent.getParent().getHeight() - leaf.getHeight());
             }
             newHeight = leaf.getHeight();
             if  (categoriesInput.get() != null) {
@@ -86,6 +87,6 @@ public class LeafToSampledAncestorJump extends TreeOperator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        return Math.log(newRange/oldRange);
+        return logNewRange - logOldRange;
     }
 }
