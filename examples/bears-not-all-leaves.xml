@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" version="2.0">
+
+
+    <data
+id="bears"
+name="alignment">
+                        <sequence id="seq_Canis_lupus_0.0" taxon="Canis_lupus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGATGCCATCGAGCAGGCCATCAAGAGCCGTGAGATCCTAGCCGTCTCGGACCCCCAGACTCTGGCCCACGTGCTGACCACTGGGGTGCAGAACTCCTTGAACGACCCTCGCCTGGTCATCTCGTACGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGTCCCGGCCCTCACCAACCTCACCCGGGAGGAACTGCTTGCCCGCCTGCAGAAGGGCATCCGCCACGAGGTGCTGGAGGGCAACGTGGGCTACCTGCGCGTGGACGACATCCCCGGCCAGGAGGTGGTGGACAAGCTGGGCAGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCCTGGTGCTGGACCTCCGGCACTGCACGGGCGGCCACATTTCTGGCATCCCCTACGTCGTCTCCTACCTGCACCCAGGGAACACGGTTCTGCATGTGGATACCATCTACGACCGCCCCTCCAACACCACCACTGAGATCTGGACCCTGCCCCAGGTCCTGGGGGAAAGGTACAGCGCTGACAAGGACGTGGTGGTCCTCACCAGCGGCCACACGGGCGGCGTGGCGGAGGACGTCACTTACATCCTCAAGCAGATGCGCCGGGCCATCGTGGTGGGCGAGCGGACTGTCGGGGGGGCCCTGGACCTCCAGAAGCTGAGGATAGGCCAGTCCGATTTCTTCCTCACCGTGCCCGTGTCCAGGTCCCTGGGGCCCCTGGGAGGGGGCAGCGAGACGTGGGAGGGCAGCGGGGTACTGCCCTGTGTGGGGACGCCAGCCGAGCAGGCCCTGGAGAAAGCCCTGGCCATCCTGACCCTGCGCCGCGCCCTGCCCAGCATAGTGCAGCGCCTGCAGGAGGCCCTGCAGGCTTACTACACACTGGTGGACCGCGTGCCCGCCCTGCTGCACCACCTGGCCAGTATGGACTTCTCCGCCGTGGTCTCCAGGGAGGACCTGGTCACCAAGCTCAATGCTG"/>
+                        <sequence id="seq_Phoca_largha_0.0" taxon="Phoca_largha_0.0" totalcount="4" value="---------------------------------------------------------------------------------------GCCCATGTGCTGACCACGGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTGGTCATCTCATATGAGCCCAGCACCCTTGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACAGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTATGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGACCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTGCTGGACCTCCGGCACTGYACTGGGGGCCATATTTCCGGCATCCCCTATGTCATCTCCTACCTACACCCAGGGAACACAGTCCTGCACGTGGATACCATCTACAACCGCCCCTCCAATACAACCACTGAGATCTGGACCCTGCCCCAGGTCCTAGGAGAAAGGTACAGTGCCGACAAGGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACTTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAGCTGCGGATAGGCCAGTCCGACTTCTTCCTCACTGTGCCCGTGTCCAGGTCCCTAGGGCCCCTGGGAGGAGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGCGTGGGGACACCAGCAGAGCAGGCGCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGAGTCGTGCAGCGCCTGCAGGAGGCCCTGCAAGCCTACTACACGCTGGTGGACCGCGTGCCCACCCTGCTGCACCACCTGGCCAACATGGACTTCTCTGCGGTGGTCTCCGAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Ailuropoda_melanoleuca_0.0" taxon="Ailuropoda_melanoleuca_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACGCAAGAGGAACAGCTTGCCCAGTTGCAGAAGGGCATCCGCCATGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAAGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGAGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCCTACCTGCACCCCGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCGGGTCCTAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACAGGGGGCGTGGCTGAGGACATCACTTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTAGCCAACATGGACTTCTCTGCGGTGGTCTCCCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Tremarctos_ornatus_0.0" taxon="Tremarctos_ornatus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAATGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGCCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCACATTTCTGGCATTCCCTACATCATCTCTTACCTGCACCCCGGGAACACGGTCCTGCATGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCTAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTCGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTAGCCAACATGGACTTCTCTGCGGTGGTCTCCCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Helarctos_malayanus_0.0" taxon="Helarctos_malayanus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCTTACCTGCACCCTGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCAAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTAGCCAACATGGACTTCTCTGCGGTGGTCTCTCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Melursus_ursinus_0.0" taxon="Melursus_ursinus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCTTACCTGCACCCCGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCAAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTGGCCAACATGGACTTCTCTGCGGTGGTCTCTCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Ursus_americanus_0.0" taxon="Ursus_americanus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCTTACCTGCACCCCGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCAAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATTGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTGGCCAACATGGACTTCTCTGCGGTGGTCTCTCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Ursus_arctos_0.0" taxon="Ursus_arctos_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCCGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCTTACCTGCACCCCGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCAAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTGGCCAACATGGACTTCTCTGCGGTGGTCTCTCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Ursus_thibetanus_0.0" taxon="Ursus_thibetanus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCTTACCTGCACCCCGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCAAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTGGCCAACATGGACTTCTCTGCGGTGGTCTCTCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Ursus_maritimus_0.0" taxon="Ursus_maritimus_0.0" totalcount="4" value="CCAGAGAACCTGATGGGGATGCAGGAAGCCATCGAGCAGGCCACCAAGAGTCGTGAGATCCTCGCCATCTCAGACCCTCAGACTCTGGCCCATGTGCTGACCACTGGGGTGCAGAGCTCCTTGAACGACCCTCGCCTTGTCATCTCATATGAGCCCAGCACCCTCGAGGCTCCCCGGCAAGCCCCAGCACTCACCAACCTCACACAAGAGGAACTGCTTGCCCGGTTGCAGAAGGGCATCCGCCACGAGGTTCTGGAGGGCAATGTGGGCTACCTGCGTGTGGACGACATCCCAGGCCAGGAGGTGGTGAGCAAGCTGGGGGGCTTCCTGGTGGCCAGCGTCTGGAGGAAGCTCATGGGCACCTCTGCCTTGGTACTGGACCTCCGGCACTGCACTGGGGGCCGCATTTCCGGCATCCCCTACGTCATCTCTTACCTGCACCCCGGGAACACGGTCCTGCACGTGGATACCATCTACGACCGCCCCTCCAACACGACCACTGAGATCTGGACCCTGCCCCAGGTCCAAGGAGAAAGGTACAGTGCCGACAAAGATGTGGTGGTCCTCACCAGCGGCCACACGGGGGGCGTGGCTGAGGACATCACCTACATCCTCAAACAGATGCGCAGGGCCATCGTGGTGGGTGAGCGGACTGTGGGGGGTGCCCTGGACCTCCAGAAACTGAGGATAGGCCAGTCCGACTTCTTCCTCACCGTGCCCGTGTCCCGGTCCCTAGGGCCCCTGGGAGGGGGCAGCCAGACATGGGAGGGCAGCGGGGTGCTGCCCTGTGTGGGGACACCAGCCGAGCAGGCCCTCGAGAAAGCCCTGGCCATCCTCACTCTGCGCCGGGCCCTGCCAGGGATAGTGCGGCGCCTGCAGGAGGCCCTGCAGGCCTACTACACGCTGGTGGACCGTGTGCCCACCCTGCTGCACCACCTGGCCAACATGGACTTCTCTGCGGTGGTCTCTCAGGAGGACCTGGTCACGAAGCTCAACGCTG"/>
+                        <sequence id="seq_Hesperocyon_gregarius_39.07" taxon="Hesperocyon_gregarius_39.07" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Caedocyon_tedfordi_25.88" taxon="Caedocyon_tedfordi_25.88" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Osbornodon_sesnoni_30.08" taxon="Osbornodon_sesnoni_30.08" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Cormocyon_copei_26.14" taxon="Cormocyon_copei_26.14" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Borophagus_diversidens_4.284" taxon="Borophagus_diversidens_4.284" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Enaliarctos_tedfordi_27.11" taxon="Enaliarctos_tedfordi_27.11" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Proneotherium_repenningi_17.92" taxon="Proneotherium_repenningi_17.92" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Leptophoca_lenis_14.99" taxon="Leptophoca_lenis_14.99" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Acrophoca_6.695" taxon="Acrophoca_6.695" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Phoca_vitulina_0.805" taxon="Phoca_vitulina_0.805" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Parictis_montanus_36.6" taxon="Parictis_montanus_36.6" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Zaragocyon_daamsi_21.86" taxon="Zaragocyon_daamsi_21.86" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Ballusia_elmensis_14.01" taxon="Ballusia_elmensis_14.01" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Ursavus_primaevus_14.41" taxon="Ursavus_primaevus_14.41" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Ursavus_brevihinus_16.2" taxon="Ursavus_brevihinus_16.2" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Indarctos_vireti_8.68" taxon="Indarctos_vireti_8.68" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Indarctos_arctoides_9.54" taxon="Indarctos_arctoides_9.54" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Indarctos_punjabiensis_4.996" taxon="Indarctos_punjabiensis_4.996" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Ailurarctos_lufengensis_7.652" taxon="Ailurarctos_lufengensis_7.652" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Agriarctos_spp_5.006" taxon="Agriarctos_spp_5.006" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Kretzoiarctos_beatrix_11.69" taxon="Kretzoiarctos_beatrix_11.69" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Arctodus_simus_0.487" taxon="Arctodus_simus_0.487" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Ursus_abstrusus_4.27" taxon="Ursus_abstrusus_4.27" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                        <sequence id="seq_Ursus_spelaeus_0.054" taxon="Ursus_spelaeus_0.054" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
+                    </data>
+
+
+    
+
+
+    
+
+
+    
+<map name="Uniform">beast.math.distributions.Uniform</map>
+<map name="Exponential">beast.math.distributions.Exponential</map>
+<map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
+<map name="Normal">beast.math.distributions.Normal</map>
+<map name="Beta">beast.math.distributions.Beta</map>
+<map name="Gamma">beast.math.distributions.Gamma</map>
+<map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
+<map name="prior">beast.math.distributions.Prior</map>
+<map name="InverseGamma">beast.math.distributions.InverseGamma</map>
+<map name="OneOnX">beast.math.distributions.OneOnX</map>
+
+
+<run id="mcmc" spec="MCMC" chainLength="10000000">
+    <state id="state" storeEvery="5000">
+        <tree id="Tree.t:bears" name="stateNode">
+            <trait id="dateTrait.t:bears" spec="beast.evolution.tree.TraitSet" traitname="date-backward">
+                Canis_lupus_0.0=0.0,
+Phoca_largha_0.0=0.0,
+Ailuropoda_melanoleuca_0.0=0.0,
+Tremarctos_ornatus_0.0=0.0,
+Helarctos_malayanus_0.0=0.0,
+Melursus_ursinus_0.0=0.0,
+Ursus_americanus_0.0=0.0,
+Ursus_arctos_0.0=0.0,
+Ursus_thibetanus_0.0=0.0,
+Ursus_maritimus_0.0=0.0,
+Hesperocyon_gregarius_39.07=39.07,
+Caedocyon_tedfordi_25.88=25.88,
+Osbornodon_sesnoni_30.08=30.08,
+Cormocyon_copei_26.14=26.14,
+Borophagus_diversidens_4.284=4.284,
+Enaliarctos_tedfordi_27.11=27.11,
+Proneotherium_repenningi_17.92=17.92,
+Leptophoca_lenis_14.99=14.99,
+Acrophoca_6.695=6.695,
+Phoca_vitulina_0.805=0.805,
+Parictis_montanus_36.6=36.6,
+Zaragocyon_daamsi_21.86=21.86,
+Ballusia_elmensis_14.01=14.01,
+Ursavus_primaevus_14.41=14.41,
+Ursavus_brevihinus_16.2=16.2,
+Indarctos_vireti_8.68=8.68,
+Indarctos_arctoides_9.54=9.54,
+Indarctos_punjabiensis_4.996=4.996,
+Ailurarctos_lufengensis_7.652=7.652,
+Agriarctos_spp_5.006=5.006,
+Kretzoiarctos_beatrix_11.69=11.69,
+Arctodus_simus_0.487=0.487,
+Ursus_abstrusus_4.27=4.27,
+Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonSet">
+                    <alignment idref="bears"/>
+                </taxa>
+            </trait>
+            <taxonset idref="TaxonSet.bears"/>
+        </tree>
+        <parameter id="ucldMean.c:bears" name="stateNode">1.0</parameter>
+        <parameter id="ucldStdev.c:bears" lower="0.0" name="stateNode">0.1</parameter>
+        <stateNode id="rateCategories.c:bears" spec="parameter.IntegerParameter" dimension="66">1</stateNode>
+        <parameter id="originFBD.t:bears" lower="0.0" name="stateNode">100.0</parameter>
+        <parameter id="diversificationRateFBD.t:bears" lower="0.0" name="stateNode">1.0</parameter>
+        <parameter id="turnoverFBD.t:bears" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
+        <parameter id="samplingProportionFBD.t:bears" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
+    </state>
+
+    <init id="RandomTree.t:bears" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
+        <populationModel id="ConstantPopulation0.t:bears" spec="ConstantPopulation">
+            <parameter id="randomPopSize.t:bears" name="popSize">1.0</parameter>
+        </populationModel>
+    </init>
+
+    <distribution id="posterior" spec="util.CompoundDistribution">
+        <distribution id="prior" spec="util.CompoundDistribution">
+            <distribution id="FBD.t:bears" spec="beast.evolution.speciation.SABirthDeathModel" conditionOnRhoSampling="true" diversificationRate="@diversificationRateFBD.t:bears" origin="@originFBD.t:bears" samplingProportion="@samplingProportionFBD.t:bears" tree="@Tree.t:bears" turnover="@turnoverFBD.t:bears">
+                <parameter id="rFBD.t:bears" lower="0.0" name="removalProbability" upper="1.0">0.0</parameter>
+                <parameter id="rhoFBD.t:bears" estimate="false" lower="0.0" name="rho" upper="1.0">1.0</parameter>
+            </distribution>
+            <prior id="diversificationRatePriorFBD.t:bears" name="distribution" x="@diversificationRateFBD.t:bears">
+                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
+            </prior>
+            <prior id="originPriorFBD.t:bears" name="distribution" x="@originFBD.t:bears">
+                <Uniform id="Uniform.01" name="distr" upper="Infinity"/>
+            </prior>
+            <prior id="samplingProportionPriorFBD.t:bears" name="distribution" x="@samplingProportionFBD.t:bears">
+                <Uniform id="Uniform.02" name="distr"/>
+            </prior>
+            <prior id="turnoverPriorFBD.t:bears" name="distribution" x="@turnoverFBD.t:bears">
+                <Uniform id="Uniform.03" name="distr"/>
+            </prior>
+            <prior id="MeanRatePrior.c:bears" name="distribution" x="@ucldMean.c:bears">
+                <Uniform id="Uniform.04" name="distr" upper="Infinity"/>
+            </prior>
+            <prior id="ucldStdevPrior.c:bears" name="distribution" x="@ucldStdev.c:bears">
+                <Gamma id="Gamma.0" name="distr">
+                    <parameter id="RealParameter.0" estimate="false" name="alpha">0.5396</parameter>
+                    <parameter id="RealParameter.01" estimate="false" name="beta">0.3819</parameter>
+                </Gamma>
+            </prior>
+            <distribution id="Canidae.prior" spec="beast.math.distributions.MRCAPrior" monophyletic="true" tree="@Tree.t:bears">
+                <taxonset id="Canidae" spec="TaxonSet">
+                    <taxon id="Canis_lupus_0.0" spec="Taxon"/>
+                    <taxon id="Caedocyon_tedfordi_25.88" spec="Taxon"/>
+                    <taxon id="Cormocyon_copei_26.14" spec="Taxon"/>
+                    <taxon id="Hesperocyon_gregarius_39.07" spec="Taxon"/>
+                    <taxon id="Osbornodon_sesnoni_30.08" spec="Taxon"/>
+                    <taxon id="Borophagus_diversidens_4.284" spec="Taxon"/>
+                </taxonset>
+            </distribution>
+        </distribution>
+        <distribution id="likelihood" spec="util.CompoundDistribution">
+            <distribution id="treeLikelihood.bears" spec="TreeLikelihood" data="@bears" tree="@Tree.t:bears">
+                <siteModel id="SiteModel.s:bears" spec="SiteModel">
+                    <parameter id="mutationRate.s:bears" estimate="false" name="mutationRate">1.0</parameter>
+                    <parameter id="gammaShape.s:bears" estimate="false" name="shape">1.0</parameter>
+                    <parameter id="proportionInvariant.s:bears" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+                    <substModel id="JC69.s:bears" spec="JukesCantor"/>
+                </siteModel>
+                <branchRateModel id="RelaxedClock.c:bears" spec="beast.evolution.branchratemodel.UCRelaxedClockModel" clock.rate="@ucldMean.c:bears" rateCategories="@rateCategories.c:bears" tree="@Tree.t:bears">
+                    <LogNormal id="LogNormalDistributionModel.c:bears" S="@ucldStdev.c:bears" meanInRealSpace="true" name="distr">
+                        <parameter id="RealParameter.02" estimate="false" lower="0.0" name="M" upper="1.0">1.0</parameter>
+                    </LogNormal>
+                </branchRateModel>
+            </distribution>
+        </distribution>
+    </distribution>
+
+    <operator id="ucldMeanScaler.c:bears" spec="ScaleOperator" parameter="@ucldMean.c:bears" scaleFactor="0.5" weight="1.0"/>
+
+    <operator id="ucldStdevScaler.c:bears" spec="ScaleOperator" parameter="@ucldStdev.c:bears" scaleFactor="0.5" weight="3.0"/>
+
+    <operator id="CategoriesRandomWalk.c:bears" spec="IntRandomWalkOperator" parameter="@rateCategories.c:bears" weight="10.0" windowSize="1"/>
+
+    <operator id="CategoriesSwapOperator.c:bears" spec="SwapOperator" intparameter="@rateCategories.c:bears" weight="10.0"/>
+
+    <operator id="CategoriesUniform.c:bears" spec="UniformOperator" parameter="@rateCategories.c:bears" weight="10.0"/>
+
+    <operator id="relaxedUpDownOperator.c:bears" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
+        <up idref="ucldMean.c:bears"/>
+        <down idref="Tree.t:bears"/>
+    </operator>
+
+    <operator id="originScalerFBD.t:bears" spec="ScaleOperator" parameter="@originFBD.t:bears" scaleFactor="0.75" weight="3.0"/>
+
+    <operator id="divRateScalerFBD.t:bears" spec="ScaleOperator" parameter="@diversificationRateFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
+
+    <operator id="turnoverScalerFBD.t:bears" spec="ScaleOperator" parameter="@turnoverFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
+
+    <operator id="samplingPScalerFBD.t:bears" spec="ScaleOperator" parameter="@samplingProportionFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
+
+    <operator id="LeafToSAFBD.t:bears" spec="LeafToSampledAncestorJump" tree="@Tree.t:bears" weight="10.0">
+        <sampledTaxa idref="Hesperocyon_gregarius_39.07" />
+        <sampledTaxa idref="Caedocyon_tedfordi_25.88" />
+        <sampledTaxa idref="Osbornodon_sesnoni_30.08" />
+        <sampledTaxa idref="Cormocyon_copei_26.14" />
+        <sampledTaxa idref="Borophagus_diversidens_4.284" />
+        <sampledTaxa spec="Taxon" id="Enaliarctos_tedfordi_27.11" />
+        <sampledTaxa spec="Taxon" id="Proneotherium_repenningi_17.92" />
+        <sampledTaxa spec="Taxon" id="Leptophoca_lenis_14.99" />
+        <sampledTaxa spec="Taxon" id="Acrophoca_6.695" />
+        <sampledTaxa spec="Taxon" id="Phoca_vitulina_0.805" />
+        <sampledTaxa spec="Taxon" id="Parictis_montanus_36.6" />
+        <sampledTaxa spec="Taxon" id="Zaragocyon_daamsi_21.86" />
+        <sampledTaxa spec="Taxon" id="Ballusia_elmensis_14.01" />
+        <sampledTaxa spec="Taxon" id="Ursavus_primaevus_14.41" />
+        <sampledTaxa spec="Taxon" id="Ursavus_brevihinus_16.2" />
+        <sampledTaxa spec="Taxon" id="Indarctos_vireti_8.68" />
+        <sampledTaxa spec="Taxon" id="Indarctos_arctoides_9.54" />
+        <sampledTaxa spec="Taxon" id="Indarctos_punjabiensis_4.996" />
+        <sampledTaxa spec="Taxon" id="Ailurarctos_lufengensis_7.652" />
+        <sampledTaxa spec="Taxon" id="Agriarctos_spp_5.006" />
+        <sampledTaxa spec="Taxon" id="Kretzoiarctos_beatrix_11.69" />
+        <sampledTaxa spec="Taxon" id="Ursus_abstrusus_4.27" />
+    </operator>
+
+    <operator id="SAWilsonBaldingFBD.t:bears" spec="SAWilsonBalding" tree="@Tree.t:bears" weight="10.0"/>
+
+    <operator id="SAWideFBD.t:bears" spec="SAExchange" isNarrow="false" tree="@Tree.t:bears" weight="10.0"/>
+
+    <operator id="SANarrowFBD.t:bears" spec="SAExchange" tree="@Tree.t:bears" weight="10.0"/>
+
+    <operator id="SAUniformOperatorFBD.t:bears" spec="SAUniform" tree="@Tree.t:bears" weight="20.0"/>
+
+    <operator id="SATreeRootScalerFBD.t:bears" spec="SAScaleOperator" rootOnly="true" scaleFactor="0.95" tree="@Tree.t:bears" weight="1.0"/>
+
+    <operator id="SATreeScalerFBD.t:bears" spec="SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:bears" weight="3.0"/>
+
+    <logger id="tracelog" fileName="bears.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <log idref="posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+        <log idref="treeLikelihood.bears"/>
+        <log id="TreeHeight.t:bears" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:bears"/>
+        <log idref="ucldMean.c:bears"/>
+        <log idref="ucldStdev.c:bears"/>
+        <log id="rate.c:bears" spec="beast.evolution.branchratemodel.RateStatistic" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
+        <log idref="FBD.t:bears"/>
+        <log idref="originFBD.t:bears"/>
+        <log idref="diversificationRateFBD.t:bears"/>
+        <log idref="turnoverFBD.t:bears"/>
+        <log idref="samplingProportionFBD.t:bears"/>
+        <log id="SACountFBD.t:bears" spec="beast.evolution.tree.SampledAncestorLogger" tree="@Tree.t:bears"/>
+        <log idref="Canidae.prior"/>
+    </logger>
+
+    <logger id="screenlog" logEvery="100000">
+        <log idref="posterior"/>
+        <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+    </logger>
+
+    <logger id="treelog.t:bears" fileName="$(tree).trees" logEvery="1000" mode="tree">
+        <log id="TreeWithMetaDataLogger.t:bears" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
+    </logger>
+
+</run>
+
+</beast>

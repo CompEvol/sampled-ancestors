@@ -1,6 +1,7 @@
 package beast.evolution.operators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import beast.core.Description;
@@ -29,13 +30,16 @@ public class LeafToSampledAncestorJump extends TreeOperator {
     public Input<RealParameter> rInput =
             new Input<RealParameter>("removalProbability", "The probability of an individual to be removed from the process immediately after the sampling");
     public Input<List<Taxon>> sampledTaxa =
-    		new Input<List<Taxon>>("sampledTaxa", "Taxa that this operator should be allowed to let jump between sampled ancestor and leaf. Default: All non-recent leaves.");
+    		new Input<List<Taxon>>(
+    				"sampledTaxa",
+    				"Taxa that this operator should be allowed to let jump between sampled ancestor and leaf. Default: All non-recent leaves.",
+    				new ArrayList<>());
 
-    protected List<Integer> validLeaves;
+    protected List<Integer> validLeaves = new ArrayList<Integer>();
     
     @Override
     public void initAndValidate() {
-    	if (sampledTaxa.get() == null) {
+    	if (sampledTaxa.get().size() == 0) {
     		validLeaves = new ArrayList<Integer>(treeInput.get().getLeafNodeCount());
             for (Node leaf: treeInput.get().getExternalNodes()) {
             	if (leaf.getHeight() > 1e-6) {
@@ -57,6 +61,8 @@ public class LeafToSampledAncestorJump extends TreeOperator {
         		i += 1;
             }
     	}
+    	// System.out.println("Nodes to be jumped:");
+    	// System.out.println(Arrays.toString(validLeaves.toArray()));
     }
 
     @Override
