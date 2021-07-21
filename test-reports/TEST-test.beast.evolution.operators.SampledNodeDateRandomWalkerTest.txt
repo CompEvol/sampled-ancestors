@@ -1,0 +1,5 @@
+Testsuite: test.beast.evolution.operators.SampledNodeDateRandomWalkerTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.141 sec
+
+Testcase: testSwitchWOffset took 0.083 sec
+Testcase: testHeightWOffset took 0.025 sec

@@ -1,0 +1,4 @@
+Testsuite: test.beast.evolution.tree.TreeWOffsetTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.067 sec
+
+Testcase: testTree took 0.049 sec

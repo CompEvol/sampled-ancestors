@@ -1,0 +1,6 @@
+Testsuite: test.beast.evolution.speciation.SABirthDeathModelTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.15 sec
+
+Testcase: testLikelihoodCalculationSimple took 0.095 sec
+Testcase: testLikelihoodCalculation1 took 0.011 sec
+Testcase: testLikelihoodCalculation2 took 0.026 sec
