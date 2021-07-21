@@ -1,5 +1,7 @@
 package beast.evolution.tree;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -7,12 +9,13 @@ import java.util.Set;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.util.Log;
+import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
 
 public class RandomTreeWithSA extends RandomTree {
 
-	final public Input<TaxonSet> startAsSampledAncestors = new Input<>("sampledAncestor",
-			"Taxa to start as sampled ancestors", Validate.REQUIRED);
+	final public Input<List<Taxon>> startAsSampledAncestors = new Input<>("sampledAncestor",
+			"Taxa to start as sampled ancestors", new ArrayList<Taxon>());
 
 	@Override
 	public void initAndValidate() {
@@ -22,9 +25,14 @@ public class RandomTreeWithSA extends RandomTree {
 		} else {
 			taxa.addAll(m_taxonset.get().asStringList());
 		}
-		if (!taxa.containsAll(startAsSampledAncestors.get().getTaxaNames())) {
-			Set<String> remaining = startAsSampledAncestors.get().getTaxaNames();
-			remaining.removeAll(taxaInput.get().getTaxaNames());
+		
+		Set<String> startTaxa = new LinkedHashSet<>();
+		for (Taxon taxon: startAsSampledAncestors.get()) {
+			startTaxa.add(taxon.getID());
+		}
+		if (!taxa.containsAll(startTaxa)) {
+			Set<String> remaining = startTaxa;
+			remaining.removeAll(taxa);
 			Log.warning("WARNING: Not all sampledAncestor taxa were part of the alignment taxa. Missing taxa "
 					+ remaining.toString() + " will not be forced to be sampled ancestors.");
 		}
@@ -35,7 +43,11 @@ public class RandomTreeWithSA extends RandomTree {
 	public void initStateNodes() {
 		super.initStateNodes();
 
-		List<String> sa = startAsSampledAncestors.get().asStringList();
+		List<String> sa = new ArrayList<String>();
+				
+		for (Taxon taxon: startAsSampledAncestors.get()) {
+			sa.add(taxon.getID());
+		}
 
 		for (Node leaf : root.getAllLeafNodes()) {
 
