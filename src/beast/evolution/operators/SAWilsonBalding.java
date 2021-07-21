@@ -157,11 +157,12 @@ public class SAWilsonBalding extends TreeOperator {
                 jP.removeChild(j);  // remove <jP, j>
                 jP.addChild(iP);   // add <jP, iP>
                 jP.makeDirty(Tree.IS_FILTHY);
+                iP.addChild(j);
             } else {
                 iP.setParent(null); // completely remove <PiP, iP>
-                tree.setRootOnly(iP);
+                iP.addChild(j);
+                tree.setRoot(iP);
             }
-            iP.addChild(j);
             iP.makeDirty(Tree.IS_FILTHY);
             j.makeDirty(Tree.IS_FILTHY);
         }
