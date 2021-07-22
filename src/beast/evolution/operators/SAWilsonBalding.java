@@ -7,180 +7,188 @@ import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
 
 /**
- *@author Alexandra Gavryushkina
+ * @author Alexandra Gavryushkina
  */
 public class SAWilsonBalding extends TreeOperator {
 
-    public Input<RealParameter> rInput =
-            new Input<RealParameter>("removalProbability", "The probability of an individual to become noninfectious immediately after the sampling");
+	public Input<RealParameter> rInput = new Input<RealParameter>("removalProbability",
+			"The probability of an individual to become noninfectious immediately after the sampling");
+	public Input<Boolean> keepSAInput = new Input<Boolean>("keepSA",
+			"Avoid moving the descendant of a sampled ancestor away, turning it into a non-SA tip", false);
 
-    @Override
-    public void initAndValidate() {
-    }
+	@Override
+	public void initAndValidate() {
+	}
 
-    /**
-     * @return log of Hastings Ratio, or Double.NEGATIVE_INFINITY if proposal should not be accepted *
-     */
-    @Override
-    public double proposal() {
+	/**
+	 * @return log of Hastings Ratio, or Double.NEGATIVE_INFINITY if proposal should
+	 *         not be accepted *
+	 */
+	@Override
+	public double proposal() {
 
-        Tree tree = treeInput.get(this);
+		Tree tree = treeInput.get(this);
 
-        //double x0 = 10;
+		// double x0 = 10;
 
-        double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;
-        int newDimension, oldDimension;
+		double oldMinAge, newMinAge, newRange, oldRange, newAge, fHastingsRatio, DimensionCoefficient;
+		int newDimension, oldDimension;
 
-        // choose a random node avoiding root and leaves that are direct ancestors
-        int nodeCount = tree.getNodeCount();
-        Node i;
+		// choose a random node avoiding root and leaves that are direct ancestors
+		int nodeCount = tree.getNodeCount();
+		Node i;
 
-        do {
-            i = tree.getNode(Randomizer.nextInt(nodeCount));
-        } while (i.isRoot() || i.isDirectAncestor());
+		// There have been issues with this assumption in this package, so let's assert
+		// it explicitly.
+		assert tree.getNode(nodeCount - 1).isRoot();
 
-        Node iP = i.getParent();
-        Node CiP;
-        if (iP.getLeft().getNr() == i.getNr()) {
-            CiP = iP.getRight();
-        } else {
-            CiP = iP.getLeft();
-        }
+		do {
+			i = tree.getNode(Randomizer.nextInt(nodeCount - 1));
+		} while (i.isDirectAncestor());
 
-        // make sure that there is at least one candidate edge to attach node iP to
-        if (iP.getParent() == null && CiP.getHeight() <= i.getHeight()) {
-            return Double.NEGATIVE_INFINITY;
-        }
+		Node iP = i.getParent();
+		Node CiP = getOtherChild(iP, i);
+		if (keepSAInput.get() && CiP.isDirectAncestor()) {
+			return Double.NEGATIVE_INFINITY;			
+		}
 
-        // choose another random node to insert i above or to attach i to this node if it is a leaf
-        Node j;
-        Node jP;
+		// make sure that there is at least one candidate edge to attach node iP to
+		if (iP.getParent() == null && CiP.getHeight() <= i.getHeight()) {
+			return Double.NEGATIVE_INFINITY;
+		}
 
-        final int leafNodeCount = tree.getLeafNodeCount();
+		// choose another random node to insert i above or to attach i to this node if
+		// it is a leaf
+		Node j;
+		Node jP;
 
-        if (leafNodeCount != tree.getExternalNodes().size()) {
-            System.out.println("node counts are incorrect. NodeCount = " + nodeCount + " leafNodeCount = " + leafNodeCount + " exteranl node count = " + tree.getExternalNodes().size());
-        }
+		final int leafNodeCount = tree.getLeafNodeCount();
 
-        // make sure that the target branch <jP, j> or target leaf j is above the subtree being moved
+		if (leafNodeCount != tree.getExternalNodes().size()) {
+			System.out.println("node counts are incorrect. NodeCount = " + nodeCount + " leafNodeCount = "
+					+ leafNodeCount + " external node count = " + tree.getExternalNodes().size());
+		}
 
-        int nodeNumber;
-        double newParentHeight;
-        boolean attachingToLeaf;
-        boolean adjacentEdge;
-        //boolean adjacentLeaf;
-        do {
-            adjacentEdge = false;
-            //adjacentLeaf = false;
-            nodeNumber = Randomizer.nextInt(nodeCount + leafNodeCount);
-            if (nodeNumber < nodeCount) {
-                j = tree.getNode(nodeNumber);
-                jP = j.getParent();
-                if (jP != null)
-                    newParentHeight = jP.getHeight();
-                else newParentHeight = Double.POSITIVE_INFINITY;
-                if (!CiP.isDirectAncestor())
-                    adjacentEdge = (CiP.getNr() == j.getNr() || iP.getNr() == j.getNr());
-                attachingToLeaf = false;
-            } else {
-                j = tree.getExternalNodes().get(nodeNumber - nodeCount);
-                jP = j.getParent();
-                newParentHeight = j.getHeight();
-                attachingToLeaf = true;
-                //adjacentLeaf = (iP.getNr() == j.getNr());
-            }
-        } while (j.isDirectAncestor() || (newParentHeight <= i.getHeight()) || (i.getNr() == j.getNr()) || adjacentEdge /*|| adjacentLeaf */);
+		// make sure that the target branch <jP, j> or target leaf j is above the
+		// subtree being moved
 
+		int nodeNumber;
+		double newParentHeight;
+		boolean attachingToLeaf;
+		boolean adjacentEdge;
+		// boolean adjacentLeaf;
+		do {
+			adjacentEdge = false;
+			// adjacentLeaf = false;
+			nodeNumber = Randomizer.nextInt(nodeCount + leafNodeCount);
+			if (nodeNumber < nodeCount) {
+				j = tree.getNode(nodeNumber);
+				jP = j.getParent();
+				if (jP != null)
+					newParentHeight = jP.getHeight();
+				else
+					newParentHeight = Double.POSITIVE_INFINITY;
+				if (!CiP.isDirectAncestor())
+					adjacentEdge = (CiP.getNr() == j.getNr() || iP.getNr() == j.getNr());
+				attachingToLeaf = false;
+			} else {
+				j = tree.getExternalNodes().get(nodeNumber - nodeCount);
+				jP = j.getParent();
+				newParentHeight = j.getHeight();
+				attachingToLeaf = true;
+				// adjacentLeaf = (iP.getNr() == j.getNr());
+			}
+		} while (j.isDirectAncestor() || (newParentHeight <= i.getHeight()) || (i.getNr() == j.getNr())
+				|| adjacentEdge /* || adjacentLeaf */);
 
-        if (attachingToLeaf && iP.getNr() == j.getNr()) {
-            System.out.println("Proposal failed because j = iP");
-            return Double.NEGATIVE_INFINITY;
-        }
+		if (attachingToLeaf && iP.getNr() == j.getNr()) {
+			System.out.println("Proposal failed because j = iP");
+			return Double.NEGATIVE_INFINITY;
+		}
 
-        if (jP != null && jP.getNr() == i.getNr()) {
-            System.out.println("Proposal failed because jP = i. Heights of i = " + i.getHeight() + " Height of jP = " + jP.getHeight());
-            return Double.NEGATIVE_INFINITY;
-        }
+		if (jP != null && jP.getNr() == i.getNr()) {
+			System.out.println("Proposal failed because jP = i. Heights of i = " + i.getHeight() + " Height of jP = "
+					+ jP.getHeight());
+			return Double.NEGATIVE_INFINITY;
+		}
 
-        oldDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
+		oldDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
 
-        //Hastings numerator calculation + newAge of iP
-        if (attachingToLeaf) {
-            newRange = 1;
-            newAge = j.getHeight();
-        } else {
-            if (jP != null) {
-                newMinAge = Math.max(i.getHeight(), j.getHeight());
-                newRange = jP.getHeight() - newMinAge;
-                newAge = newMinAge + (Randomizer.nextDouble() * newRange);
-            } else {
-                double randomNumberFromExponential;
-                randomNumberFromExponential = Randomizer.nextExponential(1);
-                //newRange = x0 - j.getHeight();
-                //randomNumberFromExponential = Randomizer.nextDouble() * newRange;
-                newRange = Math.exp(randomNumberFromExponential);
-                newAge = j.getHeight() + randomNumberFromExponential;
-            }
-        }
+		// Hastings numerator calculation + newAge of iP
+		if (attachingToLeaf) {
+			newRange = 1;
+			newAge = j.getHeight();
+		} else {
+			if (jP != null) {
+				newMinAge = Math.max(i.getHeight(), j.getHeight());
+				newRange = jP.getHeight() - newMinAge;
+				newAge = newMinAge + (Randomizer.nextDouble() * newRange);
+			} else {
+				double randomNumberFromExponential;
+				randomNumberFromExponential = Randomizer.nextExponential(1);
+				// newRange = x0 - j.getHeight();
+				// randomNumberFromExponential = Randomizer.nextDouble() * newRange;
+				newRange = Math.exp(randomNumberFromExponential);
+				newAge = j.getHeight() + randomNumberFromExponential;
+			}
+		}
 
-        Node PiP = iP.getParent();
+		Node PiP = iP.getParent();
 
-        //Hastings denominator calculation
-        if (CiP.isDirectAncestor()) {
-            oldRange = 1;
-        }
-        else {
-            oldMinAge = Math.max(i.getHeight(), CiP.getHeight());
-            if (PiP != null) {
-                oldRange = PiP.getHeight() - oldMinAge;
-            } else {
-                oldRange = Math.exp(iP.getHeight() - oldMinAge);
-                //oldRange = x0 - oldMinAge;
-            }
-        }
+		// Hastings denominator calculation
+		if (CiP.isDirectAncestor()) {
+			oldRange = 1;
+		} else {
+			oldMinAge = Math.max(i.getHeight(), CiP.getHeight());
+			if (PiP != null) {
+				oldRange = PiP.getHeight() - oldMinAge;
+			} else {
+				oldRange = Math.exp(iP.getHeight() - oldMinAge);
+				// oldRange = x0 - oldMinAge;
+			}
+		}
 
-        //update
-        if (iP.getNr() != j.getNr() && CiP.getNr() != j.getNr()) {
-            iP.removeChild(CiP); //remove <iP, CiP>
+		// update
+		if (iP.getNr() != j.getNr() && CiP.getNr() != j.getNr()) {
+			iP.removeChild(CiP); // remove <iP, CiP>
 
-            if (PiP != null) {
-                PiP.removeChild(iP);   // remove <PiP,iP>
-                PiP.addChild(CiP);   // add <PiP, CiP>
-                PiP.makeDirty(Tree.IS_FILTHY);
-                CiP.makeDirty(Tree.IS_FILTHY);
-            } else {
-                CiP.setParent(null); // completely remove <iP, CiP>
-                tree.setRootOnly(CiP);
-            }
+			if (PiP != null) {
+				PiP.removeChild(iP); // remove <PiP,iP>
+				PiP.addChild(CiP); // add <PiP, CiP>
+				PiP.makeDirty(Tree.IS_FILTHY);
+				CiP.makeDirty(Tree.IS_FILTHY);
+			} else {
+				CiP.setParent(null); // completely remove <iP, CiP>
+				tree.setRootOnly(CiP);
+			}
 
-            if (jP != null) {
-                jP.removeChild(j);  // remove <jP, j>
-                jP.addChild(iP);   // add <jP, iP>
-                jP.makeDirty(Tree.IS_FILTHY);
-                iP.addChild(j);
-            } else {
-                iP.setParent(null); // completely remove <PiP, iP>
-                iP.addChild(j);
-                tree.setRoot(iP);
-            }
-            iP.makeDirty(Tree.IS_FILTHY);
-            j.makeDirty(Tree.IS_FILTHY);
-        }
-        iP.setHeight(newAge);
+			if (jP != null) {
+				jP.removeChild(j); // remove <jP, j>
+				jP.addChild(iP); // add <jP, iP>
+				jP.makeDirty(Tree.IS_FILTHY);
+				iP.addChild(j);
+			} else {
+				iP.setParent(null); // completely remove <PiP, iP>
+				iP.addChild(j);
+				tree.setRoot(iP);
+			}
+			iP.makeDirty(Tree.IS_FILTHY);
+			j.makeDirty(Tree.IS_FILTHY);
+		}
+		iP.setHeight(newAge);
 
-        //make sure that either there are no direct ancestors or r<1
-        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
-            return Double.NEGATIVE_INFINITY;
-        }
+		// make sure that either there are no direct ancestors or r<1
+		if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1)) {
+			return Double.NEGATIVE_INFINITY;
+		}
 
-        newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
-        DimensionCoefficient = (double) oldDimension / newDimension;
+		newDimension = nodeCount - tree.getDirectAncestorNodeCount() - 1;
+		DimensionCoefficient = (double) oldDimension / newDimension;
 
-        fHastingsRatio = Math.abs(DimensionCoefficient * newRange / oldRange);
+		fHastingsRatio = Math.abs(DimensionCoefficient * newRange / oldRange);
 
-        return Math.log(fHastingsRatio);
+		return Math.log(fHastingsRatio);
 
-    }
-
+	}
 
 }
