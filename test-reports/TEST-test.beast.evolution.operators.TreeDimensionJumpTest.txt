@@ -1,0 +1,13 @@
+Testsuite: test.beast.evolution.operators.TreeDimensionJumpTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.079 sec
+------------- Standard Output ---------------
+Tree was = ((0:1.0,1:0.0):3.0,2:2.0):0.0
+Proposed tree = ((0:1.5583203577630607,1:0.5583203577630607):2.4416796422369393,2:2.0):0.0
+Log Hastings ratio = 1.0986122886681098
+Tree was = ((0:1.0,1:0.0):1.0,2:0.0):0.0
+Proposed tree = ((0:1.0,1:0.0):1.0,2:0.0):0.0
+Log Hastings ratio = -Infinity
+------------- ---------------- ---------------
+
+Testcase: testOperator2 took 0.051 sec
+Testcase: testOperator1 took 0.005 sec
