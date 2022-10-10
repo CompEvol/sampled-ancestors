@@ -4,13 +4,13 @@ import org.junit.Test;
 
 import beast.base.evolution.alignment.Taxon;
 import beast.base.evolution.alignment.TaxonSet;
-import beast.evolution.operators.SampledNodeDateRandomWalker;
-import beast.evolution.tree.SamplingDate;
 import beast.base.evolution.tree.Tree;
-import beast.evolution.tree.TreeWOffset;
 import beast.base.util.Randomizer;
-import beast.util.ZeroBranchSATreeParser;
 import junit.framework.TestCase;
+import sa.evolution.operators.SampledNodeDateRandomWalker;
+import sa.evolution.tree.SamplingDate;
+import sa.evolution.tree.TreeWOffset;
+import sa.util.ZeroBranchSATreeParser;
 
 public class SampledNodeDateRandomWalkerTest extends TestCase {
 

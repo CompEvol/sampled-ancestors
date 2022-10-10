@@ -1,14 +1,14 @@
 package test.beast.evolution.speciation;
 
 import junit.framework.TestCase;
+import sa.evolution.speciation.SABirthDeathModel;
+import sa.evolution.tree.TreeWOffset;
+import sa.util.ZeroBranchSATreeParser;
 
 import org.junit.Test;
 
 import beast.base.inference.parameter.RealParameter;
-import beast.evolution.speciation.SABirthDeathModel;
 import beast.base.evolution.tree.Tree;
-import beast.evolution.tree.TreeWOffset;
-import beast.util.ZeroBranchSATreeParser;
 
 /**
  * @author Alexei Drummond

@@ -7,6 +7,7 @@
 
     <!-- Location to check for local copy of beast2 repository -->
     <property name="beastDir" location="../beast2"/>
+    <property name="BeastFXDir" location="../BeastFX"/>
 
     <!-- Location to check for local copy of BEASTLabs repository -->
     <property name="beastLabsDir" location="../BEASTLabs"/>
@@ -18,7 +19,7 @@
     <!-- Directories necessary for all BEAST 2 packages -->
     <property name="doc" location="doc"/>
     <property name="examples" location="examples"/>
-    <property name="templates" location="templates"/>
+    <property name="fxtemplates" location="fxtemplates"/>
 
     <!-- BEAST branch and version to build against
          (only different for version tags because of
@@ -106,6 +107,25 @@
                 <fileset dir="${beastDir}/lib" includes="*.jar"/>
             </classpath>
         </javac>
+        <javac target="${targetVersion}" source="${sourceVersion}"
+            srcdir="${beastDir}/test"
+            destdir="${build-beast}" includeantruntime="false">
+            <classpath>
+                <pathelement path="${classpath}"/>
+                <fileset dir="${beastDir}/lib" includes="*.jar"/>
+                <fileset dir="${beastDir}/lib/junit" includes="*.jar"/>
+            </classpath>
+        </javac>
+        <javac target="${targetVersion}" source="${sourceVersion}"
+            srcdir="${BeastFXDir}/src"
+            destdir="${build-beast}" includeantruntime="false">
+            <classpath>
+                <pathelement path="${classpath}"/>
+                <fileset dir="${beastDir}/lib" includes="*.jar"/>
+                <fileset dir="${beastDir}/lib/junit" includes="*.jar"/>
+                <fileset dir="${BeastFXDir}/locallib" includes="*.jar"/>
+            </classpath>
+        </javac>
         <jar jarfile="${build-lib}/beast2.jar" basedir="${build-beast}" />
         <copy todir="${build-lib}">
             <fileset dir="${beastDir}/lib" includes="*.jar"/>
@@ -158,6 +178,7 @@
         <javac target="${targetVersion}" source="${sourceVersion}"
             srcdir="${beastLabsDir}/src"
             destdir="${build-beastlabs}" includeantruntime="false">
+            <include name="beastlabs/**/**" />
             <classpath>
                 <pathelement path="${classpath}"/>
                 <fileset dir="${beastLabsDir}/lib" includes="*.jar"/>
@@ -238,7 +259,7 @@
 
         <mkdir dir="${pack}"/>
         <mkdir dir="${pack}/examples"/>
-        <mkdir dir="${pack}/templates"/>
+        <mkdir dir="${pack}/fxtemplates"/>
         <mkdir dir="${pack}/lib"/>
         <mkdir dir="${pack}/doc"/>
 
@@ -261,9 +282,9 @@
             <fileset dir="${examples}" includes="**/*" />
         </copy>
 
-        <mkdir dir="${templates}" />
-        <copy todir="${pack}/templates">
-            <fileset dir="${templates}" includes="*.xml" />
+        <mkdir dir="${fxtemplates}" />
+        <copy todir="${pack}/fxtemplates">
+            <fileset dir="${fxtemplates}" includes="*.xml" />
         </copy>
 
         <mkdir dir="${doc}" />
@@ -356,7 +377,7 @@
         <mkdir dir="${test}"/>
         <mkdir dir="${lib}"/>
         <mkdir dir="${examples}"/>
-        <mkdir dir="${templates}"/>
+        <mkdir dir="${fxtemplates}"/>
         <mkdir dir="${doc}"/>
 
         <echo/>
@@ -367,7 +388,7 @@
         <echo>${test} - your junit tests go here (You _are_ going to write, those, aren't you!)</echo>
         <echo>${doc} - your documentation goes here</echo>
         <echo>${examples} - your example XML scripts go here</echo>
-        <echo>${templates} - your BEAUti templates go here</echo>
+        <echo>${fxtemplates} - your BEAUti fxtemplates go here</echo>
         <echo/>
         <echo>To build your package, just type "ant" at the command line.</echo>
         <echo/>

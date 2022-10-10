@@ -111,10 +111,10 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
     </init>
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
       <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
-        <distribution id="FBD.t:rode05_mod" spec="beast.evolution.speciation.SABirthDeathModel" conditionOnSampling="true" diversificationRate="@diversificationRateFBD.t:rode05_mod" origin="@originFBD.t:rode05_mod" samplingProportion="@samplingProportionFBD.t:rode05_mod" tree="@Tree.t:rode05_mod" turnover="@turnoverFBD.t:rode05_mod">
+        <distribution id="FBD.t:rode05_mod" spec="sa.evolution.speciation.SABirthDeathModel" conditionOnSampling="true" diversificationRate="@diversificationRateFBD.t:rode05_mod" origin="@originFBD.t:rode05_mod" samplingProportion="@samplingProportionFBD.t:rode05_mod" tree="@Tree.t:rode05_mod" turnover="@turnoverFBD.t:rode05_mod">
           <parameter id="rFBD.t:rode05_mod" lower="0.0" name="removalProbability" upper="1.0">0.0</parameter>
           <parameter id="rhoFBD.t:rode05_mod" estimate="false" lower="0.0" name="rho" upper="1.0">1.0</parameter>
-          <treeWOffset id="treeWoffset" spec="beast.base.evolution.tree.TreeWOffset" tree="@Tree.t:rode05_mod" offset="367.762481269822"/>
+          <treeWOffset id="treeWoffset" spec="sa.evolution.tree.TreeWOffset" tree="@Tree.t:rode05_mod" offset="367.762481269822"/>
         </distribution>
         <prior id="ClockPrior.c:rode05_mod" name="distribution" x="@clockRate.c:rode05_mod">
           <LogNormal id="LogNormalDistributionModel.1" meanInRealSpace="true" name="distr">
@@ -140,7 +140,7 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
           <siteModel id="SiteModel.s:rode05_mod" spec="SiteModel">
             <parameter id="mutationRate.s:rode05_mod" estimate="false" name="mutationRate">1.0</parameter>
             <parameter id="gammaShape.s:rode05_mod" estimate="false" name="shape">1.0</parameter>
-            <substModel id="LewisMK.s:rode05_mod" spec="LewisMK" datatype="@StandardData"/>
+            <substModel id="LewisMK.s:rode05_mod" spec="morphmodels.evolution.substitutionmodel.LewisMK" datatype="@StandardData"/>
           </siteModel>
           <branchRateModel id="StrictClock.c:rode05_mod" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:rode05_mod"/>
         </distribution>
@@ -150,13 +150,13 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
     <operator id="divRateScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@diversificationRateFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
     <operator id="turnoverScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@turnoverFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
     <operator id="samplingPScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@samplingProportionFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
-    <operator id="LeafToSAFBD.t:rode05_mod" spec="LeafToSampledAncestorJump" tree="@Tree.t:rode05_mod" weight="10.0"/>
-    <operator id="SAWilsonBaldingFBD.t:rode05_mod" spec="SAWilsonBalding" tree="@Tree.t:rode05_mod" weight="10.0"/>
-    <operator id="SAWideFBD.t:rode05_mod" spec="SAExchange" isNarrow="false" tree="@Tree.t:rode05_mod" weight="10.0"/>
-    <operator id="SANarrowFBD.t:rode05_mod" spec="SAExchange" tree="@Tree.t:rode05_mod" weight="10.0"/>
-    <operator id="SAUniformOperatorFBD.t:rode05_mod" spec="SAUniform" tree="@Tree.t:rode05_mod" weight="20.0"/>
-    <operator id="SATreeRootScalerFBD.t:rode05_mod" spec="SAScaleOperator" rootOnly="true" scaleFactor="0.95" tree="@Tree.t:rode05_mod" weight="1.0"/>
-    <operator id="SATreeScalerFBD.t:rode05_mod" spec="SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:rode05_mod" weight="3.0"/>
+    <operator id="LeafToSAFBD.t:rode05_mod" spec="sa.evolution.operators.LeafToSampledAncestorJump" tree="@Tree.t:rode05_mod" weight="10.0"/>
+    <operator id="SAWilsonBaldingFBD.t:rode05_mod" spec="sa.evolution.operators.SAWilsonBalding" tree="@Tree.t:rode05_mod" weight="10.0"/>
+    <operator id="SAWideFBD.t:rode05_mod" spec="sa.evolution.operators.SAExchange" isNarrow="false" tree="@Tree.t:rode05_mod" weight="10.0"/>
+    <operator id="SANarrowFBD.t:rode05_mod" spec="sa.evolution.operators.SAExchange" tree="@Tree.t:rode05_mod" weight="10.0"/>
+    <operator id="SAUniformOperatorFBD.t:rode05_mod" spec="sa.evolution.operators.SAUniform" tree="@Tree.t:rode05_mod" weight="20.0"/>
+    <operator id="SATreeRootScalerFBD.t:rode05_mod" spec="sa.evolution.operators.SAScaleOperator" rootOnly="true" scaleFactor="0.95" tree="@Tree.t:rode05_mod" weight="1.0"/>
+    <operator id="SATreeScalerFBD.t:rode05_mod" spec="sa.evolution.operators.SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:rode05_mod" weight="3.0"/>
     <operator id="ucldMeanScaler.c:rode05_mod" spec="ScaleOperator" parameter="@clockRate.c:rode05_mod" scaleFactor="0.75" weight="3.0"/>
     <operator id="relaxedUpDownOperator.c:rode05_mod" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
       <up idref="clockRate.c:rode05_mod"/>
@@ -174,8 +174,8 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
       <log idref="turnoverFBD.t:rode05_mod"/>
       <log idref="samplingProportionFBD.t:rode05_mod"/>
       <log idref="originFBD.t:rode05_mod"/>
-      <log id="SACountFBD.t:rode05_mod" spec="beast.evolution.tree.SampledAncestorLogger" tree="@Tree.t:rode05_mod"/>
-      <log id="offset" spec="beast.evolution.tree.OffsetLogger" treeWOffset="@treeWoffset"/>
+      <log id="SACountFBD.t:rode05_mod" spec="sa.evolution.tree.SampledAncestorLogger" tree="@Tree.t:rode05_mod"/>
+      <log id="offset" spec="sa.evolution.tree.OffsetLogger" treeWOffset="@treeWoffset"/>
     </logger>
     <logger id="screenlog" logEvery="50000">
       <log idref="posterior"/>
@@ -186,31 +186,31 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
     <logger id="treelog.t:rode05_mod" fileName="brachiopods_FBD_interval_ages.trees" logEvery="10000" mode="tree">
       <log id="TreeWithMetaDataLogger.t:rode05_mod" spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@Tree.t:rode05_mod"/>
     </logger>
-    <operator spec="SampledNodeDateRandomWalker" windowSize="10." tree="@Tree.t:rode05_mod" treeWOffset="@treeWoffset" weight="5.">
-      <samplingDates id="samplingDate.Floweria_anomala1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_anomala" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_arctostriata1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_arctostriata" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_becraftensis1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_becraftensis" lower="407.6" upper="410.8"/>
-      <samplingDates id="samplingDate.Floweria_chemungensis1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_chemungensis" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_chemungensis2" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_chemungensis" lower="372.2" upper="382.7"/>
-      <samplingDates id="samplingDate.Floweria_chemungensis3" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_chemungensis" lower="358.9" upper="372.2"/>
-      <samplingDates id="samplingDate.Floweria_cornucopia1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_cornucopia" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_crassa1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_crassa" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_deformis1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_deformis" lower="393.3" upper="407.6"/>
-      <samplingDates id="samplingDate.Floweria_iowensis1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_iowensis" lower="372.2" upper="382.7"/>
-      <samplingDates id="samplingDate.Floweria_lirella1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_lirella" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_magnacicatrix1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_magnacicatrix" lower="372.2" upper="382.7"/>
-      <samplingDates id="samplingDate.Floweria_pandora1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_pandora" lower="393.3" upper="407.6"/>
-      <samplingDates id="samplingDate.Floweria_perversa1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_perversa" lower="393.3" upper="407.6"/>
-      <samplingDates id="samplingDate.Floweria_perversa2" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_perversa" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Floweria_prava1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_prava" lower="372.2" upper="382.7"/>
-      <samplingDates id="samplingDate.Floweria_transversalis1" spec="beast.evolution.tree.SamplingDate" taxon="@Floweria_transversalis" lower="372.2" upper="382.7"/>
-      <samplingDates id="samplingDate.Schuchertella_lens1" spec="beast.evolution.tree.SamplingDate" taxon="@Schuchertella_lens" lower="358.9" upper="372.2"/>
-      <samplingDates id="samplingDate.Schuchertella_percha1" spec="beast.evolution.tree.SamplingDate" taxon="@Schuchertella_percha" lower="358.9" upper="372.2"/>
-      <samplingDates id="samplingDate.Xystostrophia_woolworthana1" spec="beast.evolution.tree.SamplingDate" taxon="@Xystostrophia_woolworthana" lower="410.8" upper="419.2"/>
-      <samplingDates id="samplingDate.Xystostrophia_umbraculum1" spec="beast.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="387.7" upper="393.3"/>
-      <samplingDates id="samplingDate.Xystostrophia_umbraculum2" spec="beast.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="382.7" upper="387.7"/>
-      <samplingDates id="samplingDate.Xystostrophia_umbraculum3" spec="beast.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="372.2" upper="382.7"/>
-      <samplingDates id="samplingDate.Xystostrophia_umbraculum4" spec="beast.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="358.9" upper="372.2"/>
+    <operator spec="sa.evolution.operators.SampledNodeDateRandomWalker" windowSize="10." tree="@Tree.t:rode05_mod" treeWOffset="@treeWoffset" weight="5.">
+      <samplingDates id="samplingDate.Floweria_anomala1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_anomala" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_arctostriata1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_arctostriata" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_becraftensis1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_becraftensis" lower="407.6" upper="410.8"/>
+      <samplingDates id="samplingDate.Floweria_chemungensis1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_chemungensis" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_chemungensis2" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_chemungensis" lower="372.2" upper="382.7"/>
+      <samplingDates id="samplingDate.Floweria_chemungensis3" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_chemungensis" lower="358.9" upper="372.2"/>
+      <samplingDates id="samplingDate.Floweria_cornucopia1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_cornucopia" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_crassa1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_crassa" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_deformis1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_deformis" lower="393.3" upper="407.6"/>
+      <samplingDates id="samplingDate.Floweria_iowensis1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_iowensis" lower="372.2" upper="382.7"/>
+      <samplingDates id="samplingDate.Floweria_lirella1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_lirella" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_magnacicatrix1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_magnacicatrix" lower="372.2" upper="382.7"/>
+      <samplingDates id="samplingDate.Floweria_pandora1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_pandora" lower="393.3" upper="407.6"/>
+      <samplingDates id="samplingDate.Floweria_perversa1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_perversa" lower="393.3" upper="407.6"/>
+      <samplingDates id="samplingDate.Floweria_perversa2" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_perversa" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Floweria_prava1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_prava" lower="372.2" upper="382.7"/>
+      <samplingDates id="samplingDate.Floweria_transversalis1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_transversalis" lower="372.2" upper="382.7"/>
+      <samplingDates id="samplingDate.Schuchertella_lens1" spec="sa.evolution.tree.SamplingDate" taxon="@Schuchertella_lens" lower="358.9" upper="372.2"/>
+      <samplingDates id="samplingDate.Schuchertella_percha1" spec="sa.evolution.tree.SamplingDate" taxon="@Schuchertella_percha" lower="358.9" upper="372.2"/>
+      <samplingDates id="samplingDate.Xystostrophia_woolworthana1" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_woolworthana" lower="410.8" upper="419.2"/>
+      <samplingDates id="samplingDate.Xystostrophia_umbraculum1" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="387.7" upper="393.3"/>
+      <samplingDates id="samplingDate.Xystostrophia_umbraculum2" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="382.7" upper="387.7"/>
+      <samplingDates id="samplingDate.Xystostrophia_umbraculum3" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="372.2" upper="382.7"/>
+      <samplingDates id="samplingDate.Xystostrophia_umbraculum4" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="358.9" upper="372.2"/>
       <taxonset id="fossilTaxa" spec="TaxonSet">
         <taxon id="Floweria_anomala" spec="Taxon"/>
         <taxon id="Floweria_arctostriata" spec="Taxon"/>

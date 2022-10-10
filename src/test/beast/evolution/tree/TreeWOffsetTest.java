@@ -3,9 +3,9 @@ package test.beast.evolution.tree;
 import org.junit.Test;
 
 import beast.base.evolution.tree.Tree;
-import beast.evolution.tree.TreeWOffset;
-import beast.util.ZeroBranchSATreeParser;
 import junit.framework.TestCase;
+import sa.evolution.tree.TreeWOffset;
+import sa.util.ZeroBranchSATreeParser;
 
 public class TreeWOffsetTest extends TestCase {
 

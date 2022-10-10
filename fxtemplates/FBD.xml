@@ -4,17 +4,17 @@
     <!-- tree priors -->
     <mergewith point='treePriorTemplates'>
 
-        <subtemplate id='FossilizedBirthDeathModel' class='beast.evolution.speciation.SABirthDeathModel' mainid='FBD.t:$(n)'
-                     suppressInputs='beast.evolution.speciation.SABirthDeathModel.removalProbability,
-	beast.evolution.speciation.SABirthDeathModel.treeIntervals,
-	beast.evolution.speciation.SABirthDeathModel.birthRate,
-	beast.evolution.speciation.SABirthDeathModel.deathRate,
-	beast.evolution.speciation.SABirthDeathModel.samplingRate,
-	beast.evolution.speciation.SABirthDeathModel.conditioningOnRoot,
-	beast.evolution.speciation.SABirthDeathModel.tree'>
+        <subtemplate id='FossilizedBirthDeathModel' class='sa.evolution.speciation.SABirthDeathModel' mainid='FBD.t:$(n)'
+                     suppressInputs='sa.evolution.speciation.SABirthDeathModel.removalProbability,
+	sa.evolution.speciation.SABirthDeathModel.treeIntervals,
+	sampled.evolution.speciation.SABirthDeathModel.birthRate,
+	sa.evolution.speciation.SABirthDeathModel.deathRate,
+	sa.evolution.speciation.SABirthDeathModel.samplingRate,
+	sa.evolution.speciation.SABirthDeathModel.conditioningOnRoot,
+	sa.evolution.speciation.SABirthDeathModel.tree'>
             <![CDATA[
     <!-- Sampled Ancestor Birth Death model-->
-    <SABirthDeathModel spec="beast.evolution.speciation.SABirthDeathModel" id="FBD.t:$(n)" tree="@Tree.t:$(n)" conditionOnRhoSampling="true">
+    <SABirthDeathModel spec="sa.evolution.speciation.SABirthDeathModel" id="FBD.t:$(n)" tree="@Tree.t:$(n)" conditionOnRhoSampling="true">
 		<parameter name="origin" id="originFBD.t:$(n)" value ="100.0" lower="0."/>
 		<parameter name="diversificationRate" id="diversificationRateFBD.t:$(n)" value="1." lower="0."/>
         <parameter name="turnover" id="turnoverFBD.t:$(n)" value=".5" lower="0." upper="1."/>
@@ -46,16 +46,16 @@
 	<operator id='samplingPScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingProportionFBD.t:$(n)"/>
     <operator id='rhoScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@rhoFBD.t:$(n)"/>
 
-    <plugin id='SACountFBD.t:$(n)' spec='beast.evolution.tree.SampledAncestorLogger' tree='@Tree.t:$(n)'/>
+    <plugin id='SACountFBD.t:$(n)' spec='sa.evolution.tree.SampledAncestorLogger' tree='@Tree.t:$(n)'/>
 
     <!-- operators for sampled ancestor trees -->
-    <operator id='LeafToSAFBD.t:$(n)' spec='beast.evolution.operators.LeafToSampledAncestorJump' weight="10" tree="@Tree.t:$(n)"/>
-    <operator id='SAWilsonBaldingFBD.t:$(n)' spec='beast.evolution.operators.SAWilsonBalding' weight="10" tree="@Tree.t:$(n)"/>
-    <operator id='SAWideFBD.t:$(n)' spec='beast.evolution.operators.SAExchange' isNarrow="false" weight="10" tree="@Tree.t:$(n)"/>
-    <operator id='SANarrowFBD.t:$(n)' spec='beast.evolution.operators.SAExchange' weight="10" tree="@Tree.t:$(n)"/>
-    <operator id='SAUniformOperatorFBD.t:$(n)' spec='beast.evolution.operators.SAUniform' weight="20" tree="@Tree.t:$(n)"/>
-    <operator id='SATreeRootScalerFBD.t:$(n)' spec='beast.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="1" tree="@Tree.t:$(n)" rootOnly='true'/>
-    <operator id='SATreeScalerFBD.t:$(n)' spec='beast.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
+    <operator id='LeafToSAFBD.t:$(n)' spec='sa.evolution.operators.LeafToSampledAncestorJump' weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SAWilsonBaldingFBD.t:$(n)' spec='sa.evolution.operators.SAWilsonBalding' weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SAWideFBD.t:$(n)' spec='sa.evolution.operators.SAExchange' isNarrow="false" weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SANarrowFBD.t:$(n)' spec='sa.evolution.operators.SAExchange' weight="10" tree="@Tree.t:$(n)"/>
+    <operator id='SAUniformOperatorFBD.t:$(n)' spec='sa.evolution.operators.SAUniform' weight="20" tree="@Tree.t:$(n)"/>
+    <operator id='SATreeRootScalerFBD.t:$(n)' spec='sa.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="1" tree="@Tree.t:$(n)" rootOnly='true'/>
+    <operator id='SATreeScalerFBD.t:$(n)' spec='sa.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="3" tree="@Tree.t:$(n)"/>
 
 ]]>
             <connect srcID='FBD.t:$(n)' targetID='prior' inputName='distribution' if='inposterior(FBD.t:$(n)) and inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>

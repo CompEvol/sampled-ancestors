@@ -1,9 +1,10 @@
 package test.beast.evolution.operators;
 
-import beast.evolution.operators.TreeDimensionJump;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import junit.framework.TestCase;
+import sa.evolution.operators.TreeDimensionJump;
+
 import org.junit.Test;
 
 /**

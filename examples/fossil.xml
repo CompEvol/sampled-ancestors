@@ -80,7 +80,7 @@
     </trait>
 
     <!-- tree prior model -->
-    <BirthDeathSkylineModel spec="beast.evolution.speciation.SABirthDeathModel" id="birthDeath" tree="@tree" conditionOnRhoSampling="true" conditionOnRoot="true">
+    <BirthDeathSkylineModel spec="sa.evolution.speciation.SABirthDeathModel" id="birthDeath" tree="@tree" conditionOnRhoSampling="true" conditionOnRoot="true">
         <parameter name="diversificationRate" id="diversificationRate" value="1."/>
         <parameter name="turnover" id="turnover" value=".5"/>
         <parameter name="samplingProportion" id="samplingProportion" value="0.7"/>
@@ -131,7 +131,7 @@
              monophyletic in the name it does not mean that any clade has to be monophyletic) is set to true then
              the most recent common ancestor of the clade is not a sampled node and both its children have extant
              descendants. If taxonsetOut is not specified then taxonsetIn is considered to be mohophyletic.-->
-            <distribution id="bears_6.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
+            <distribution id="bears_6.prior" stronglyMonophyletic="true" spec="sa.evolution.tree.CladeConstraint" tree="@tree">
                 <taxonsetIn id="bears_6" spec="TaxonSet">
                     <taxon idref="Helarctos_malayanus" spec="Taxon"/>
                     <taxon idref="Ursus_americanus" spec="Taxon"/>
@@ -153,7 +153,7 @@
             <!-- This constraint specifies the bear clade, which is monophyletic. If a clade is monophyletic then
               the taxonsetOut should include all the taxa but the taxa in taxonsetIn. This also can be specified by simply
              omitting taxonsetOut input as it is done for this constraint -->
-            <distribution id="bears_3.prior" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
+            <distribution id="bears_3.prior" spec="sa.evolution.tree.CladeConstraint" tree="@tree">
                 <taxonsetIn id="bears_3" spec="TaxonSet">
                     <taxon idref="Ailuropoda_melanoleuca" spec="Taxon"/>
                     <taxon idref="Tremarctos_ornatus" spec="Taxon"/>
@@ -179,7 +179,7 @@
             can be used to specify the stronglyMonophyletic input for the root node as it is done in this constraint.
             Since the stronglyMonophyletic input is true, the root is not a sampled node and there are extant samples on
              both sides of the root.  -->
-            <distribution id="whole_group_1.prior" stronglyMonophyletic="true" spec="beast.evolution.tree.CladeConstraint" tree="@tree">
+            <distribution id="whole_group_1.prior" stronglyMonophyletic="true" spec="sa.evolution.tree.CladeConstraint" tree="@tree">
                 <taxonsetIn id="whole_group_1" spec="TaxonSet">
                     <taxon id="Ailuropoda_melanoleuca" spec="Taxon"/>
                     <taxon id="Tremarctos_ornatus" spec="Taxon"/>
@@ -242,7 +242,7 @@
             it makes all the clades that encounter as taxonsetIn inputs of clade constraints monophyletic. Make sure
              that every pair of taxonsetIn inputs is consistent, that is, the taxa sets in the two taxonsetIn inputs
              either don't intersect or one is a strict  subset of another. -->
-        <init spec='beast.evolution.tree.ZeroBranchSARandomTree' id='SARandomTree' initial='@tree'>
+        <init spec='sa.util.ZeroBranchSARandomTree' id='SARandomTree' initial='@tree'>
             <cladeConstraint idref="whole_group_1.prior"/>
             <cladeConstraint idref="bears_3.prior"/>
             <cladeConstraint idref="bears_6.prior"/>
@@ -279,18 +279,18 @@
         <operator id='samplingProportionOperator' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@samplingProportion"/>
         <operator id='rhoOperator' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@rho"/>
 
-        <operator id='LeafToSA' spec='LeafToSampledAncestorJump' weight="20" tree="@tree"/>
-        <operator id='SAWilsonBalding' spec='SAWilsonBalding' weight="20" tree="@tree"/>
-        <operator id='SAWide' spec='SAExchange' isNarrow="false" weight="20" tree="@tree"/>
-        <operator id='SANarrow' spec='SAExchange' weight="20" tree="@tree"/>
-        <operator id='SAUniform' spec='SAUniform' weight="20" tree="@tree"/>
-        <operator id='treeScaler' spec='SAScaleOperator' scaleFactor=".95" weight="10.0" tree="@tree"/>
-        <operator id='rootScaler' spec='SAScaleOperator' scaleFactor=".95" weight="5.0" tree="@tree" rootOnly='true'/>
+        <operator id='LeafToSA' spec='sa.evolution.operators.LeafToSampledAncestorJump' weight="20" tree="@tree"/>
+        <operator id='SAWilsonBalding' spec='sa.evolution.operators.SAWilsonBalding' weight="20" tree="@tree"/>
+        <operator id='SAWide' spec='sa.evolution.operators.SAExchange' isNarrow="false" weight="20" tree="@tree"/>
+        <operator id='SANarrow' spec='sa.evolution.operators.SAExchange' weight="20" tree="@tree"/>
+        <operator id='SAUniform' spec='sa.evolution.operators.SAUniform' weight="20" tree="@tree"/>
+        <operator id='treeScaler' spec='sa.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="10.0" tree="@tree"/>
+        <operator id='rootScaler' spec='sa.evolution.operators.SAScaleOperator' scaleFactor=".95" weight="5.0" tree="@tree" rootOnly='true'/>
         <operator id="updownTree" spec="UpDownOperator" scaleFactor=".95" weight="30" up="@clock.rate" down="@tree"/>
 
         <!-- this operator allows to sample dates of sampled nodes. The dates will be variable for all the
          taxa listed in the taxonset input and in the samplingDates inputs -->
-        <operator spec='SampledNodeDateRandomWalker' windowSize="1"  tree="@tree" weight="10">
+        <operator spec='sa.evolution.operators.SampledNodeDateRandomWalker' windowSize="1"  tree="@tree" weight="10">
             <!-- this input specify the taxa with variable dates. In this example only one taxon has a variably sampling date.
                 If this input is not specified then all the leaves except the most recent are assumed to have
                 variable sampling dates. -->
@@ -301,7 +301,7 @@
                 with a sampling date range. In this example, the only taxon with a varaible sampling date
                 has also sampling date range with bounds 1 and 15. Note that if a samplingDates is specified for
                 a taxon then the bounds will be used even if this taxon is not in taxonset. -->
-            <samplingDates id="samplingDate1" spec="beast.evolution.tree.SamplingDate" taxon="Ursavus_primaevus" upper="15." lower="1."/>
+            <samplingDates id="samplingDate1" spec="sa.evolution.tree.SamplingDate" taxon="Ursavus_primaevus" upper="15." lower="1."/>
         </operator>
 
         <operator id="clock.rateScaler" parameter="@clock.rate" scaleFactor="0.75" spec="ScaleOperator" weight="15.0"/>
@@ -323,7 +323,7 @@
             <!-- logs the heights of monophyletic clades (the height of the most recent common ancestor of in-taxa) -->
             <log idref="bears_3.prior"/>
             <log idref="bears_6.prior"/>
-            <log id="SACount" spec="beast.evolution.tree.SampledAncestorLogger" tree="@tree"/>
+            <log id="SACount" spec="sa.evolution.tree.SampledAncestorLogger" tree="@tree"/>
             <log idref="diversificationRate"/>
             <log idref="turnover"/>
             <log idref="samplingProportion"/>

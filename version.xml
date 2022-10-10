@@ -3,13 +3,66 @@
   <depends on='BEAST.app' atleast='2.7.0'/>
 	<depends on='BEASTLabs' atleast='1.8.0'/>
 	
-	<addonapp description="SampledAncestorTreeAnalyser"
-              class="beast.app.tools.SampledAncestorTreeAnalyser"
+	  <packageapp description="SampledAncestorTreeAnalyser"
+              class="sa.app.tools.SampledAncestorTreeAnalyser"
               args=""
             />
 
-    <addonapp description="FullToExtantTreeConverter"
-              class="beast.app.tools.FullToExtantTreeConverter"
+    <packageapp description="FullToExtantTreeConverter"
+              class="sa.app.tools.FullToExtantTreeConverter"
               args=""
             />
+
+    <service type="beast.base.core.BEASTInterface">
+        <provider classname="sa.app.tools.FullToExtantTreeConverter"/>
+        <provider classname="sa.app.tools.SampledAncestorTreeAnalyser"/>
+        <provider classname="sa.evolution.operators.Binary"/>
+        <provider classname="sa.evolution.operators.IntRandomWalkWithExclusion"/>
+        <provider classname="sa.evolution.operators.IntSwapWithExclusion"/>
+        <provider classname="sa.evolution.operators.IntUniformWithExclusion"/>
+        <provider classname="sa.evolution.operators.JumpToPoint"/>
+        <provider classname="sa.evolution.operators.LeafToSampledAncestorJump"/>
+        <provider classname="sa.evolution.operators.SAExchange"/>
+        <provider classname="sa.evolution.operators.SampledNodeDateRandomWalker"/>
+        <provider classname="sa.evolution.operators.SAScaleOperator"/>
+        <provider classname="sa.evolution.operators.SAUniform"/>
+        <provider classname="sa.evolution.operators.SAWilsonBalding"/>
+        <provider classname="sa.evolution.operators.TreeDimensionJump"/>
+        <provider classname="sa.evolution.operators.WilsonBaldingWithRateCategories"/>
+        <provider classname="sa.evolution.speciation.DiversificationTurnoverParameterization"/>
+        <provider classname="sa.evolution.speciation.DiversificationTurnoverPsiExpectedNParameterization"/>
+        <provider classname="sa.evolution.speciation.ParameterizedSABirthDeathModel"/>
+        <provider classname="sa.evolution.speciation.ProbabilitySA"/>
+        <provider classname="sa.evolution.speciation.RateParameterization"/>
+        <provider classname="sa.evolution.speciation.SABirthDeathModel"/>
+        <provider classname="sa.evolution.tree.AncestryConstraint"/>
+        <provider classname="sa.evolution.tree.CladeConstraint"/>
+        <provider classname="sa.evolution.tree.OffsetLogger"/>
+        <provider classname="sa.evolution.tree.SampledAncestorLogger"/>
+        <provider classname="sa.evolution.tree.SamplingDate"/>
+        <provider classname="sa.evolution.tree.TreeWOffset"/>
+        <provider classname="sa.math.distributions.DegenerateBeta"/>
+        <provider classname="sa.math.distributions.DegenerateUniform"/>
+        <provider classname="sa.math.distributions.SpecialMRCAPrior"/>
+        <provider classname="sa.util.ClusterZBSATree"/>
+        <provider classname="sa.util.ZeroBranchSATreeParser"/>
+    </service>
+
+
+    <!-- for backward compatibility -->
+    <map from="beast.evolution.operators.JumpToPoint" to="sa.evolution.operators.JumpToPoint"/>
+    <map from="beast.evolution.operators.LeafToSampledAncestorJump" to="sa.evolution.operators.LeafToSampledAncestorJump"/>
+    <map from="beast.evolution.operators.SAExchange" to="sa.evolution.operators.SAExchange"/>
+    <map from="beast.evolution.operators.SampledNodeDateRandomWalker" to="sa.evolution.operators.SampledNodeDateRandomWalker"/>
+    <map from="beast.evolution.operators.SAScaleOperator" to="sa.evolution.operators.SAScaleOperator"/>
+    <map from="beast.evolution.operators.SAUniform" to="sa.evolution.operators.SAUniform"/>
+    <map from="beast.evolution.operators.SAWilsonBalding" to="sa.evolution.operators.SAWilsonBalding"/>
+    <map from="beast.evolution.operators.TreeDimensionJump" to="sa.evolution.operators.TreeDimensionJump"/>
+    <map from="beast.evolution.operators.WilsonBaldingWithRateCategories" to="sa.evolution.operators.WilsonBaldingWithRateCategories"/>
+    <map from="beast.evolution.speciation.SABirthDeathModel" to="sa.evolution.speciation.SABirthDeathModel"/>
+    <map from="beast.evolution.tree.SampledAncestorLogger" to="sa.evolution.tree.SampledAncestorLogger"/>
+    <map from="beast.evolution.tree.SamplingDate" to="sa.evolution.tree.SamplingDate"/>
+
+
+
 </package>

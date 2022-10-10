@@ -120,7 +120,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
 
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
         <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
-            <distribution id="FBD.t:bears" spec="beast.evolution.speciation.SABirthDeathModel" conditionOnRhoSampling="true" diversificationRate="@diversificationRateFBD.t:bears" origin="@originFBD.t:bears" samplingProportion="@samplingProportionFBD.t:bears" tree="@Tree.t:bears" turnover="@turnoverFBD.t:bears">
+            <distribution id="FBD.t:bears" spec="sa.evolution.speciation.SABirthDeathModel" conditionOnRhoSampling="true" diversificationRate="@diversificationRateFBD.t:bears" origin="@originFBD.t:bears" samplingProportion="@samplingProportionFBD.t:bears" tree="@Tree.t:bears" turnover="@turnoverFBD.t:bears">
                 <parameter id="rFBD.t:bears" lower="0.0" name="removalProbability" upper="1.0">0.0</parameter>
                 <parameter id="rhoFBD.t:bears" estimate="false" lower="0.0" name="rho" upper="1.0">1.0</parameter>
             </distribution>
@@ -196,25 +196,25 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
 
     <operator id="samplingPScalerFBD.t:bears" spec="ScaleOperator" parameter="@samplingProportionFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
 
-    <operator id="LeafToSAFBD.t:bears" spec="LeafToSampledAncestorJump" tree="@Tree.t:bears" weight="10.0"/>
+    <operator id="LeafToSAFBD.t:bears" spec="sa.evolution.operators.LeafToSampledAncestorJump" tree="@Tree.t:bears" weight="10.0"/>
 
-    <operator id="SAWilsonBaldingFBD.t:bears" spec="SAWilsonBalding" tree="@Tree.t:bears" weight="10.0"/>
+    <operator id="SAWilsonBaldingFBD.t:bears" spec="sa.evolution.operators.SAWilsonBalding" tree="@Tree.t:bears" weight="10.0"/>
 
-    <operator id="SAWideFBD.t:bears" spec="SAExchange" isNarrow="false" tree="@Tree.t:bears" weight="10.0"/>
+    <operator id="SAWideFBD.t:bears" spec="sa.evolution.operators.SAExchange" isNarrow="false" tree="@Tree.t:bears" weight="10.0"/>
 
-    <operator id="SANarrowFBD.t:bears" spec="SAExchange" tree="@Tree.t:bears" weight="10.0"/>
+    <operator id="SANarrowFBD.t:bears" spec="sa.evolution.operators.SAExchange" tree="@Tree.t:bears" weight="10.0"/>
 
-    <operator id="SAUniformOperatorFBD.t:bears" spec="SAUniform" tree="@Tree.t:bears" weight="20.0"/>
+    <operator id="SAUniformOperatorFBD.t:bears" spec="sa.evolution.operators.SAUniform" tree="@Tree.t:bears" weight="20.0"/>
 
-    <operator id="SATreeRootScalerFBD.t:bears" spec="SAScaleOperator" rootOnly="true" scaleFactor="0.95" tree="@Tree.t:bears" weight="1.0"/>
+    <operator id="SATreeRootScalerFBD.t:bears" spec="sa.evolution.operators.SAScaleOperator" rootOnly="true" scaleFactor="0.95" tree="@Tree.t:bears" weight="1.0"/>
 
-    <operator id="SATreeScalerFBD.t:bears" spec="SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:bears" weight="3.0"/>
+    <operator id="SATreeScalerFBD.t:bears" spec="sa.evolution.operators.SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:bears" weight="3.0"/>
     
     <!-- ADD FOSSIL OCCURRENCE DATE RANGES HERE AS FOLLOWS -->
     
     <!-- this operator allows to sample dates of fossil samples. The dates will be variable for all the
      taxa listed in the taxonset input and in the samplingDates inputs -->
-    <operator spec='SampledNodeDateRandomWalker' windowSize="1"  tree="@Tree.t:bears" weight="10">
+    <operator spec='sa.evolution.operators.SampledNodeDateRandomWalker' windowSize="1"  tree="@Tree.t:bears" weight="10">
         <!-- this input specify the taxa with variable dates. In this example only one taxon has a variable sampling date. Add more if you need.
          If this input is not specified then all the leaves except the most recent are assumed to have
          variable sampling dates. -->
@@ -225,7 +225,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
          with a sampling date range. In this example, the only taxon with a varaible sampling date
          has also sampling date range with bounds 1 and 15. Note that if a samplingDates is specified for
          a taxon then the bounds will be used even if this taxon is not in the taxonset. -->
-        <samplingDates id="samplingDate1" spec="beast.evolution.tree.SamplingDate" taxon="Ursavus_primaevus_14.41" upper="15." lower="1."/>
+        <samplingDates id="samplingDate1" spec="sa.evolution.tree.SamplingDate" taxon="Ursavus_primaevus_14.41" upper="15." lower="1."/>
     </operator>
 
     <logger id="tracelog" fileName="bears.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
@@ -242,7 +242,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
         <log idref="diversificationRateFBD.t:bears"/>
         <log idref="turnoverFBD.t:bears"/>
         <log idref="samplingProportionFBD.t:bears"/>
-        <log id="SACountFBD.t:bears" spec="beast.evolution.tree.SampledAncestorLogger" tree="@Tree.t:bears"/>
+        <log id="SACountFBD.t:bears" spec="sa.evolution.tree.SampledAncestorLogger" tree="@Tree.t:bears"/>
         <log idref="Canidae.prior"/>
     </logger>
 
