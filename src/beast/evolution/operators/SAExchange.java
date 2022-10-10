@@ -5,10 +5,11 @@ package beast.evolution.operators;
  */
 
 
-import beast.core.Description;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.evolution.operator.Exchange;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
 
 @Description("Implement Narrow and Wide Exchange for sampled ancestor trees." +
         "Narrow move chooses a random internal node (not a fake node) with two non-leaf children." +

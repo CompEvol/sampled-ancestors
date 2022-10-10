@@ -1,15 +1,17 @@
 package beast.evolution.operators;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.tree.Node;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.operator.TipDatesRandomWalker;
+import beast.base.evolution.tree.Node;
 import beast.evolution.tree.SamplingDate;
-import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeWOffset;
-import beast.util.Randomizer;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
 
 @Description("Randomly select a sampled node and shifts the date of the node within a given window")
 public class SampledNodeDateRandomWalker extends TipDatesRandomWalker {

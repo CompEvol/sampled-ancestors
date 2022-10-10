@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution.speciation:beast.core.parameter:beast.util" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.evolution.speciation:beast.pkgmgmt:beast.base.core:beast.base.inference.parameter:beast.base.util:beast.base.math" version="2.0">
 
 
     <data id="alignment" name="alignment">
@@ -41,7 +41,7 @@
         <sequence id="seq_Ursus_spelaeus" taxon="Ursus_spelaeus" totalcount="4" value="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"/>
     </data>
 
-    <trait id="tipDates" spec='beast.evolution.tree.TraitSet' traitname='date-backward' units='year' value='
+    <trait id="tipDates" spec='beast.base.evolution.tree.TraitSet' traitname='date-backward' units='year' value='
     Canis_lupus = 0.0,
     Phoca_largha = 0.0,
     Ailuropoda_melanoleuca = 0.0,
@@ -76,7 +76,7 @@
     Arctodus_simus = 0.487,
     Ursus_abstrusus = 4.27,
     Ursus_spelaeus = 0.054'>
-        <taxa id='taxonSet' spec='beast.evolution.alignment.TaxonSet' alignment='@alignment'/>
+        <taxa id='taxonSet' spec='beast.base.evolution.alignment.TaxonSet' alignment='@alignment'/>
     </trait>
 
     <!-- tree prior model -->
@@ -101,28 +101,28 @@
         </substModel>
     </siteModel>
 
-    <branchRateModel id="StrictClock" spec="beast.evolution.branchratemodel.StrictClockModel">
+    <branchRateModel id="StrictClock" spec="beast.base.evolution.branchratemodel.StrictClockModel">
         <parameter dimension="1" id="clock.rate" name="clock.rate" value="0.0023" lower="0." upper="1."/>
     </branchRateModel>
 
 
     <!-- likelihood and priors: -->
-    <distribution id="posterior" spec="util.CompoundDistribution">
-        <distribution id="prior" spec="util.CompoundDistribution">
-            <distribution  x="@clock.rate" id="clockRatePrior" spec='beast.math.distributions.Prior'>
-                <distr spec='beast.math.distributions.Exponential' id='clockRatePrior.exp' mean="1." offset="0.0"/>
+    <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
+        <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
+            <distribution  x="@clock.rate" id="clockRatePrior" spec='beast.base.inference.distribution.Prior'>
+                <distr spec='beast.base.inference.distribution.Exponential' id='clockRatePrior.exp' mean="1." offset="0.0"/>
             </distribution>
-            <distribution id="hky.frequencies.prior" spec="beast.math.distributions.Prior" x="@freqParameter">
-                <distr id="Uniform " lower="0.0" upper="1.0" spec="beast.math.distributions.Uniform" />
+            <distribution id="hky.frequencies.prior" spec="beast.base.inference.distribution.Prior" x="@freqParameter">
+                <distr id="Uniform " lower="0.0" upper="1.0" spec="beast.base.inference.distribution.Uniform" />
             </distribution>
-            <distribution id="diversificationRate_prior" spec="beast.math.distributions.Prior" x="@diversificationRate">
-                <distr spec="beast.math.distributions.Uniform" lower="0." upper="1000." offset="0."/>
+            <distribution id="diversificationRate_prior" spec="beast.base.inference.distribution.Prior" x="@diversificationRate">
+                <distr spec="beast.base.inference.distribution.Uniform" lower="0." upper="1000." offset="0."/>
             </distribution>
-            <distribution id="turnover_prior" spec="beast.math.distributions.Prior" x="@turnover">
-                <distr spec="beast.math.distributions.Uniform" lower="0." upper="1." offset="0."/>
+            <distribution id="turnover_prior" spec="beast.base.inference.distribution.Prior" x="@turnover">
+                <distr spec="beast.base.inference.distribution.Uniform" lower="0." upper="1." offset="0."/>
             </distribution>
-            <distribution id="samplingProportion_prior" spec="beast.math.distributions.Prior" x="@samplingProportion">
-                <distr spec="beast.math.distributions.Uniform" lower="0." upper="1." offset="0."/>
+            <distribution id="samplingProportion_prior" spec="beast.base.inference.distribution.Prior" x="@samplingProportion">
+                <distr spec="beast.base.inference.distribution.Uniform" lower="0." upper="1." offset="0."/>
             </distribution>
 
             <!-- the clade constraints has two main inputs taxonsetIn (is required) and taxonsetOut (is optional).
@@ -217,11 +217,11 @@
                     <taxon id="Canis_lupus" spec="Taxon"/>
                 </taxonsetIn>
             </distribution>
-            <distribution id="BDlikelihood" spec="util.CompoundDistribution">
+            <distribution id="BDlikelihood" spec="beast.base.inference.CompoundDistribution">
                 <distribution idref="birthDeath"/>
             </distribution>
         </distribution>
-        <distribution id="jointTreeLikelihood" spec="util.CompoundDistribution">
+        <distribution id="jointTreeLikelihood" spec="beast.base.inference.CompoundDistribution">
             <distribution data="@alignment" id="treeLikelihood" spec="TreeLikelihood" tree="@tree" siteModel="@SiteModel" branchRateModel="@StrictClock"/>
         </distribution>
     </distribution>
@@ -230,7 +230,7 @@
     <!-- the starting tree can be specified directly passing in a newick tree as in the commented example. If it is specified like this
     then init input of run should be removed and stateNode tree has to refer to this tree through idref="tree". -->
     <!-- <tree spec='ZeroBranchSATreeParser' id='tree' nodetype="beast.evolution.tree.ZeroBranchSANode" trait='@tipDates'>
-        <taxonset spec='beast.evolution.alignment.TaxonSet' id='taxa' alignment='@alignment'/>
+        <taxonset spec='beast.base.evolution.alignment.TaxonSet' id='taxa' alignment='@alignment'/>
         <input name='newick'>
             ((((((Canis_lupus:4.2480001747608185,Borophagus_diversidens:2.9802322387695312E-8):21.63199996203184,Caedocyon_tedfordi:0.0):0.2600000575184822,Cormocyon_copei:0.0):3.940000146627426,Osbornodon_sesnoni:5.9604644775390625E-8):8.989999890327454,Hesperocyon_gregarius:0.0):11.236480832099915,((((((Phoca_largha:0.8050000071525574,Phoca_vitulina:0.0):5.8899999260902405,Acrophoca:5.9604644775390625E-8):8.295000076293945,Leptophoca_lenis:5.9604644775390625E-8):2.930000126361847,Proneotherium_repenningi:1.1920928955078125E-7):9.189999582245946,Enaliarctos_tedfordi:1.862645149230957E-9):10.37828111462295,((((((((((Ailuropoda_melanoleuca:4.99599988386035,Indarctos_punjabiensis:9.313225746154785E-9):0.010000010952353477,Agriarctos_spp:2.9802322387695312E-8):2.64599996060133,Ailurarctos_lufengensis:5.21540641784668E-8):1.0279999896883965,Indarctos_vireti:4.470348358154297E-8):0.8650000542402267,Indarctos_arctoides:8.940696716308594E-8):2.1450003683567047,Kretzoiarctos_beatrix:4.76837158203125E-7):6.012767404317856,((Tremarctos_ornatus:0.48699998552910984,Arctodus_simus:0.0):12.124506834195927,((((Helarctos_malayanus:4.0819931626319885,(Ursus_americanus:3.7759116613306105,Ursus_thibetanus:3.7759116613306105):0.3060815311037004):0.31272637844085693,Ursus_abstrusus:0.12471956014633179):0.5327784568071365,((Ursus_arctos:0.05400002375245094,Ursus_spelaeus:2.2351741790771484E-8):0.8167596086859703,Ursus_maritimus:0.8707596324384212):4.056738376617432):0.260577779263258,Melursus_ursinus:5.188075747340918):7.423431072384119):5.091261029243469):0.0,((Ballusia_elmensis:0.40000003576278687,Ursavus_primaevus:2.9802322387695312E-8):1.7900000214576721,Ursavus_brevihinus:8.568167686462402E-8):1.4181015193462372):5.271453134715557,Zaragocyon_daamsi:1.0295548252761364):13.710445173084736,Parictis_montanus:0.0):0.8882811069488525):12.818199634552002):0.0
         </input>
@@ -256,7 +256,7 @@
         <state id="state" storeEvery="1000000">
             <!-- If the tree is initialized with newick tree then use this stateNode: <stateNode idref="tree"/>
                  instead the following one   -->
-            <stateNode id="tree" trait='@tipDates' spec='beast.evolution.tree.Tree'>
+            <stateNode id="tree" trait='@tipDates' spec='beast.base.evolution.tree.Tree'>
                 <taxonset idref="taxonSet"/>
             </stateNode>
             <stateNode idref="diversificationRate"/>
@@ -319,7 +319,7 @@
             <distribution idref="posterior" name="log"/>
             <log idref="BDlikelihood"/>
             <log idref="jointTreeLikelihood"/>
-            <log id="treeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
+            <log id="treeHeight" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@tree"/>
             <!-- logs the heights of monophyletic clades (the height of the most recent common ancestor of in-taxa) -->
             <log idref="bears_3.prior"/>
             <log idref="bears_6.prior"/>
@@ -350,7 +350,7 @@
         </logger>
 
         <logger id="treeLogger" fileName="fossil_example.$(seed).trees"  logEvery="10000" mode="tree">
-            <log spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@tree"/>
+            <log spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@tree"/>
         </logger>
     </run>
 

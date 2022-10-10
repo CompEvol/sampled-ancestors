@@ -1,10 +1,10 @@
 package beast.evolution.operators;
 
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.parameter.RealParameter;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
 
 /**
  * @author Alexandra Gavryushkina
@@ -31,7 +31,7 @@ public class JumpToPoint extends Operator {
     public double proposal() {
 
         Tree tree = treeInput.get();
-        final RealParameter rParameter = rInput.get(this);
+        final RealParameter rParameter = rInput.get();
 
         double r = rParameter.getValue();
 

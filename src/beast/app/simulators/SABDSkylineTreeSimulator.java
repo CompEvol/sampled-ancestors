@@ -1,8 +1,8 @@
 package beast.app.simulators;
 
-import beast.core.Description;
-import beast.evolution.tree.Node;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.evolution.tree.Node;
+import beast.base.util.Randomizer;
 
 import java.io.File;
 import java.io.IOException;

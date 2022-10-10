@@ -1,9 +1,10 @@
 package beast.app.tools;
 
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeAnnotation;
-import beast.util.NexusParser;
+
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.parser.NexusParser;
+import beastlabs.evolution.tree.TreeAnnotation;
 
 import java.io.*;
 import java.util.List;

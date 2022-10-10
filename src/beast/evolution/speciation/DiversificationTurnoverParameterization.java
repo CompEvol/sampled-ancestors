@@ -1,7 +1,7 @@
 package beast.evolution.speciation;
 
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
 
 /**
  * Created by alexei on 7/09/15.

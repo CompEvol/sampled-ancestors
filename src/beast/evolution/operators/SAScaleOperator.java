@@ -1,8 +1,9 @@
 package beast.evolution.operators;
 
-import beast.core.Description;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.core.Description;
+import beast.base.evolution.operator.ScaleOperator;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 /**
  * @author Alexandra Gavryushkina
  */
@@ -22,7 +23,8 @@ public class SAScaleOperator extends ScaleOperator {
         try {
 
             if (isTreeScaler()) {
-                Tree tree = treeInput.get(this);
+                Tree tree = treeInput.get();
+                tree.startEditing(this);
                 if (rootOnlyInput.get()) {
                     Node root = tree.getRoot();
                     if ((root).isFake() && !scaleSNodes) {

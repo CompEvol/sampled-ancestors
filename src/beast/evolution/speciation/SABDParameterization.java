@@ -1,6 +1,6 @@
 package beast.evolution.speciation;
 
-import beast.core.CalculationNode;
+import beast.base.inference.CalculationNode;
 
 /**
  * Created by alexei on 7/09/15.

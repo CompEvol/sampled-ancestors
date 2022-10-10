@@ -1,5 +1,5 @@
 <beast version='2.0'
-       namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions'>
+       namespace='beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions'>
 
     <!-- tree priors -->
     <mergewith point='treePriorTemplates'>
@@ -24,20 +24,20 @@
 	</SABirthDeathModel>
 
 
-	<distribution  id='originPriorFBD.t:$(n)' x="@originFBD.t:$(n)" spec='beast.math.distributions.Prior'>
-		<distr spec='beast.math.distributions.Uniform' lower="0." upper="Infinity"/>
+	<distribution  id='originPriorFBD.t:$(n)' x="@originFBD.t:$(n)" spec='beast.base.inference.distribution.Prior'>
+		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="Infinity"/>
 	</distribution>
-	<distribution id="diversificationRatePriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@diversificationRateFBD.t:$(n)">
-		<distr spec='beast.math.distributions.Uniform' lower="0." upper="Infinity"/>
+	<distribution id="diversificationRatePriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@diversificationRateFBD.t:$(n)">
+		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="Infinity"/>
 	</distribution>
-	<distribution id="turnoverPriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@turnoverFBD.t:$(n)">
-		<distr spec='beast.math.distributions.Uniform' lower="0." upper="1."/>
+	<distribution id="turnoverPriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@turnoverFBD.t:$(n)">
+		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="1."/>
 	</distribution>
-	<distribution id="samplingProportionPriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@samplingProportionFBD.t:$(n)">
-		<distr spec='beast.math.distributions.Uniform' lower="0." upper="1."/>
+	<distribution id="samplingProportionPriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@samplingProportionFBD.t:$(n)">
+		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="1."/>
 	</distribution>
-	<distribution id="rhoPriorFBD.t:$(n)" spec="beast.math.distributions.Prior" x="@rhoFBD.t:$(n)">
-		<distr spec='beast.math.distributions.Uniform' lower="0." upper="1."/>
+	<distribution id="rhoPriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@rhoFBD.t:$(n)">
+		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="1."/>
 	</distribution>
 
 	<operator id='originScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@originFBD.t:$(n)"/>

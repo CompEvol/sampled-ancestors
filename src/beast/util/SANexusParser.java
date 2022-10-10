@@ -1,6 +1,7 @@
 package beast.util;
 
-import beast.evolution.tree.Tree;
+import beast.base.evolution.tree.Tree;
+import beast.base.parser.NexusParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;

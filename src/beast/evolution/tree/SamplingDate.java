@@ -1,9 +1,9 @@
 package beast.evolution.tree;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.evolution.alignment.Taxon;
-import beast.util.Randomizer;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.util.Randomizer;
 
 /**
  * @author Alexandra Gavryushkina

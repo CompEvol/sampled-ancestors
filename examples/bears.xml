@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
 
 
     <data
@@ -48,22 +48,22 @@ name="alignment">
 
 
     
-<map name="Uniform">beast.math.distributions.Uniform</map>
-<map name="Exponential">beast.math.distributions.Exponential</map>
-<map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
-<map name="Normal">beast.math.distributions.Normal</map>
-<map name="Beta">beast.math.distributions.Beta</map>
-<map name="Gamma">beast.math.distributions.Gamma</map>
-<map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
-<map name="prior">beast.math.distributions.Prior</map>
-<map name="InverseGamma">beast.math.distributions.InverseGamma</map>
-<map name="OneOnX">beast.math.distributions.OneOnX</map>
+<map name="Uniform">beast.base.inference.distribution.Uniform</map>
+<map name="Exponential">beast.base.inference.distribution.Exponential</map>
+<map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
+<map name="Normal">beast.base.inference.distribution.Normal</map>
+<map name="Beta">beast.base.inference.distribution.Beta</map>
+<map name="Gamma">beast.base.inference.distribution.Gamma</map>
+<map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
+<map name="prior">beast.base.inference.distribution.Prior</map>
+<map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
+<map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
 
 
 <run id="mcmc" spec="MCMC" chainLength="10000000">
     <state id="state" storeEvery="5000">
         <tree id="Tree.t:bears" name="stateNode">
-            <trait id="dateTrait.t:bears" spec="beast.evolution.tree.TraitSet" traitname="date-backward">
+            <trait id="dateTrait.t:bears" spec="beast.base.evolution.tree.TraitSet" traitname="date-backward">
                 Canis_lupus_0.0=0.0,
 Phoca_largha_0.0=0.0,
 Ailuropoda_melanoleuca_0.0=0.0,
@@ -112,14 +112,14 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
         <parameter id="samplingProportionFBD.t:bears" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
     </state>
 
-    <init id="RandomTree.t:bears" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
+    <init id="RandomTree.t:bears" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
         <populationModel id="ConstantPopulation0.t:bears" spec="ConstantPopulation">
             <parameter id="randomPopSize.t:bears" name="popSize">1.0</parameter>
         </populationModel>
     </init>
 
-    <distribution id="posterior" spec="util.CompoundDistribution">
-        <distribution id="prior" spec="util.CompoundDistribution">
+    <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
+        <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
             <distribution id="FBD.t:bears" spec="beast.evolution.speciation.SABirthDeathModel" conditionOnRhoSampling="true" diversificationRate="@diversificationRateFBD.t:bears" origin="@originFBD.t:bears" samplingProportion="@samplingProportionFBD.t:bears" tree="@Tree.t:bears" turnover="@turnoverFBD.t:bears">
                 <parameter id="rFBD.t:bears" lower="0.0" name="removalProbability" upper="1.0">0.0</parameter>
                 <parameter id="rhoFBD.t:bears" estimate="false" lower="0.0" name="rho" upper="1.0">1.0</parameter>
@@ -145,7 +145,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
                     <parameter id="RealParameter.01" estimate="false" name="beta">0.3819</parameter>
                 </Gamma>
             </prior>
-            <distribution id="Canidae.prior" spec="beast.math.distributions.MRCAPrior" monophyletic="true" tree="@Tree.t:bears">
+            <distribution id="Canidae.prior" spec="beast.base.evolution.tree.MRCAPrior" monophyletic="true" tree="@Tree.t:bears">
                 <taxonset id="Canidae" spec="TaxonSet">
                     <taxon id="Canis_lupus_0.0" spec="Taxon"/>
                     <taxon id="Caedocyon_tedfordi_25.88" spec="Taxon"/>
@@ -156,7 +156,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
                 </taxonset>
             </distribution>
         </distribution>
-        <distribution id="likelihood" spec="util.CompoundDistribution">
+        <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
             <distribution id="treeLikelihood.bears" spec="TreeLikelihood" data="@bears" tree="@Tree.t:bears">
                 <siteModel id="SiteModel.s:bears" spec="SiteModel">
                     <parameter id="mutationRate.s:bears" estimate="false" name="mutationRate">1.0</parameter>
@@ -164,7 +164,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
                     <parameter id="proportionInvariant.s:bears" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
                     <substModel id="JC69.s:bears" spec="JukesCantor"/>
                 </siteModel>
-                <branchRateModel id="RelaxedClock.c:bears" spec="beast.evolution.branchratemodel.UCRelaxedClockModel" clock.rate="@ucldMean.c:bears" rateCategories="@rateCategories.c:bears" tree="@Tree.t:bears">
+                <branchRateModel id="RelaxedClock.c:bears" spec="beast.base.evolution.branchratemodel.UCRelaxedClockModel" clock.rate="@ucldMean.c:bears" rateCategories="@rateCategories.c:bears" tree="@Tree.t:bears">
                     <LogNormal id="LogNormalDistributionModel.c:bears" S="@ucldStdev.c:bears" meanInRealSpace="true" name="distr">
                         <parameter id="RealParameter.02" estimate="false" lower="0.0" name="M" upper="1.0">1.0</parameter>
                     </LogNormal>
@@ -215,10 +215,10 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
         <log idref="likelihood"/>
         <log idref="prior"/>
         <log idref="treeLikelihood.bears"/>
-        <log id="TreeHeight.t:bears" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:bears"/>
+        <log id="TreeHeight.t:bears" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:bears"/>
         <log idref="ucldMean.c:bears"/>
         <log idref="ucldStdev.c:bears"/>
-        <log id="rate.c:bears" spec="beast.evolution.branchratemodel.RateStatistic" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
+        <log id="rate.c:bears" spec="beast.base.evolution.RateStatistic" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
         <log idref="FBD.t:bears"/>
         <log idref="originFBD.t:bears"/>
         <log idref="diversificationRateFBD.t:bears"/>
@@ -236,7 +236,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
     </logger>
 
     <logger id="treelog.t:bears" fileName="$(tree).trees" logEvery="1000" mode="tree">
-        <log id="TreeWithMetaDataLogger.t:bears" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
+        <log id="TreeWithMetaDataLogger.t:bears" spec="beast.base.evolution.TreeWithMetaDataLogger" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
     </logger>
 
 </run>

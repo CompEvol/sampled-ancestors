@@ -4,10 +4,10 @@ package beast.evolution.operators;
  * @author Alexandra Gavryushkina
  */
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.parameter.IntegerParameter;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.inference.parameter.IntegerParameter;
 
 @Description("Implement an operator that jumps between zero and one")
 public class Binary extends Operator {

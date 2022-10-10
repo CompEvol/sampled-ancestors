@@ -1,10 +1,10 @@
 package beast.app.tools;
 
-import beast.core.Description;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.util.NexusParser;
-import beast.util.TreeParser;
+import beast.base.core.Description;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.parser.NexusParser;
+import beast.base.evolution.tree.TreeParser;
 
 import java.io.FileReader;
 import java.io.IOException;

@@ -1,9 +1,10 @@
 package beast.evolution.operators;
 
-import beast.core.Description;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.evolution.operator.TreeOperator;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
 
 /**
  * @author Alexandra Gavryushkina
@@ -23,7 +24,8 @@ public class SAUniform extends TreeOperator {
      */
     @Override
     public double proposal() {
-        final Tree tree = treeInput.get(this);
+        final Tree tree = treeInput.get();
+        tree.startEditing(this);
         final int nNodeCount = tree.getNodeCount();
         int leafNodeCount = tree.getLeafNodeCount();
 

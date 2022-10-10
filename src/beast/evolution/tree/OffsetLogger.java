@@ -2,10 +2,11 @@ package beast.evolution.tree;
 
 import java.io.PrintStream;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Loggable;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.core.Loggable;
+import beast.base.evolution.tree.Tree;
 
 public class OffsetLogger extends BEASTObject implements Loggable {
 	

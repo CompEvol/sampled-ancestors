@@ -1,8 +1,8 @@
 package beast.app.simulators;
 
-import beast.evolution.tree.Node;
-import beast.math.distributions.LogNormalDistributionModel;
-import beast.util.Randomizer;
+import beast.base.evolution.tree.Node;
+import beast.base.inference.distribution.LogNormalDistributionModel;
+import beast.base.util.Randomizer;
 
 import java.io.*;
 import java.util.*;

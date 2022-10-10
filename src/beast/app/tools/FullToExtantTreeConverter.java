@@ -1,12 +1,13 @@
 package beast.app.tools;
 
-import beast.app.util.Application;
-import beast.app.util.TreeFile;
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeTraceAnalysis;
+
+import beastfx.app.tools.Application;
+import beastfx.app.util.TreeFile;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beastfx.app.tools.TreeTraceAnalysis;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ import java.util.List;
  *
  */
 
-public class FullToExtantTreeConverter extends beast.core.Runnable {
-	public Input<TreeFile> treesInput = new Input<>("trees","tree set file to be converted");
+public class FullToExtantTreeConverter extends beast.base.inference.Runnable {
 	public Input<TreeFile> outputInput = new Input<>("output","file to store converted tree set. If not specified, _extant is aded to input file name");
+	public Input<TreeFile> treesInput = new Input<>("trees","tree set file to be converted");
 	public Input<Double> thresholdInput= new Input<>("threshold", "the threshold for identifying extant taxa. Ignored if negative.", -1.0);
 
     ArrayList<String> extantTaxa = new ArrayList<>();

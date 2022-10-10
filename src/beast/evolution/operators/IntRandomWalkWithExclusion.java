@@ -1,9 +1,9 @@
 package beast.evolution.operators;
 
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.parameter.IntegerParameter;
-import beast.util.Randomizer;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.util.Randomizer;
 
 /**
  * Created by agav755 on 26/06/14.
@@ -28,7 +28,7 @@ public class IntRandomWalkWithExclusion extends Operator {
     @Override
     public double proposal() {
 
-        final IntegerParameter param = parameterInput.get(this);
+        final IntegerParameter param = parameterInput.get();
         int index;
         do {
              index = Randomizer.nextInt(param.getDimension());

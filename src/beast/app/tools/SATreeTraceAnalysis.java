@@ -1,9 +1,9 @@
 package beast.app.tools;
 
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeTraceAnalysis;
-import beast.util.FrequencySet;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beastfx.app.tools.TreeTraceAnalysis;
+import beast.base.util.FrequencySet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

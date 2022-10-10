@@ -1,12 +1,12 @@
 package beast.app.tools;
 
-import beast.app.BEASTVersion2;
-import beast.app.util.Application;
-import beast.core.Description;
-import beast.core.Param;
-import beast.core.util.Log;
-import beast.util.PackageManager;
-import beast.util.NexusParser;
+import beast.base.core.BEASTVersion2;
+import beastfx.app.tools.Application;
+import beast.base.core.Description;
+import beast.base.core.Param;
+import beast.base.core.Log;
+import beast.pkgmgmt.PackageManager;
+import beast.base.parser.NexusParser;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,7 +23,7 @@ import java.io.IOException;
  * for an internal node to be ancestral.
  *
  */
-public class SampledAncestorTreeAnalyser extends beast.core.Runnable {
+public class SampledAncestorTreeAnalyser extends beast.base.inference.Runnable {
 	
 	private File file;
 	private Boolean printFrequencies = true;

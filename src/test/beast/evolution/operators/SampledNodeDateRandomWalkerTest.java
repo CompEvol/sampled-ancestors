@@ -2,13 +2,13 @@ package test.beast.evolution.operators;
 
 import org.junit.Test;
 
-import beast.evolution.alignment.Taxon;
-import beast.evolution.alignment.TaxonSet;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.alignment.TaxonSet;
 import beast.evolution.operators.SampledNodeDateRandomWalker;
 import beast.evolution.tree.SamplingDate;
-import beast.evolution.tree.Tree;
+import beast.base.evolution.tree.Tree;
 import beast.evolution.tree.TreeWOffset;
-import beast.util.Randomizer;
+import beast.base.util.Randomizer;
 import beast.util.ZeroBranchSATreeParser;
 import junit.framework.TestCase;
 

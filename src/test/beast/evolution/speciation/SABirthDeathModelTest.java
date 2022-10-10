@@ -4,9 +4,9 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import beast.core.parameter.RealParameter;
+import beast.base.inference.parameter.RealParameter;
 import beast.evolution.speciation.SABirthDeathModel;
-import beast.evolution.tree.Tree;
+import beast.base.evolution.tree.Tree;
 import beast.evolution.tree.TreeWOffset;
 import beast.util.ZeroBranchSATreeParser;
 

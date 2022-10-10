@@ -1,9 +1,11 @@
 package beast.evolution.tree;
 
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.State;
-import beast.evolution.alignment.TaxonSet;
+import beast.base.inference.Distribution;
+import beast.base.core.Input;
+import beast.base.inference.State;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 import java.io.PrintStream;
 import java.util.*;

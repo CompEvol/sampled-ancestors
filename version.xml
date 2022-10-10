@@ -1,5 +1,6 @@
-<addon name='SA' version='2.0.2'>
-	<depends on='beast2' atleast='2.5.0' atmost='2.6.9'/>
+<package name='SA' version='2.1.0'>
+  <depends on='BEAST.base' atleast='2.7.0'/>
+  <depends on='BEAST.app' atleast='2.7.0'/>
 	<depends on='BEASTLabs' atleast='1.8.0'/>
 	
 	<addonapp description="SampledAncestorTreeAnalyser"
@@ -11,4 +12,4 @@
               class="beast.app.tools.FullToExtantTreeConverter"
               args=""
             />
-</addon>
+</package>

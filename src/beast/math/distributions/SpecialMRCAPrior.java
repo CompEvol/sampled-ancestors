@@ -1,8 +1,9 @@
 package beast.math.distributions;
 
-import beast.core.Input;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.Node;
+import beast.base.core.Input;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.MRCAPrior;
+import beast.base.evolution.tree.Node;
 
 /**
  * Alexandra Gavryushkina
