@@ -1,7 +1,7 @@
 <package name='SA' version='2.1.0'>
   <depends on='BEAST.base' atleast='2.7.0'/>
   <depends on='BEAST.app' atleast='2.7.0'/>
-	<depends on='BEASTLabs' atleast='1.8.0'/>
+	<depends on='BEASTLabs' atleast='2.0.0'/>
 	
 	  <packageapp description="SampledAncestorTreeAnalyser"
               class="sa.app.tools.SampledAncestorTreeAnalyser"
