@@ -13,6 +13,15 @@
               args=""
             />
 
+    <service type="beastfx.app.inputeditor.InputEditor">
+        <provider classname="sa.beauti.SAMRCAPriorInputEditor"/>      
+    </service>
+
+    <service type="beastfx.app.beauti.PriorProvider">
+        <provider classname="sa.beauti.SAMRCAPriorProvider"/>
+    </service>
+
+
     <service type="beast.base.core.BEASTInterface">
         <provider classname="sa.app.tools.FullToExtantTreeConverter"/>
         <provider classname="sa.app.tools.SampledAncestorTreeAnalyser"/>
@@ -44,6 +53,7 @@
         <provider classname="sa.math.distributions.DegenerateBeta"/>
         <provider classname="sa.math.distributions.DegenerateUniform"/>
         <provider classname="sa.math.distributions.SpecialMRCAPrior"/>
+        <provider classname="sa.math.distributions.SAMRCAPrior"/>
         <provider classname="sa.util.ClusterZBSATree"/>
         <provider classname="sa.util.ZeroBranchSATreeParser"/>
     </service>
