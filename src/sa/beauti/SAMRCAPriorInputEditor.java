@@ -11,6 +11,7 @@ import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.BooleanInputEditor;
 import beastfx.app.inputeditor.InputEditor;
 import beastfx.app.inputeditor.MRCAPriorInputEditor;
+import beastfx.app.util.FXUtils;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
@@ -66,6 +67,29 @@ public class SAMRCAPriorInputEditor extends MRCAPriorInputEditor {
         return e;
     }
 
+    public class NoEditor extends InputEditor.Base {
+		@Override
+		public Class<?> type() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    }
+    
+    public InputEditor createTreeEditor() {
+    	System.err.println(">>>>>> createTreeEditor");
+    	return new NoEditor();
+    }
+
+    public InputEditor createMonophyleticEditor() {
+    	System.err.println(">>>>>> createMonophyleticEditor");
+    	return new NoEditor();
+    }
+
+    public InputEditor createTaxonsetEditor() {
+    	System.err.println(">>>>>> createTaxonsetEditor");
+    	return new NoEditor();
+    }
+    
     // add TipDatesRandomWalker (if not present) and add to list of operators
     private void enableTipSampling() {
     	// First, create/find the operator

@@ -14,7 +14,8 @@
             />
 
     <service type="beastfx.app.inputeditor.InputEditor">
-        <provider classname="sa.beauti.SAMRCAPriorInputEditor"/>      
+        <provider classname="sa.beauti.SAMRCAPriorInputEditor"/>
+        <provider classname="sa.beauti.SampledNodeDataWalkerInputEditor"/>
     </service>
 
     <service type="beastfx.app.beauti.PriorProvider">
