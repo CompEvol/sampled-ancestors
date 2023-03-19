@@ -1,5 +1,6 @@
 package sa.beauti;
 
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.BooleanInputEditor;
 import beastfx.app.inputeditor.InputEditor;
 import beastfx.app.inputeditor.MRCAPriorInputEditor;
-import beastfx.app.util.FXUtils;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
@@ -32,10 +32,9 @@ public class SAMRCAPriorInputEditor extends MRCAPriorInputEditor {
 	public Class<?> type() {
 		return SAMRCAPrior.class;
 	}
-
-	//InputEditor tipsonlyEditor;
     
     public InputEditor createTipsonlyEditor() throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    	doc.beautiConfig.suppressBEASTObjects.add(SampledNodeDateRandomWalker.class.getName() + ".taxonset");
         BooleanInputEditor e = new BooleanInputEditor (doc) {
 
 			@Override
@@ -48,6 +47,8 @@ public class SAMRCAPriorInputEditor extends MRCAPriorInputEditor {
 		        			if (o instanceof CheckBox) {
 		        				((CheckBox)o).setOnAction(e -> {
 				                	CheckBox src = (CheckBox) e.getSource();
+			        				SAMRCAPrior prior = (SAMRCAPrior) m_beastObject;
+			        				prior.onlyUseTipsInput.setValue(src.isSelected(), prior);
 				                	if (src.isSelected()) {
 				                		enableTipSampling();
 				                	} else {
@@ -70,23 +71,19 @@ public class SAMRCAPriorInputEditor extends MRCAPriorInputEditor {
     public class NoEditor extends InputEditor.Base {
 		@Override
 		public Class<?> type() {
-			// TODO Auto-generated method stub
 			return null;
 		}
     }
     
     public InputEditor createTreeEditor() {
-    	System.err.println(">>>>>> createTreeEditor");
     	return new NoEditor();
     }
 
     public InputEditor createMonophyleticEditor() {
-    	System.err.println(">>>>>> createMonophyleticEditor");
     	return new NoEditor();
     }
 
     public InputEditor createTaxonsetEditor() {
-    	System.err.println(">>>>>> createTaxonsetEditor");
     	return new NoEditor();
     }
     
