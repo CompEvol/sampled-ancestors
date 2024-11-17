@@ -106,7 +106,7 @@ public class SABirthDeathModel extends TreeDistribution {
     protected String taxonName;
     protected double taxonAge;
     
-    TreeWOffset combinedTree;
+    protected TreeWOffset combinedTree;
 
     public void initAndValidate() {
 
