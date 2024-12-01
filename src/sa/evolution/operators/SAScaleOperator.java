@@ -10,15 +10,12 @@ import beast.base.evolution.tree.Tree;
 @Description("")
 public class SAScaleOperator extends ScaleOperator {
 
-    //public Input<Boolean> m_pScaleSNodes = new Input<Boolean>("scaleSampledNodes", "If it is true then sampled node dates are scaled (default false).", false);
-
     @Override   //WARNING works with bifurcating (exactly 2 children) trees only
     // sampled ancestors are assumed to be on zero branches
 
     public double proposal() {
 
         final double scale = getScaler();
-        final boolean scaleSNodes = false; // m_pScaleSNodes.get();
 
         try {
 
@@ -27,16 +24,13 @@ public class SAScaleOperator extends ScaleOperator {
                 tree.startEditing(this);
                 if (rootOnlyInput.get()) {
                     Node root = tree.getRoot();
-                    if ((root).isFake() && !scaleSNodes) {
+                    if ((root).isFake()) {
                         return Double.NEGATIVE_INFINITY;
                     }
                     double fNewHeight = root.getHeight() * scale;
 
                     //make sure the new height doesn't make a parent younger than a child
-                    double oldestChildHeight;
-                    if ((root).isFake()) {
-                        oldestChildHeight = root.getNonDirectAncestorChild().getHeight();
-                    } else oldestChildHeight = Math.max(root.getLeft().getHeight(), root.getRight().getHeight());
+                    double oldestChildHeight = Math.max(root.getLeft().getHeight(), root.getRight().getHeight());
                     if (fNewHeight < oldestChildHeight) {
                         return Double.NEGATIVE_INFINITY;
                     }
