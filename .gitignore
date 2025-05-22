@@ -3,10 +3,11 @@
 # Build output
 /out
 /bin
-
 beast-source/
 build-beast/
 dist/
+build-test/
+test-reports/
 
 # IntelliJ cruft
 /.idea

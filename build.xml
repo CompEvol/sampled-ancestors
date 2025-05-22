@@ -2,7 +2,7 @@
 
     <!-- Source, JUnit test code and jar library locations. -->
     <property name="src" location="src"/>
-    <property name="test" location="test"/>
+    <property name="test" location="src/test"/>
     <property name="lib" location="lib"/>
 
     <!-- Location to check for local copy of beast2 repository -->
