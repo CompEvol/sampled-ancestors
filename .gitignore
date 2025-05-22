@@ -1,6 +1,12 @@
+.DS_Store
+
 # Build output
 /out
 /bin
+
+beast-source/
+build-beast/
+dist/
 
 # IntelliJ cruft
 /.idea
