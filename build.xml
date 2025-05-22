@@ -2,15 +2,11 @@
 
     <!-- Source, JUnit test code and jar library locations. -->
     <property name="src" location="src"/>
-    <property name="test" location="src"/>
+    <property name="test" location="test"/>
     <property name="lib" location="lib"/>
 
     <!-- Location to check for local copy of beast2 repository -->
-    <property name="beastDir" location="../beast2"/>
-    <property name="BeastFXDir" location="../BeastFX"/>
-
-    <!-- Location to check for local copy of BEASTLabs repository -->
-    <property name="beastLabsDir" location="../BEASTLabs"/>
+    <property name="local-beast-source-root" location="../beast2"/>
 
     <!-- BEAST 2 currently uses Java 1.8 -->
     <property name="sourceVersion" value="1.8"/>
@@ -19,6 +15,7 @@
     <!-- Directories necessary for all BEAST 2 packages -->
     <property name="doc" location="doc"/>
     <property name="examples" location="examples"/>
+    <property name="scripts" location="scripts"/>
     <property name="fxtemplates" location="fxtemplates"/>
 
     <!-- BEAST branch and version to build against
@@ -29,11 +26,31 @@
 
     <!-- Names of temporary build/test directories -->
     <property name="build" location="build"/>
-    <property name="build-lib" location="build-lib"/>
+    <property name="build-beast" location="build-beast"/>
+    <property name="beast-source-root" location="beast-source"/>
     <property name="build-test" location="build-test"/>
     <property name="test-reports" location="test-reports"/>
     <property name="dist" location="dist"/>
     <property name="pack" location="${dist}/package"/>
+    <property name="beast2path" location="../beast2"/>
+    <property name="libBeast2" location="${beast2path}/lib"/>
+    <property name="srcBeast2" location="${beast2path}/src"/>
+    <property name="beast2classpath" location="${beast2path}/build"/>
+    <property name="beastlabsclasspath" location="../BEASTLabs/build"/>
+
+
+    <path id="classpath">
+        <pathelement path="${build}"/>
+        <fileset dir="${libBeast2}" includes="junit/junit-platform-console-standalone-1.8.2.jar"/>
+        <fileset dir="${libBeast2}" includes="commons-math3-3.6.1.jar"/>
+        <pathelement path="${beast2classpath}"/>
+        <fileset dir="${beast2path}/lib" includes="jam.jar"/>
+        <fileset dir="${beast2path}/lib" includes="beagle.jar"/>
+        <fileset dir="${beast2path}/lib" includes="fest.jar"/>
+        <fileset dir="${beast2path}/lib" includes="colt.jar"/>
+        <pathelement path="../BeastFX/build"/>
+    </path>
+
 
     <!-- Prepare for compilation -->
     <target name="init">
@@ -47,160 +64,87 @@
         </fail>
 
         <!-- Read package name and version from xml file -->
-        <xmlproperty file="version.xml" prefix="fromVersionFile" />
-        <property name="projName" value="${fromVersionFile.package(name)}" />
-        <property name="projVersion" value="${fromVersionFile.package(version)}" />
+        <xmlproperty file="version.xml" prefix="fromVersionFile"/>
+        <property name="projName" value="${fromVersionFile.package(name)}"/>
+        <property name="projVersion" value="${fromVersionFile.package(version)}"/>
 
         <mkdir dir="${build}"/>
-        <mkdir dir="${build-lib}"/>
+        <mkdir dir="${build-beast}"/>
+        <mkdir dir="${beast-source-root}"/>
         <mkdir dir="${dist}"/>
-
-        <copy todir="${build-lib}" failonerror="false">
-            <fileset dir="${lib}" includes="*.jar"/>
-        </copy>
     </target>
 
     <!-- Get beast -->
 
     <target name="find-beast" depends="init">
-        <available file="${beastDir}" property="localBeastAvailable"/>
+        <available file="${local-beast-source-root}" property="localBeastAvailable"/>
     </target>
 
-    <target name="build-remote-beast" depends="find-beast" unless="localBeastAvailable">
-        <echo>No local copy of the beast2 source found at ${beastDir}.</echo>
+    <target name="get-remote-beast" depends="find-beast" unless="localBeastAvailable">
+        <echo>No local copy of the beast2 source found at ${local-beast-source-root}.</echo>
         <echo>Compiling against version ${beast-version} from GitHub.</echo>
 
-        <property name="build-beast" location="build-beast"/>
-        <mkdir dir="${build-beast}"/>
+        <mkdir dir="beast-archive"/>
 
-        <get src="https://github.com/CompEvol/beast2/archive/${beast-branch}.zip" dest="${build-beast}/beast.zip"/>
-        <unzip src="${build-beast}/beast.zip" dest="${build-beast}"/>
-        <mkdir dir="${build-beast}/beast2-${beast-version}/build"/>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${build-beast}/beast2-${beast-version}/src"
-            destdir="${build-beast}/beast2-${beast-version}/build" includeantruntime="false">
-            <classpath>
-                <pathelement path="${classpath}"/>
-                <fileset dir="${build-beast}/beast2-${beast-version}/lib" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <jar jarfile="${build-lib}/beast2.jar" basedir="${build-beast}/beast2-${beast-version}/build" />
-        <copy todir="${build-lib}">
-            <fileset dir="${build-beast}/beast2-${beast-version}/lib" includes="*.jar"/>
+        <get src="https://github.com/CompEvol/beast2/archive/${beast-branch}.zip"
+             dest="beast-archive/beast.zip"/>
+        <unzip src="beast-archive/beast.zip" dest="beast-archive"/>
+
+        <copy todir="${beast-source-root}">
+            <fileset dir="beast-archive/beast2-${beast-version}" includes="**/*.*"/>
         </copy>
 
-        <delete dir="${build-beast}" />
-
+        <delete dir="beast-archive"/>
     </target>
 
-    <target name="build-local-beast" depends="find-beast" if="localBeastAvailable">
-        <echo>Compiling against beast2 source found at ${beastDir}.</echo>
+    <target name="get-local-beast" depends="find-beast" if="localBeastAvailable">
+        <echo>Compiling against beast2 source found at ${local-beast-source-root}.</echo>
 
-        <property name="build-beast" location="build-beast"/>
-        <mkdir dir="${build-beast}"/>
-
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${beastDir}/src"
-            destdir="${build-beast}" includeantruntime="false">
-            <classpath>
-                <pathelement path="${classpath}"/>
-                <fileset dir="${beastDir}/lib" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${beastDir}/test"
-            destdir="${build-beast}" includeantruntime="false">
-            <classpath>
-                <pathelement path="${classpath}"/>
-                <fileset dir="${beastDir}/lib" includes="*.jar"/>
-                <fileset dir="${beastDir}/lib/junit" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${BeastFXDir}/src"
-            destdir="${build-beast}" includeantruntime="false">
-            <classpath>
-                <pathelement path="${classpath}"/>
-                <fileset dir="${beastDir}/lib" includes="*.jar"/>
-                <fileset dir="${beastDir}/lib/junit" includes="*.jar"/>
-                <fileset dir="${BeastFXDir}/locallib" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <jar jarfile="${build-lib}/beast2.jar" basedir="${build-beast}" />
-        <copy todir="${build-lib}">
-            <fileset dir="${beastDir}/lib" includes="*.jar"/>
+        <copy todir="${beast-source-root}">
+            <fileset dir="${local-beast-source-root}" includes="**/*.*"/>
         </copy>
-
-        <delete dir="${build-beast}" />
     </target>
 
-    <target name="build-beast" depends="build-local-beast,build-remote-beast"/>
-
-    <!-- Get BEASTLabs -->
-
-    <target name="find-beastlabs" depends="init">
-        <available file="${beastLabsDir}" property="localBeastLabsAvailable"/>
-    </target>
-
-    <target name="build-remote-beastlabs" depends="find-beastlabs" unless="localBeastLabsAvailable">
-        <echo>No local copy of the BEASTLabs source found at ${beastLabsDir}.</echo>
-        <echo>Compiling against version ${beast-version} from GitHub.</echo>
-
-        <property name="build-beastlabs" location="build-beastlabs"/>
-        <mkdir dir="${build-beastlabs}"/>
-
-        <get src="https://github.com/beast2-dev/BEASTLabs/archive/master.zip" dest="${build-beastlabs}/beastlabs.zip"/>
-        <unzip src="${build-beastlabs}/beastlabs.zip" dest="${build-beastlabs}"/>
-        <mkdir dir="${build-beastlabs}/BEASTLabs-master/build"/>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${build-beastlabs}/BEASTLabs-master/src"
-            destdir="${build-beastlabs}/BEASTLabs-master/build" includeantruntime="false">
+    <target name="build-beast" depends="get-local-beast,get-remote-beast">
+        <javac
+                srcdir="${beast-source-root}/src"
+                destdir="${build-beast}"
+                source="${sourceVersion}"
+                target="${targetVersion}"
+                includeantruntime="false"
+                fork="yes">
             <classpath>
                 <pathelement path="${classpath}"/>
-                <fileset dir="${build-beastlabs}/BEASTLabs-master/lib" includes="*.jar"/>
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
             </classpath>
         </javac>
-        <jar jarfile="${build-lib}/beastlabs.jar" basedir="${build-beastlabs}/BEASTLabs-master/build" />
-        <copy todir="${build-lib}">
-            <fileset dir="${build-beastlabs}/BEASTLabs-master/lib" includes="*.jar"/>
-        </copy>
-
-        <delete dir="${build-beastlabs}" />
-    </target>
-
-    <target name="build-local-beastlabs" depends="find-beastlabs" if="localBeastLabsAvailable">
-        <echo>Compiling against local BEASTLabs source found at ${beastLabsDir}.</echo>
-
-        <property name="build-beastlabs" location="build-beastlabs"/>
-        <mkdir dir="${build-beastlabs}"/>
-
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${beastLabsDir}/src"
-            destdir="${build-beastlabs}" includeantruntime="false">
-            <include name="beastlabs/**/**" />
+        <javac
+                srcdir="${beast-source-root}/test"
+                destdir="${build-beast}"
+                source="${sourceVersion}"
+                target="${targetVersion}"
+                includeantruntime="false"
+                fork="yes">
             <classpath>
                 <pathelement path="${classpath}"/>
-                <fileset dir="${beastLabsDir}/lib" includes="*.jar"/>
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
             </classpath>
         </javac>
-        <jar jarfile="${build-lib}/beastlabs.jar" basedir="${build-beastlabs}" />
-        <copy todir="${build-lib}">
-            <fileset dir="${beastLabsDir}/lib" includes="*.jar"/>
-        </copy>
-
-        <delete dir="${build-beastlabs}" />
     </target>
-
-    <target name="build-beastlabs" depends="build-local-beastlabs,build-remote-beastlabs"/>
 
     <!-- Compile -->
-    <target name="compile" depends="build-beast,build-beastlabs">
-        <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${src}" destdir="${build}" includeantruntime="false">
+    <target name="compile" depends="build-beast">
+        <javac target="${targetVersion}" source="${sourceVersion}"
+               srcdir="${src}" destdir="${build}"
+               includeantruntime="false" fork="yes">
+            <exclude name="transmission2/**"/>
             <classpath>
                 <pathelement path="${classpath}"/>
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <fileset dir="${lib}" includes="**/*.jar"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
+                <pathelement path="../BeastFX/build"/>
+                <pathelement path="${beastlabsclasspath}"/>
             </classpath>
         </javac>
     </target>
@@ -208,7 +152,7 @@
     <target name="copy-resources" depends="compile">
         <copy todir="${build}">
             <fileset dir="${src}"
-                     includes="**/*.png" />
+                     includes="**/*.png"/>
         </copy>
     </target>
 
@@ -218,14 +162,17 @@
         <mkdir dir="${test-reports}"/>
     </target>
 
-
     <!-- Compile unit tests -->
     <target name="compile-test" depends="init-test,compile,copy-resources">
-        <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${test}" destdir="${build-test}" includeantruntime="false">
+        <javac target="${targetVersion}" source="${sourceVersion}"
+               srcdir="${test}" destdir="${build-test}"
+               includeantruntime="false" fork="yes">
             <classpath>
                 <pathelement path="${classpath}"/>
-                <pathelement path="${build}" />
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <pathelement path="${build}"/>
+                <fileset dir="${lib}" includes="**/*.jar"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
             </classpath>
         </javac>
     </target>
@@ -236,16 +183,17 @@
         <junit printsummary="yes" failureproperty="testFailed" showoutput="true">
             <classpath>
                 <pathelement path="${classpath}"/>
-                <pathelement path="${build}" />
-                <pathelement path="${build-test}" />
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <pathelement path="${build}"/>
+                <pathelement path="${build-test}"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
             </classpath>
             <batchtest fork="yes" todir="${test-reports}">
                 <fileset dir="${test}">
-                    <include name="**/*Test.java"/>
+                    <include name="**/*.java"/>
                 </fileset>
                 <formatter type="plain"/>
-                <!--formatter type="plain" usefile="false"/--> <!-- to screen -->
+                <formatter type="plain" usefile="false"/> <!-- to screen -->
             </batchtest>
         </junit>
 
@@ -259,42 +207,53 @@
 
         <mkdir dir="${pack}"/>
         <mkdir dir="${pack}/examples"/>
+        <mkdir dir="${pack}/scripts"/>
         <mkdir dir="${pack}/fxtemplates"/>
         <mkdir dir="${pack}/lib"/>
         <mkdir dir="${pack}/doc"/>
 
-        <jar jarfile="${pack}/${fullName}.src.jar" basedir="${src}" />
+        <jar jarfile="${pack}/${fullName}.src.jar" basedir="${src}">
+            <exclude name="transmission2/**"/>
+        </jar>
 
-        <mkdir dir="${lib}" />
+        <mkdir dir="${lib}"/>
         <copy todir="${pack}/lib">
-            <fileset dir="${lib}" includes="*.jar" />
+            <fileset dir="${lib}" includes="*.jar"/>
         </copy>
-        <jar jarfile="${pack}/lib/${fullName}.jar" basedir="${build}" />
+        <jar jarfile="${pack}/lib/${fullName}.jar" basedir="${build}">
+            <exclude name="transmission2/**"/>
+        </jar>
 
-        <copy file="README.md" tofile="${pack}/README" />
-        <copy file="COPYING" todir="${pack}" />
+        <copy file="README.md" tofile="${pack}/README"/>
+        <copy file="COPYING" todir="${pack}"/>
         <copy todir="${pack}">
-            <fileset dir="${lib}" includes="LICENSE*" />
+            <fileset dir="${lib}" includes="LICENSE*"/>
         </copy>
 
-        <mkdir dir="${examples}" />
+        <mkdir dir="${examples}"/>
         <copy todir="${pack}/examples">
-            <fileset dir="${examples}" includes="**/*" />
+            <fileset dir="${examples}" includes="**/*.xml"/>
         </copy>
 
-        <mkdir dir="${fxtemplates}" />
+        <mkdir dir="${scripts}"/>
+        <copy todir="${pack}/scripts">
+            <fileset dir="${scripts}" includes="**/*"/>
+        </copy>
+
+
+        <mkdir dir="${fxtemplates}"/>
         <copy todir="${pack}/fxtemplates">
-            <fileset dir="${fxtemplates}" includes="*.xml" />
+            <fileset dir="${fxtemplates}" includes="*.xml"/>
         </copy>
 
-        <mkdir dir="${doc}" />
+        <mkdir dir="${doc}"/>
         <copy todir="${pack}/doc">
             <fileset dir="${doc}" includes="*.tex,*.doc,*.lyx,*.txt"/>
         </copy>
 
-        <copy file="version.xml" todir="${pack}" />
+        <copy file="version.xml" todir="${pack}"/>
 
-        <zip destfile="${dist}/${fullName}.zip" basedir="${pack}" />
+        <zip destfile="${dist}/${fullName}.zip" basedir="${pack}"/>
 
         <delete dir="${pack}"/>
 
@@ -306,96 +265,47 @@
 
     <!-- Revert to pristine state. -->
     <target name="clean">
-        <delete dir="${build}" />
-        <delete dir="${build-lib}" />
-        <delete dir="${dist}" />
-        <delete dir="${build-test}" />
-        <delete dir="${test-reports}" />
+        <delete dir="${build}"/>
+        <delete dir="${build-beast}"/>
+        <delete dir="${beast-source-root}"/>
+        <delete dir="${dist}"/>
+        <delete dir="${build-test}"/>
+        <delete dir="${test-reports}"/>
     </target>
 
+    <condition property="isWindows">
+        <os family="windows"/>
+    </condition>
+    <condition property="isLinux">
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
+    </condition>
+    <condition property="isMac">
+        <os family="mac"/>
+    </condition>
 
-    <!-- Create skeleton package layout in current directory -->
-    <target name="skeleton">
-
-        <fail>
-            <condition>
-                <or>
-                    <resourcecount when="gt" count="1">
-                        <fileset dir="${basedir}"/>
-                    </resourcecount>
-                    <resourcecount when="gt" count="1">
-                        <dirset dir="${basedir}"/>
-                    </resourcecount>
-                </or>
-            </condition>
-
-            ** This directory contains files besides the build script. **
-            You should run "ant skeleton" in a directory containing only the build script.
-        </fail>
-
-        <echo>===============================</echo>
-        <echo>Create skeleton BEAST 2 package</echo>
-        <echo>===============================</echo>
-        <echo/>
-        <echo>First, we need some information...</echo>
-        <echo/>
-
-        <basename property="defaultProjName" file="${basedir}"/>
-
-        <input addproperty="projName" defaultvalue="${defaultProjName}">Enter package name</input>
-        <input addproperty="license" defaultvalue="gpl3" validargs="gpl3,lgpl3,lgpl2.1,apache2">Select open source software license</input>
-        <input addproperty="projVersion" defaultvalue="1.0.0">Enter package version</input>
-        <input addproperty="beastVersionReq" defaultvalue="2.1.0">Enter minimum required BEAST 2 version</input>
-
-        <echo>Assembling files and directory structure...</echo>
-
-        <echo file="version.xml">&lt;addon name="${projName}" version="${projVersion}"&gt;
-            &lt;depends on="beast2" atleast="${beastVersionReq}"/&gt;
-
-            &lt;!-- Add other dependencies as necessary. --&gt;
-            &lt;/addon&gt;
-        </echo>
-
-        <echo file="README.md" message="README for my package.${line.separator}"/>
-
-        <condition property="licenseURL" value="https://www.gnu.org/licenses/gpl-3.0.txt">
-            <equals arg1="${license}" arg2="gpl3"/>
-        </condition>
-        <condition property="licenseURL" value="https://www.gnu.org/licenses/lgpl-3.0.txt">
-            <equals arg1="${license}" arg2="lgpl3"/>
-        </condition>
-        <condition property="licenseURL" value="https://www.gnu.org/licenses/lgpl-2.1.txt">
-            <equals arg1="${license}" arg2="lgpl2.1"/>
-        </condition>
-        <condition property="licenseURL" value="http://www.apache.org/licenses/LICENSE-2.0.txt">
-            <equals arg1="${license}" arg2="apache2"/>
-        </condition>
-
-        <get src="${licenseURL}" dest="COPYING"/>
-
-        <mkdir dir="${src}"/>
-        <mkdir dir="${test}"/>
-        <mkdir dir="${lib}"/>
-        <mkdir dir="${examples}"/>
-        <mkdir dir="${fxtemplates}"/>
-        <mkdir dir="${doc}"/>
-
-        <echo/>
-        <echo>Done.</echo>
-        <echo/>
-        <echo>The directory structure is as follows:</echo>
-        <echo>${src} - your java source goes here</echo>
-        <echo>${test} - your junit tests go here (You _are_ going to write, those, aren't you!)</echo>
-        <echo>${doc} - your documentation goes here</echo>
-        <echo>${examples} - your example XML scripts go here</echo>
-        <echo>${fxtemplates} - your BEAUti fxtemplates go here</echo>
-        <echo/>
-        <echo>To build your package, just type "ant" at the command line.</echo>
-        <echo/>
-        <echo>To run unit tests, type "ant test".</echo>
-        <echo/>
-        <echo>That's it!  Happy coding!</echo>
-
+    <target name="installLinux" depends="build" if="isLinux">
+        <mkdir dir="${user.home}/.beast/2.7/${projName}"/>
+        <unzip src="${dist}/${fullName}.zip" dest="${user.home}/.beast/2.7/${projName}"/>
     </target>
+
+    <target name="installMac" depends="build" if="isMac">
+        <mkdir dir="${user.home}/.beast/2.7/${projName}"/>
+        <unzip src="${dist}/${fullName}.zip"
+               dest="${user.home}/Library/Application Support/BEAST/2.7/${projName}"/>
+    </target>
+
+    <target name="installWindows" depends="build" if="isWindows">
+        <mkdir dir="${user.home}/BEAST/2.7/${projName}"/>
+        <unzip src="${dist}/${fullName}.zip" dest="${user.home}/BEAST/2.7/${projName}"/>
+    </target>
+
+    <target name="install" depends="installWindows,installMac,installLinux">
+    </target>
+
 
 </project>
