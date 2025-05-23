@@ -8,7 +8,7 @@ import sa.evolution.operators.SampledNodeDateRandomWalker;
 public class SampledNodeDataWalkerInputEditor extends BEASTObjectInputEditor {
 
 	public SampledNodeDataWalkerInputEditor(BeautiDoc doc) {
-		super(doc); // this is important if the superclass uses the doc
+		super(doc);
 	}
 
 	@Override
