@@ -15,7 +15,6 @@
     <!-- Directories necessary for all BEAST 2 packages -->
     <property name="doc" location="doc"/>
     <property name="examples" location="examples"/>
-    <property name="scripts" location="scripts"/>
     <property name="fxtemplates" location="fxtemplates"/>
 
     <!-- BEAST branch and version to build against
@@ -207,7 +206,6 @@
 
         <mkdir dir="${pack}"/>
         <mkdir dir="${pack}/examples"/>
-        <mkdir dir="${pack}/scripts"/>
         <mkdir dir="${pack}/fxtemplates"/>
         <mkdir dir="${pack}/lib"/>
         <mkdir dir="${pack}/doc"/>
@@ -235,11 +233,6 @@
             <fileset dir="${examples}" includes="**/*.xml"/>
         </copy>
 
-        <mkdir dir="${scripts}"/>
-        <copy todir="${pack}/scripts">
-            <fileset dir="${scripts}" includes="**/*"/>
-        </copy>
-
 
         <mkdir dir="${fxtemplates}"/>
         <copy todir="${pack}/fxtemplates">
@@ -259,7 +252,7 @@
 
         <echo/>
         <echo/>
-        <echo>** Package ${dist}/${fullName}.zip created successfuly! **</echo>
+        <echo>** Package ${dist}/${fullName}.zip created successfully! **</echo>
     </target>
 
 
