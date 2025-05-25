@@ -20,17 +20,18 @@ Building package from source
 
 To build this package from source, ensure you have the following installed:
 
-* Java JDK v1.8 
+* Java JDK v1.8
 * Apache Ant v1.9 or later
 * An internet connection
 
-The internet connection is required since the build script downloads the most
-recent version of the BEAST 2 source to build the package against.
-Assuming both Java and Ant are on your execution path and your CWD is the root of
-this archive, simply type "ant" from the command line to build the package.
-This may take up to a minute due to the script fetching the BEAST source, and
-the resulting binary will be left in the `/dist` directory.
-To run the unit tests, use "ant test".
+To install this package from source you will need to clone this repository first.
+Then `cd` to the directory and run
+```bash
+ant install
+```
+to install the package.
+
+To run the unit tests, use `ant test`.
 
 
 Archive Contents
