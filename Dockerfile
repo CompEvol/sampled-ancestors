@@ -1,11 +1,12 @@
 # Dockerfile to build container for unit testing
 
-FROM openjdk:11
+FROM debian:stable
 
-RUN apt-get update && apt-get install -y ant
+RUN apt-get update
+RUN apt-get install -y openjdk-17-jdk openjfx ant
 
 WORKDIR /root
 
 ADD . ./
 
-ENTRYPOINT ant test
+ENTRYPOINT JAVA_FX_HOME=/usr/share/java/ ant test
