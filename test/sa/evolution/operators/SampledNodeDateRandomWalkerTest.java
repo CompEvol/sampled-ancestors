@@ -1,4 +1,4 @@
-package test.beast.evolution.operators;
+package sa.evolution.operators;
 
 import org.junit.Test;
 

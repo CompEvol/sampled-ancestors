@@ -1,4 +1,4 @@
-package test.beast.evolution.tree;
+package sa.evolution.tree;
 
 import org.junit.Test;
 
