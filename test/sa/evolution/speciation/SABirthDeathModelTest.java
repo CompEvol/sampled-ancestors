@@ -1,4 +1,4 @@
-package test.beast.evolution.speciation;
+package sa.evolution.speciation;
 
 import junit.framework.TestCase;
 import sa.evolution.speciation.SABirthDeathModel;

@@ -4,10 +4,11 @@ package sa.app.tools;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.parser.NexusParser;
-import beastlabs.evolution.tree.TreeAnnotation;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Convert zero-branch tree(s) to "real" SA trees.
@@ -110,7 +111,7 @@ public class ConvertZBTreeToSATree {
     }
 
     // convert ZB node into SA node
-    private void convertTree(Node node) {
+    void convertTree(Node node) {
 
         if (!node.isLeaf()) {
             if (node.isFake()) {
@@ -130,6 +131,68 @@ public class ConvertZBTreeToSATree {
         }
     }
 
+    /**
+     * Class representing mapping from tip nodes to annotations
+     * which are read from a file.  Contains a method for applying
+     * these annotations to existing trees.
+     *
+     * This implements the functionality of the BEASTLabs class,
+     * TreeAnnotation, avoiding that dependency.
+     */
+    static class TipAnnotations {
+        Map<String, String> annotations = new HashMap<>();
+        String traitName = null;
+
+        /**
+         * Create a new TipAnnotations object representing the annotations
+         * contained in a file.  The file should be a two-column tab-separated
+         * variable file where the first column contains taxon IDs and the
+         * second the metadata to be associated with each taxon. The first
+         * row must contain column headers. The header of the second column
+         * is used as the "key" for the key-value pairs assigned to each tip.
+         *
+         * @param fileName name of file to read annotations from.
+         */
+        TipAnnotations(String fileName) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+                boolean isHeader = true;
+                for (String line : reader.lines().toList()) {
+                    String[] fields = line.split("\t");
+                    if (isHeader) {
+                        traitName = fields[1];
+                        isHeader = false;
+                    } else {
+                        annotations.put(fields[0], fields[1]);
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /**
+         * Apply annotations to each tree in a list. A runtime exception is
+         * thrown if the tree contains tips for which annotations are not
+         * defined.
+         *
+         * @param trees list of trees to annotate.
+         */
+        void applyToTrees(List<Tree> trees) {
+            for (Tree tree : trees) {
+                for (Node node : tree.getNodesAsArray()) {
+                    if (node.isLeaf()) {
+                        if (!annotations.containsKey(node.getID()))
+                            throw new IllegalArgumentException("Cannot find trait for tip " + node.getID());
+                        node.metaDataString = traitName + "='" + annotations.get(node.getID()) + "'";
+                    } else {
+                        node.metaDataString = null;
+                        node.lengthMetaDataString = null;
+                    }
+                }
+            }
+        }
+    }
+
     // Usage: ConvertZBTreeToSATree tree_file [annotation_file]
     public static void main(String[] args) throws Exception {
 
@@ -144,10 +207,9 @@ public class ConvertZBTreeToSATree {
         ConvertZBTreeToSATree converter = new ConvertZBTreeToSATree(treeFilePath);
         boolean printMetaData = false;
 
-//        String traitName = "group";
         if (args.length > 1) {
-            TreeAnnotation treeAnnotation = new TreeAnnotation(null, args[1]);
-            treeAnnotation.annotateNodes(converter.trees, true, true);
+            TipAnnotations tipAnnotations = new TipAnnotations(args[1]);
+            tipAnnotations.applyToTrees(converter.trees);
             printMetaData = true;
         }
 

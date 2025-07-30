@@ -1,17 +1,16 @@
 <package name='SA' version='2.1.1'>
   <depends on='BEAST.base' atleast='2.7.0'/>
   <depends on='BEAST.app' atleast='2.7.0'/>
-	<depends on='BEASTLabs' atleast='2.0.0'/>
-	
-	  <packageapp description="SampledAncestorTreeAnalyser"
+
+  <packageapp description="SampledAncestorTreeAnalyser"
               class="sa.app.tools.SampledAncestorTreeAnalyser"
               args=""
-            />
+              />
 
-    <packageapp description="FullToExtantTreeConverter"
+  <packageapp description="FullToExtantTreeConverter"
               class="sa.app.tools.FullToExtantTreeConverter"
               args=""
-            />
+              />
 
     <service type="beastfx.app.inputeditor.InputEditor">
         <provider classname="sa.beauti.SAMRCAPriorInputEditor"/>
