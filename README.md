@@ -57,9 +57,10 @@ Operators that permit MCMC on sampled-ancestor trees.
 
 BEAUti input editors for sampled-ancestor priors.
 
-### `fxtemplates`
+### `fxtemplates` (in `-fx` module resources)
 
 Contains `FBD.xml`, a BEAUti template for `SABirthDeathModel` and sampled-ancestor tree operators.
+Located at `beast-sampled-ancestors-fx/src/main/resources/sa.fx/fxtemplates/`.
 
 ## License
 
