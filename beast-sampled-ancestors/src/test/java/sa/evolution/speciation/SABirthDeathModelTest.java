@@ -1,19 +1,19 @@
 package sa.evolution.speciation;
 
-import junit.framework.TestCase;
-import sa.evolution.speciation.SABirthDeathModel;
 import sa.evolution.tree.TreeWOffset;
 import sa.util.ZeroBranchSATreeParser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.tree.Tree;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * @author Alexei Drummond
  */
-public class SABirthDeathModelTest extends TestCase {
+public class SABirthDeathModelTest {
 
 	@Test
 	public void testLikelihoodCalculationSimple() throws Exception {
@@ -100,7 +100,7 @@ public class SABirthDeathModelTest extends TestCase {
 	@Test
 	public void testLikelihoodCalculation2() throws Exception {
 		Tree tree = new ZeroBranchSATreeParser("((1:1.5,2:0.5):0.5)3:0.0", true, false, 1);
-		
+
 		SABirthDeathModel sabd = new SABirthDeathModel();
 		sabd.setInputValue("tree", tree);
 		sabd.setInputValue("origin", new RealParameter("10."));

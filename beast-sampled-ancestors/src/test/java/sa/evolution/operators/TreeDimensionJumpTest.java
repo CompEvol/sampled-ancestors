@@ -2,16 +2,13 @@ package sa.evolution.operators;
 
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
-import junit.framework.TestCase;
-import sa.evolution.operators.TreeDimensionJump;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Alexandra Gavryushkina
  */
-
-public class TreeDimensionJumpTest extends TestCase {
+public class TreeDimensionJumpTest {
 
     @Test
     public void testOperator1() throws Exception {
@@ -24,10 +21,10 @@ public class TreeDimensionJumpTest extends TestCase {
         left.setNr(0);
         left.setHeight(0.0);
         for (int i = 1; i < taxaSize; i++) {
-            Node right = new Node(); 
+            Node right = new Node();
             right.setNr(i);
             right.setHeight(i);
-            Node parent = new Node(); 
+            Node parent = new Node();
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
             left.setParent(parent);
@@ -56,14 +53,14 @@ public class TreeDimensionJumpTest extends TestCase {
         int taxaSize = 3;
 
         // make a caterpillar
-        Node left = new Node(); 
+        Node left = new Node();
         left.setNr(0);
         left.setHeight(0.0);
         for (int i = 1; i < taxaSize; i++) {
-            Node right = new Node(); 
+            Node right = new Node();
             right.setNr(i);
             right.setHeight(i);
-            Node parent = new Node(); 
+            Node parent = new Node();
             parent.setNr(taxaSize + i - 1);
             parent.setHeight(i);
             left.setParent(parent);

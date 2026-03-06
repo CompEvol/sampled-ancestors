@@ -1,13 +1,13 @@
 package sa.evolution.tree;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import beast.base.evolution.tree.Tree;
-import junit.framework.TestCase;
-import sa.evolution.tree.TreeWOffset;
 import sa.util.ZeroBranchSATreeParser;
 
-public class TreeWOffsetTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class TreeWOffsetTest {
 
 	@Test
 	public void testTree() throws Exception {
@@ -16,9 +16,9 @@ public class TreeWOffsetTest extends TestCase {
 		TreeWOffset treewoffset = new TreeWOffset();
 		treewoffset.initByName("tree", tree, "offset", 25.0);
 
-		assertEquals(treewoffset.getHeightOfNode(0), 25.0);
-		assertEquals(treewoffset.getHeightOfNode(1), 26.0);
-		assertEquals(treewoffset.getOffset(), 25.0);
+		assertEquals(25.0, treewoffset.getHeightOfNode(0), 1e-10);
+		assertEquals(26.0, treewoffset.getHeightOfNode(1), 1e-10);
+		assertEquals(25.0, treewoffset.getOffset(), 1e-10);
 	}
 
 }
