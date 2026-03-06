@@ -1,4 +1,4 @@
-package sa.app.tools;
+package sa.app.tools.fx;
 
 
 import beastfx.app.tools.Application;

@@ -2,11 +2,10 @@ package sa.math.distributions;
 
 
 import beast.base.core.Input;
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.ContinuousDistribution;
-import org.apache.commons.math.distribution.Distribution;
+import org.apache.commons.statistics.distribution.ContinuousDistribution;
 
 import beast.base.inference.distribution.ParametricDistribution;
+import org.apache.commons.rng.UniformRandomProvider;
 
 /**
  * @author Alexandra Gavryushkina
@@ -52,8 +51,7 @@ public class DegenerateUniform extends ParametricDistribution {
         }
 
         @Override
-        public double cumulativeProbability(double x) throws MathException {
-
+        public double cumulativeProbability(double x) {
             if (x < point) {
                 x = Math.max(x, lower);
                 return (1- mass) * (x - lower) / (upper - lower);
@@ -61,18 +59,10 @@ public class DegenerateUniform extends ParametricDistribution {
                 x = Math.min(x, upper);
                 return mass + (1-mass) * (x - lower)/(upper - lower);
             }
-
-
-
         }
 
         @Override
-        public double cumulativeProbability(double x0, double x1) throws MathException {
-            return cumulativeProbability(x1) - cumulativeProbability(x0);
-        }
-
-        @Override
-        public double inverseCumulativeProbability(double p) throws MathException {
+        public double inverseCumulativeProbability(double p) {
             return 0.0;      //TODO derive and implement formula for inverse cumulative probability
         }
 
@@ -89,10 +79,18 @@ public class DegenerateUniform extends ParametricDistribution {
         public double logDensity(double x) {
             return Math.log(density(x));
         }
+
+        @Override public double getMean() { return (lower + upper) / 2.0; }
+        @Override public double getVariance() { double range = upper - lower; return range * range / 12.0; }
+        @Override public double getSupportLowerBound() { return lower; }
+        @Override public double getSupportUpperBound() { return upper; }
+        @Override public ContinuousDistribution.Sampler createSampler(UniformRandomProvider rng) {
+            return () -> lower + rng.nextDouble() * (upper - lower);
+        }
     } // class DegenerateUniformImpl
 
     @Override
-    public Distribution getDistribution() {
+    public Object getDistribution() {
         return distr;
     }
 

@@ -1,9 +1,11 @@
-package sa.app.tools;
+package sa.app.tools.fx;
 
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beastfx.app.tools.TreeTraceAnalysis;
 import beast.base.util.FrequencySet;
+import sa.app.tools.NodeComparator;
+import sa.app.tools.ResultsOutput;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

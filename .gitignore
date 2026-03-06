@@ -8,13 +8,23 @@ build-beast/
 dist/
 build-test/
 test-reports/
+target/
+**/target/
 
 # IntelliJ cruft
 /.idea
-/sampled-ancestors.iml
+*.iml
 
 # Eclipse files
 .classpath
 .project
 /build
 /build-lib
+
+# BEAST run output
+*.log
+*.trees
+*.xml.state
+
+# Package ZIPs
+*.v*.zip

@@ -233,7 +233,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
         <log idref="likelihood"/>
         <log idref="prior"/>
         <log idref="treeLikelihood.bears"/>
-        <log id="TreeHeight.t:bears" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:bears"/>
+        <log id="TreeHeight.t:bears" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree.t:bears"/>
         <log idref="ucldMean.c:bears"/>
         <log idref="ucldStdev.c:bears"/>
         <log id="rate.c:bears" spec="beast.base.evolution.RateStatistic" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>

@@ -1,14 +1,13 @@
-<package name='SA' version='2.1.1'>
-  <depends on='BEAST.base' atleast='2.7.0'/>
-  <depends on='BEAST.app' atleast='2.7.0'/>
+<package name='SA' version='3.0.0'>
+  <depends on='BEAST.base' atleast='2.8.0'/>
 
   <packageapp description="SampledAncestorTreeAnalyser"
-              class="sa.app.tools.SampledAncestorTreeAnalyser"
+              class="sa.app.tools.fx.SampledAncestorTreeAnalyser"
               args=""
               />
 
   <packageapp description="FullToExtantTreeConverter"
-              class="sa.app.tools.FullToExtantTreeConverter"
+              class="sa.app.tools.fx.FullToExtantTreeConverter"
               args=""
               />
 
@@ -23,8 +22,8 @@
 
 
     <service type="beast.base.core.BEASTInterface">
-        <provider classname="sa.app.tools.FullToExtantTreeConverter"/>
-        <provider classname="sa.app.tools.SampledAncestorTreeAnalyser"/>
+        <provider classname="sa.app.tools.fx.FullToExtantTreeConverter"/>
+        <provider classname="sa.app.tools.fx.SampledAncestorTreeAnalyser"/>
         <provider classname="sa.evolution.operators.Binary"/>
         <provider classname="sa.evolution.operators.IntRandomWalkWithExclusion"/>
         <provider classname="sa.evolution.operators.IntSwapWithExclusion"/>

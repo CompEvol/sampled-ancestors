@@ -1,8 +1,8 @@
 package sa.app.simulators;
 
 import beast.base.evolution.tree.Node;
-import beast.base.inference.distribution.LogNormalDistributionModel;
 import beast.base.util.Randomizer;
+import org.apache.commons.statistics.distribution.LogNormalDistribution;
 
 import java.io.*;
 import java.util.*;
@@ -700,11 +700,8 @@ public class SABDTreeSimulator {
         double r_turnover = Randomizer.nextDouble(); // turnover
         double s = 0.5 + Randomizer.nextDouble()*0.5; // sampling proportion
         if (simClock) {
-            LogNormalDistributionModel logNorm = new LogNormalDistributionModel();
-            logNorm.initByName("M", "-4.6");
-            logNorm.initByName("S", "1.25");
-            logNorm.initAndValidate();
-            clock = ((LogNormalDistributionModel.LogNormalImpl)logNorm.getDistribution()).inverseCumulativeProbability(Randomizer.nextDouble());
+            LogNormalDistribution logNorm = LogNormalDistribution.of(-4.6, 1.25);
+            clock = logNorm.inverseCumulativeProbability(Randomizer.nextDouble());
         }
 
         rates[0] = d/(1-r_turnover); // lambda

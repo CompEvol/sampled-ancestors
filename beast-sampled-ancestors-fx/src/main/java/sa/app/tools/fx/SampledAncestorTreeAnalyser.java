@@ -1,4 +1,4 @@
-package sa.app.tools;
+package sa.app.tools.fx;
 
 import beast.base.core.BEASTVersion2;
 import beastfx.app.tools.Application;
