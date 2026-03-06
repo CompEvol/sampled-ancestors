@@ -1,0 +1,43 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>beast-package</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <!-- version.xml from project root -->
+    <files>
+        <file>
+            <source>${project.parent.basedir}/version.xml</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+    </files>
+
+    <!-- Module JARs only (BEAST core, JavaFX, and their transitive deps are provided by the runtime) -->
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <scope>runtime</scope>
+            <includes>
+                <include>io.github.compevol:beast-sampled-ancestors</include>
+                <include>io.github.compevol:beast-sampled-ancestors-fx</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <!-- fxtemplates/ -->
+        <fileSet>
+            <directory>${project.parent.basedir}/fxtemplates</directory>
+            <outputDirectory>/fxtemplates</outputDirectory>
+        </fileSet>
+        <!-- examples/ from project root -->
+        <fileSet>
+            <directory>${project.parent.basedir}/examples</directory>
+            <outputDirectory>/examples</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>
