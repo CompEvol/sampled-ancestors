@@ -1,94 +1,73 @@
-sampled-ancestors
-=================
+# Sampled Ancestors
 
 [![Build Status](https://github.com/CompEvol/sampled-ancestors/workflows/Unit%2Fintegration%20tests/badge.svg)](https://github.com/CompEvol/sampled-ancestors/actions?query=workflow%3A%22Unit%2Fintegration+tests%22)
 
-This [BEAST 2](http://www.beast2.org) package provides MCMC proposals and post-processing tools for samples of trees containing sampled ancestors. 
-It relies on the support for sampled-ancestor trees built into the `beast.evolution.tree.Tree` class (https://github.com/CompEvol/beast2/blob/master/src/beast/evolution/tree/Tree.java).
-
-This archive contains the source code of the package and is therefore of
-primary interest to programmers.
+This [BEAST 3](https://github.com/CompEvol/beast3) package provides MCMC proposals and post-processing tools for samples of trees containing sampled ancestors.
+It relies on the support for sampled-ancestor trees built into the `beast.base.evolution.tree.Tree` class.
 
 The paper describing this package is:
 
 Alexandra Gavryushkina, David Welch, Tanja Stadler, Alexei J. Drummond (2014) Bayesian Inference of Sampled Ancestor Trees for Epidemiology and Fossil Calibration. _PLoS Computational Biology_ https://doi.org/10.1371/journal.pcbi.1003919
 
-Currently the sampled-ancestors package uses `beast.*` Java package namespace, which is now deprecated because the `beast.*` package namespace is reserved for the beast2 core (https://github.com/CompEvol/beast2).
+## Building from source
 
-Building package from source
-----------------------------
+Requirements:
 
-To build this package from source, ensure you have the following installed:
-
-* OpenJDK version 17 or greater
-* A recent version of OpenJFX
-* The Apache Ant build system
-* An internet connection
-The internet connection is required since the build script downloads the most
-recent version of the BEAST 2 source to build the package against.
-
-Assuming both Java and Ant are on your execution path and your current working
-directory is the root of directory this archive, simply type
+* JDK 25 or later
+* Apache Maven
 
 ```sh
-JAVA_FX_HOME=/path/to/openjfx/ ant
+mvn compile
 ```
 
-from the command line to build the package. This may take up to a minute due
-to the script fetching the BEAST source, and the resulting binary will be
-left in the `/dist` directory.
+To run an example:
 
-To run the unit tests, use "ant test".
+```sh
+mvn -pl beast-sampled-ancestors exec:exec -Dbeast.args="examples/bears.xml"
+```
 
+## Project structure
 
-Archive Contents
-----------------
+This is a multi-module Maven project with two modules:
 
-* `README.md` : this file
-* `build.xml` : Ant build script
-* `/doc` : Contains additional documentation, currently a tutorial for using fossilized birth-death tree prior.
-* `/examples` : Example analyses in beast2 xml format. See below for details.
-* `/src` : source files. See below for details.
-* `/test` : unit tests
-* `/templates` : BEAUti templates. See below for details.
-* `version.xml` : BEAST package version file.
+* **beast-sampled-ancestors** — core module (no JavaFX dependency, runs headless on clusters)
+* **beast-sampled-ancestors-fx** — BEAUti input editors and JavaFX-dependent tools
 
-The main Java packages and folders in the sampled-ancestors BEAST2 package are: 
+### `sa.app.simulators`
 
-### `beast.app.simulators`
+Simulators for the fossilized birth-death (FBD) model and FBD-skyline model.
 
-Contains simulators for the fossilized birth-death (FBD) model and FBD-skyline model.
+### `sa.app.tools`
 
-### `beast.app.tools`
+* Conversion tools between zero-branch-length sampled-ancestor trees and native sampled-ancestor trees
+* `SATreeTraceAnalysis` and various other post-processing tools (in `-fx` module)
 
-* Contains conversion tools between zero-branch-length sampled-ancestor trees and native sampled-ancestor trees
-* Contains `SATreeTraceAnalysis` and various other post-processing tools and support
-		
-### `beast.evolution.operators`
-		
-* Contains the operators that permit MCMC on sampled-ancestor trees
+### `sa.evolution.operators`
 
-### `beast.evolution.speciation`
+Operators that permit MCMC on sampled-ancestor trees.
 
-Contains `SpeciesTreeDistribution` calculations for the FBD prior:
+### `sa.evolution.speciation`
 
-* `SABirthDeathModel` - A species tree probability density of FBD prior with multiple hard-coded parameterizations possible. 
-* `ParameterizedSABirthDeathModel` -  A species tree probability density with multiple parameterizations implemented in an object-oriented way.
+`SpeciesTreeDistribution` calculations for the FBD prior:
 
-### `templates`
+* `SABirthDeathModel` — FBD prior with multiple hard-coded parameterizations
+* `ParameterizedSABirthDeathModel` — FBD prior with object-oriented parameterizations
 
-Contains a template called `FBD.xml` which provides a template for `SABirthDeathModel` and sampled-ancestor tree operators.
+### `sa.beauti` (in `-fx` module)
 
-License
--------
+BEAUti input editors for sampled-ancestor priors.
 
-This software is free (as in freedom). You are welcome to use it, modify it,
-and distribute your modified versions provided you extend the same courtesy to
-users of your modified version.  Specifically, it is made available under the
+### `fxtemplates`
+
+Contains `FBD.xml`, a BEAUti template for `SABirthDeathModel` and sampled-ancestor tree operators.
+
+## License
+
+This software is free (as in freedom). With your modified versions provided you extend the same courtesy to
+users of your modified version. Specifically, it is made available under the
 terms of the GNU General Public License version 3.
 
-Acknowledgements
-----------------
+## Acknowledgements
 
 Work on this project was supported by:
 
