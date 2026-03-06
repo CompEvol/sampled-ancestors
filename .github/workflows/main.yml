@@ -10,4 +10,9 @@ jobs:
         with:
           distribution: temurin
           java-version: 25
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
       - run: mvn test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
