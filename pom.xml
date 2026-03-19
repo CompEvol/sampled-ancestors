@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.compevol</groupId>
+    <artifactId>sampled-ancestors-parent</artifactId>
+    <version>2.2.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Sampled Ancestors</name>
+    <description>BEAST 3 package for sampled ancestor trees</description>
+    <url>https://github.com/CompEvol/sampled-ancestors</url>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Alexandra Gavryushkina</name>
+        </developer>
+        <developer>
+            <name>Alexei Drummond</name>
+            <url>https://github.com/alexeid</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/CompEvol/sampled-ancestors.git</connection>
+        <developerConnection>scm:git:ssh://github.com:CompEvol/sampled-ancestors.git</developerConnection>
+        <url>https://github.com/CompEvol/sampled-ancestors</url>
+    </scm>
+
+    <modules>
+        <module>beast-sampled-ancestors</module>
+        <module>beast-sampled-ancestors-fx</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>25</maven.compiler.release>
+
+        <beast.version>2.8.0-SNAPSHOT</beast.version>
+        <javafx.version>25.0.2</javafx.version>
+        <junit.version>5.8.2</junit.version>
+        <beast.main>beastfx.app.beauti.Beauti</beast.main>
+        <beast.args/>
+        <beast.pkg.name>SA</beast.pkg.name>
+        <beast.pkg.version>2.2.0</beast.pkg.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- BEAST 3 modules -->
+            <dependency>
+                <groupId>io.github.compevol</groupId>
+                <artifactId>beast-pkgmgmt</artifactId>
+                <version>${beast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.compevol</groupId>
+                <artifactId>beast-base</artifactId>
+                <version>${beast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.compevol</groupId>
+                <artifactId>beast-fx</artifactId>
+                <version>${beast.version}</version>
+            </dependency>
+
+            <!-- Internal modules -->
+            <dependency>
+                <groupId>io.github.compevol</groupId>
+                <artifactId>beast-sampled-ancestors</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- JavaFX -->
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/CompEvol/beast3</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.15.0</version>
+                    <configuration>
+                        <release>25</release>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.1.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.2</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals><goal>jar</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.6.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
