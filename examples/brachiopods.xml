@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast beautitemplate="Standard" beautistatus="" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="SA v3.0.0:MM v1.3.0" version="2.5">
+<beast beautitemplate="Standard" beautistatus="" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter" required="SA v3.0.0:MM v1.3.0" version="2.5">
   <data id="rode05_mod" dataType="standard" name="alignment">
     <sequence id="seq_Floweria_anomala" taxon="Floweria_anomala" totalcount="2" value="00{01}020111{01}11101110011100101111101010"/>
     <sequence id="seq_Floweria_arctostriata" taxon="Floweria_arctostriata" totalcount="2" value="1000{12}0{01}110{01}12100000{01}10011100100111{01}{01}"/>
@@ -98,10 +98,10 @@ Xystostrophia_umbraculum=5.6815330258105,
 Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignment idref="rode05_mod"/></taxa>
             </trait>
       </tree>
-      <parameter id="diversificationRateFBD.t:rode05_mod" lower="0.0" name="stateNode">0.1</parameter>
-      <parameter id="turnoverFBD.t:rode05_mod" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
-      <parameter id="samplingProportionFBD.t:rode05_mod" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
-      <parameter id="originFBD.t:rode05_mod" lower="0.0" name="stateNode">500.0</parameter>
+      <stateNode id="diversificationRateFBD.t:rode05_mod" spec="RealScalarParam" domain="Real" value="0.1"/>
+      <stateNode id="turnoverFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+      <stateNode id="samplingProportionFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+      <stateNode id="originFBD.t:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="500.0"/>
       <parameter id="clockRate.c:rode05_mod" name="stateNode">1.0</parameter>
     </state>
     <init id="RandomTree.t:rode05_mod" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:rode05_mod" taxa="@rode05_mod">
@@ -112,8 +112,8 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
       <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
         <distribution id="FBD.t:rode05_mod" spec="sa.evolution.speciation.SABirthDeathModel" conditionOnSampling="true" diversificationRate="@diversificationRateFBD.t:rode05_mod" origin="@originFBD.t:rode05_mod" samplingProportion="@samplingProportionFBD.t:rode05_mod" tree="@Tree.t:rode05_mod" turnover="@turnoverFBD.t:rode05_mod">
-          <parameter id="rFBD.t:rode05_mod" lower="0.0" name="removalProbability" upper="1.0">0.0</parameter>
-          <parameter id="rhoFBD.t:rode05_mod" estimate="false" lower="0.0" name="rho" upper="1.0">1.0</parameter>
+          <removalProbability id="rFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
+          <rho id="rhoFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
           <treeWOffset id="treeWoffset" spec="sa.evolution.tree.TreeWOffset" tree="@Tree.t:rode05_mod" offset="367.762481269822"/>
         </distribution>
         <prior id="ClockPrior.c:rode05_mod" name="distribution" x="@clockRate.c:rode05_mod">
@@ -122,18 +122,14 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
             <parameter id="Real.Parameter.4" estimate="false" lower="0.0" name="S" upper="5.0">1.25</parameter>
           </LogNormal>
         </prior>
-        <prior id="diversificationRatePriorFBD.t:rode05_mod" name="distribution" x="@diversificationRateFBD.t:rode05_mod">
-          <Uniform id="Uniform.5" name="distr" upper="Infinity"/>
-        </prior>
-        <prior id="originPriorFBD.t:rode05_mod" name="distribution" x="@originFBD.t:rode05_mod">
-          <Uniform id="Uniform.4" name="distr" upper="Infinity"/>
-        </prior>
-        <prior id="samplingProportionPriorFBD.t:rode05_mod" name="distribution" x="@samplingProportionFBD.t:rode05_mod">
-          <Uniform id="Uniform.0" name="distr"/>
-        </prior>
-        <prior id="turnoverPriorFBD.t:rode05_mod" name="distribution" x="@turnoverFBD.t:rode05_mod">
-          <Uniform id="Uniform.01" name="distr"/>
-        </prior>
+        <distribution id="diversificationRatePriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@diversificationRateFBD.t:rode05_mod">
+          <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+        </distribution>
+        <distribution id="originPriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@originFBD.t:rode05_mod">
+          <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+        </distribution>
+        <distribution id="samplingProportionPriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@samplingProportionFBD.t:rode05_mod"/>
+        <distribution id="turnoverPriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@turnoverFBD.t:rode05_mod"/>
       </distribution>
       <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution" useThreads="true">
         <distribution id="treeLikelihood.rode05_mod" spec="ThreadedTreeLikelihood" data="@rode05_mod" tree="@Tree.t:rode05_mod">
@@ -146,10 +142,10 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
         </distribution>
       </distribution>
     </distribution>
-    <operator id="originScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@originFBD.t:rode05_mod" scaleFactor="0.75" weight="3.0"/>
-    <operator id="divRateScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@diversificationRateFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
-    <operator id="turnoverScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@turnoverFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
-    <operator id="samplingPScalerFBD.t:rode05_mod" spec="ScaleOperator" parameter="@samplingProportionFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
+    <operator id="originScalerFBD.t:rode05_mod" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@originFBD.t:rode05_mod" scaleFactor="0.75" weight="3.0"/>
+    <operator id="divRateScalerFBD.t:rode05_mod" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@diversificationRateFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
+    <operator id="turnoverScalerFBD.t:rode05_mod" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@turnoverFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
+    <operator id="samplingPScalerFBD.t:rode05_mod" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@samplingProportionFBD.t:rode05_mod" scaleFactor="0.75" weight="10.0"/>
     <operator id="LeafToSAFBD.t:rode05_mod" spec="sa.evolution.operators.LeafToSampledAncestorJump" tree="@Tree.t:rode05_mod" weight="10.0"/>
     <operator id="SAWilsonBaldingFBD.t:rode05_mod" spec="sa.evolution.operators.SAWilsonBalding" tree="@Tree.t:rode05_mod" weight="10.0"/>
     <operator id="SAWideFBD.t:rode05_mod" spec="sa.evolution.operators.SAExchange" isNarrow="false" tree="@Tree.t:rode05_mod" weight="10.0"/>

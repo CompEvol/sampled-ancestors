@@ -7,12 +7,13 @@ package sa.evolution.operators;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.IntegerParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 
 @Description("Implement an operator that jumps between zero and one")
 public class Binary extends Operator {
 
-    public final Input<IntegerParameter> parameterInput = new Input<IntegerParameter>("parameter", "binary parameter", Input.Validate.REQUIRED);
+    public final Input<IntScalarParam<? extends NonNegativeInt>> parameterInput = new Input<>("parameter", "binary parameter", Input.Validate.REQUIRED);
 
     double point;
 
@@ -23,10 +24,10 @@ public class Binary extends Operator {
     @Override
     public double proposal() {
 
-        if (parameterInput.get().getValue() == 0) {
-            parameterInput.get().setValue(1);
+        if (parameterInput.get().get() == 0) {
+            parameterInput.get().set(1);
         } else {
-            parameterInput.get().setValue(0);
+            parameterInput.get().set(0);
         }
 
         return 0.0;

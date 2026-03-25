@@ -3,8 +3,8 @@ package sa.evolution.operators;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.inference.parameter.Parameter;
+import beast.base.spec.domain.Int;
+import beast.base.spec.inference.parameter.IntVectorParam;
 import beast.base.util.Randomizer;
 
 /**
@@ -13,20 +13,16 @@ import beast.base.util.Randomizer;
 @Description("Assign one or more parameter values (excluding negative values) to a uniformly selected value in its range.")
 public class IntUniformWithExclusion extends Operator {
 
-    public Input<IntegerParameter> parameterInput = new Input<IntegerParameter>("parameter", "an integer parameter to sample individual values for", Input.Validate.REQUIRED, Parameter.class);
+    public Input<IntVectorParam<? extends Int>> parameterInput = new Input<>("parameter", "an integer parameter to sample individual values for", Input.Validate.REQUIRED);
 
-    Parameter<?> parameter;
+    IntVectorParam<? extends Int> parameter;
     int iLower, iUpper;
 
     @Override
     public void initAndValidate() {
         parameter = parameterInput.get();
-        if (parameter instanceof IntegerParameter) {
-            iLower = (Integer) parameter.getLower();
-            iUpper = (Integer) parameter.getUpper();
-        } else {
-            throw new RuntimeException("parameter should be an IntergerParameter, not " + parameter.getClass().getName());
-        }
+        iLower = parameter.getLower();
+        iUpper = parameter.getUpper();
     }
 
     @Override
@@ -34,12 +30,12 @@ public class IntUniformWithExclusion extends Operator {
 
         int index;
         do {
-            index = Randomizer.nextInt(parameter.getDimension());
-        } while (((IntegerParameter)parameter).getValue(index) < 0);
+            index = Randomizer.nextInt(parameter.size());
+        } while (parameter.get(index) < 0);
 
 
         int newValue = Randomizer.nextInt(iUpper - iLower + 1) + iLower; // from 0 to n-1, n must > 0,
-        ((IntegerParameter) parameter).setValue(index, newValue);
+        parameter.set(index, newValue);
 
         return 0.0;
     }

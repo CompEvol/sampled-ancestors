@@ -3,7 +3,8 @@ package sa.evolution.speciation;
 import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.type.RealScalar;
 import beast.base.evolution.speciation.SpeciesTreeDistribution;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
@@ -27,19 +28,19 @@ public class ParameterizedSABirthDeathModel extends SpeciesTreeDistribution {
     public Input<SABDParameterization> parameterizationInput = new Input<>("parameterization", "The parameterization to use.", Input.Validate.REQUIRED);
 
     // r parameter
-    public Input<RealParameter> removalProbability =
-            new Input<RealParameter>("removalProbability", "The probability that an individual is removed from the process after the sampling", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends UnitInterval>> removalProbability =
+            new Input<>("removalProbability", "The probability that an individual is removed from the process after the sampling", Input.Validate.REQUIRED);
 
-    public Input<RealParameter> rhoProbability =
-            new Input<RealParameter>("rho", "Probability of an individual to be sampled at present", (RealParameter)null);
+    public Input<RealScalar<? extends UnitInterval>> rhoProbability =
+            new Input<>("rho", "Probability of an individual to be sampled at present");
 
     // if the tree likelihood is condition on sampling at least one individual then set to true one of the inputs:
-    public Input<Boolean> conditionOnSamplingInput = new Input<Boolean>("conditionOnSampling", "the tree " +
+    public Input<Boolean> conditionOnSamplingInput = new Input<>("conditionOnSampling", "the tree " +
             "likelihood is conditioned on sampling at least one individual", false);
-    public Input<Boolean> conditionOnRhoSamplingInput = new Input<Boolean>("conditionOnRhoSampling", "the tree " +
+    public Input<Boolean> conditionOnRhoSamplingInput = new Input<>("conditionOnRhoSampling", "the tree " +
             "likelihood is conditioned on sampling at least one individual in present", false);
 
-    public Input<Boolean> conditionOnRootInput = new Input<Boolean>("conditionOnRoot", "the tree " +
+    public Input<Boolean> conditionOnRootInput = new Input<>("conditionOnRoot", "the tree " +
             "likelihood is conditioned on the root height otherwise on the time of origin", false);
 
     protected double r;
@@ -98,9 +99,9 @@ public class ParameterizedSABirthDeathModel extends SpeciesTreeDistribution {
             origin = Double.POSITIVE_INFINITY;
         }
 
-        r = removalProbability.get().getValue();
+        r = removalProbability.get().get();
         if (rhoProbability.get() != null ) {
-            rho = rhoProbability.get().getValue();
+            rho = rhoProbability.get().get();
         } else {
             rho = 0.;
         }

@@ -3,12 +3,9 @@ package sa.evolution.speciation;
 import beast.base.inference.MCMC;
 import beast.base.inference.Operator;
 import beast.base.inference.StateNode;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.core.BEASTInterface;
 import beast.base.core.Citation;
 import beast.base.core.Description;
-import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.core.Log;
 import beast.base.evolution.alignment.Taxon;
@@ -18,6 +15,13 @@ import beast.base.evolution.operator.SubtreeSlide;
 import beast.base.evolution.operator.TipDatesRandomWalker;
 import beast.base.evolution.operator.Uniform;
 import beast.base.evolution.operator.WilsonBalding;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.Real;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.type.IntScalar;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.domain.NonNegativeInt;
 import sa.evolution.tree.TreeWOffset;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -43,51 +47,51 @@ import java.util.List;
 public class SABirthDeathModel extends TreeDistribution {
 
 	public Input<TreeWOffset> treeWOffsetInput =
-            new Input<TreeWOffset>("treeWOffset", "Optional fully extinct tree", (TreeWOffset)null);
-	
+            new Input<>("treeWOffset", "Optional fully extinct tree", (TreeWOffset)null);
+
     //'direct' parameters
-    public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The time when the process started", (RealParameter)null);
-    public Input<RealParameter> birthRateInput =
-            new Input<RealParameter>("birthRate", "Birth rate", Input.Validate.REQUIRED);
-    public Input<Function> deathRateInput =
-            new Input<Function>("deathRate", "Death rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> samplingRateInput =
-            new Input<RealParameter>("samplingRate", "Sampling rate per individual", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends PositiveReal>> originInput =
+            new Input<>("origin", "The time when the process started");
+    public Input<RealScalar<? extends PositiveReal>> birthRateInput =
+            new Input<>("birthRate", "Birth rate", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends NonNegativeReal>> deathRateInput =
+            new Input<>("deathRate", "Death rate", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends NonNegativeReal>> samplingRateInput =
+            new Input<>("samplingRate", "Sampling rate per individual", Input.Validate.REQUIRED);
 
     //transformed parameters:
-    public Input<RealParameter> expectedNInput =
-            new Input<RealParameter>("expectedN", "The expected-N-at-present parameterisation of T",(RealParameter)null);
-    public Input<RealParameter> diversificationRateInput =
-            new Input<RealParameter>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.XOR, birthRateInput);
-    public Input<Function> turnoverInput =
-            new Input<Function>("turnover", "Turnover. Death rate/birth rate", Input.Validate.XOR, deathRateInput);
-    public Input<RealParameter> samplingProportionInput =
-            new Input<RealParameter>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.XOR, samplingRateInput);
+    public Input<RealScalar<? extends PositiveReal>> expectedNInput =
+            new Input<>("expectedN", "The expected-N-at-present parameterisation of T");
+    public Input<RealScalar<? extends Real>> diversificationRateInput =
+            new Input<>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.XOR, birthRateInput);
+    public Input<RealScalar<? extends UnitInterval>> turnoverInput =
+            new Input<>("turnover", "Turnover. Death rate/birth rate", Input.Validate.XOR, deathRateInput);
+    public Input<RealScalar<? extends UnitInterval>> samplingProportionInput =
+            new Input<>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.XOR, samplingRateInput);
 
 
     // r parameter
-    public Input<RealParameter> removalProbability =
-            new Input<RealParameter>("removalProbability", "The probability that an individual is removed from the process after the sampling", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends UnitInterval>> removalProbability =
+            new Input<>("removalProbability", "The probability that an individual is removed from the process after the sampling", Input.Validate.REQUIRED);
 
-    public Input<RealParameter> rhoProbability =
-            new Input<RealParameter>("rho", "Probability of an individual to be sampled at present", (RealParameter)null);
+    public Input<RealScalar<? extends UnitInterval>> rhoProbability =
+            new Input<>("rho", "Probability of an individual to be sampled at present");
 
     // if the tree likelihood is condition on sampling at least one individual then set to true one of the inputs:
-    public Input<Boolean> conditionOnSamplingInput = new Input<Boolean>("conditionOnSampling", "the tree " +
+    public Input<Boolean> conditionOnSamplingInput = new Input<>("conditionOnSampling", "the tree " +
             "likelihood is conditioned on sampling at least one individual if condition on origin or at least one individual on both sides of the root if condition on root", false);
-    public Input<Boolean> conditionOnRhoSamplingInput = new Input<Boolean>("conditionOnRhoSampling", "the tree " +
+    public Input<Boolean> conditionOnRhoSamplingInput = new Input<>("conditionOnRhoSampling", "the tree " +
             "likelihood is conditioned on sampling at least one individual in present if condition on origin or at lease one extant individual on both sides of the root if condition on root", false);
 
-    public Input<Boolean> conditionOnRootInput = new Input<Boolean>("conditionOnRoot", "the tree " +
+    public Input<Boolean> conditionOnRootInput = new Input<>("conditionOnRoot", "the tree " +
             "likelihood is conditioned on the root height otherwise on the time of origin", false);
 
-    public Input<Taxon> taxonInput = new Input<Taxon>("taxon", "a name of the taxon for which to calculate the prior probability of" +
+    public Input<Taxon> taxonInput = new Input<>("taxon", "a name of the taxon for which to calculate the prior probability of" +
             "being sampled ancestor under the model", (Taxon) null);
 
-    public final Input<IntegerParameter> SATaxonInput = new Input<IntegerParameter>("SAtaxon", "A binary parameter is equal to zero " +
+    public final Input<IntScalar<? extends NonNegativeInt>> SATaxonInput = new Input<>("SAtaxon", "A binary parameter is equal to zero " +
             "if the taxon is not a sampled ancestor (that is, it does not have sampled descendants) and to one " +
-            "if it is a sampled ancestor (that is, it has sampled descendants)", (IntegerParameter)null);
+            "if it is a sampled ancestor (that is, it has sampled descendants)");
 
     protected double r;
     protected double lambda;
@@ -173,16 +177,17 @@ public class SABirthDeathModel extends TreeDistribution {
         
         // sanity check for sampled ancestor analysis
     	boolean isSAAnalysis = false;
-    	if (removalProbability.get() != null && removalProbability.get().getValue() >= 1.0 && removalProbability.get().isEstimatedInput.get()) {
+    	if (removalProbability.get() != null && removalProbability.get().get() >= 1.0
+    	        && removalProbability.get() instanceof StateNode sn && sn.isEstimatedInput.get()) {
     		// default parameters have estimated=true by default.
     		// check there is an operator on this parameter
-    		for (BEASTInterface o : removalProbability.get().getOutputs()) {
+    		for (BEASTInterface o : ((BEASTInterface) removalProbability.get()).getOutputs()) {
     			if (o instanceof Operator) {
     				isSAAnalysis = true;
     			}
     		}
     	}
-        if (removalProbability.get() != null && removalProbability.get().getValue() < 1.0 || isSAAnalysis) {
+        if (removalProbability.get() != null && removalProbability.get().get() < 1.0 || isSAAnalysis) {
         	// this is a sampled ancestor analysis
         	// check that there are no invalid operators in this analysis
         	List<Operator> operators = getOperators(this);
@@ -293,19 +298,19 @@ public class SABirthDeathModel extends TreeDistribution {
      */
     private double origin() {
         if (transformT) {
-            double N = expectedNInput.get().getValue();
+            double N = expectedNInput.get().get();
             return Math.log((1.0 - turnover())*N + turnover())/d();
         }
-        return originInput.get().getValue();
+        return originInput.get().get();
     }
 
     /**
      * @return the current diversification rate, regardless of parametrization.
      */
     private double d() {
-        if (transform) return diversificationRateInput.get().getValue();
+        if (transform) return diversificationRateInput.get().get();
 
-        double lambda = birthRateInput.get().getValue();
+        double lambda = birthRateInput.get().get();
         return lambda * (1.0 - turnover());
     }
 
@@ -313,18 +318,18 @@ public class SABirthDeathModel extends TreeDistribution {
      * @return the current turnover, regardless of parametrization.
      */
     private double turnover() {
-        if (transform) return turnoverInput.get().getArrayValue();
+        if (transform) return turnoverInput.get().get();
 
-        double lambda = birthRateInput.get().getValue();
-        double mu = deathRateInput.get().getArrayValue();
+        double lambda = birthRateInput.get().get();
+        double mu = deathRateInput.get().get();
 
         return mu/lambda;
     }
 
     private void transformParameters() {
-        double d = diversificationRateInput.get().getValue();
-        double r_turnover = turnoverInput.get().getArrayValue();
-        double s = samplingProportionInput.get().getValue();
+        double d = diversificationRateInput.get().get();
+        double r_turnover = turnoverInput.get().get();
+        double s = samplingProportionInput.get().get();
         lambda = d/(1-r_turnover);
         mu = r_turnover*lambda;
         psi = mu*s/(1-s);
@@ -335,14 +340,14 @@ public class SABirthDeathModel extends TreeDistribution {
         if (transform) {
             transformParameters();
         } else {
-            lambda = birthRateInput.get().getValue();
-            mu = deathRateInput.get().getArrayValue();
-            psi = samplingRateInput.get().getValue();
+            lambda = birthRateInput.get().get();
+            mu = deathRateInput.get().get();
+            psi = samplingRateInput.get().get();
         }
 
-        r = removalProbability.get().getValue();
+        r = removalProbability.get().get();
         if (rhoProbability.get() != null ) {
-            rho = rhoProbability.get().getValue();
+            rho = rhoProbability.get().get();
         } else {
             rho = 0.;
         }
@@ -387,7 +392,7 @@ public class SABirthDeathModel extends TreeDistribution {
                 logP -= Math.log(oneMinusP0Hat(x0, c1, c2));
             }
 
-            if (SATaxonInput.get().getValue() == 0) {
+            if (SATaxonInput.get().get() == 0) {
                 logP += Math.log(1 - oneMinusP0(taxonAge, c1, c2));
             } else {
                 logP += Math.log(oneMinusP0(taxonAge, c1, c2));

@@ -23,6 +23,14 @@
             <artifactId>beast-pkgmgmt</artifactId>
         </dependency>
 
+        <!-- BEAGLE (optional, needed at runtime for TreeLikelihood) -->
+        <dependency>
+            <groupId>io.github.compevol</groupId>
+            <artifactId>beagle</artifactId>
+            <version>1.0</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

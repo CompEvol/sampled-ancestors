@@ -2,8 +2,10 @@ package sa.evolution.operators;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.Int;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.IntVectorParam;
+import beast.base.spec.type.RealScalar;
 import beast.base.evolution.operator.TreeOperator;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -21,10 +23,10 @@ import beast.base.util.Randomizer;
         " between the sampled node height and its old parent height.")
 public class TreeDimensionJump extends TreeOperator {
 
-    public Input<IntegerParameter> categoriesInput = new Input<IntegerParameter>("rateCategories", "rate category per branch");
+    public Input<IntVectorParam<? extends Int>> categoriesInput = new Input<>("rateCategories", "rate category per branch");
 
-    public Input<RealParameter> rInput =
-            new Input<RealParameter>("removalProbability", "The probability of an individual to be removed from the process immediately after the sampling");
+    public Input<RealScalar<? extends UnitInterval>> rInput =
+            new Input<>("removalProbability", "The probability of an individual to be removed from the process immediately after the sampling");
 
     @Override
     public void initAndValidate() {
@@ -61,7 +63,7 @@ public class TreeDimensionJump extends TreeOperator {
             if (categoriesInput.get() != null) {
                 int index = leaf.getNr();
                 int newValue = Randomizer.nextInt(categoryCount) + categoriesInput.get().getLower(); // from 0 to n-1, n must > 0,
-                categoriesInput.get().setValue(index, newValue);
+                categoriesInput.get().set(index, newValue);
             }
         } else {
             newRange = (double) 1;
@@ -77,13 +79,13 @@ public class TreeDimensionJump extends TreeOperator {
             newHeight = leaf.getHeight();
             if  (categoriesInput.get() != null) {
                 int index = leaf.getNr();
-                categoriesInput.get().setValue(index, -1);
+                categoriesInput.get().set(index, -1);
             }
         }
         parent.setHeight(newHeight);
 
         //make sure that either there are no direct ancestors or r<1
-        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
+        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().get() == 1))  {
             return Double.NEGATIVE_INFINITY;
         }
 

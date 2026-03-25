@@ -1,7 +1,9 @@
 package sa.evolution.speciation;
 
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.type.RealScalar;
 
 /**
  * Created by alexei on 7/09/15.
@@ -9,26 +11,26 @@ import beast.base.inference.parameter.RealParameter;
 public class RateParameterization extends SABDParameterization {
 
     //'direct' parameters
-    public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The time when the process started", Input.Validate.REQUIRED);
-    public Input<RealParameter> birthRateInput =
-            new Input<RealParameter>("birthRate", "Birth rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> deathRateInput =
-            new Input<RealParameter>("deathRate", "Death rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> samplingRateInput =
-            new Input<RealParameter>("samplingRate", "Sampling rate per individual", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends PositiveReal>> originInput =
+            new Input<>("origin", "The time when the process started", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends PositiveReal>> birthRateInput =
+            new Input<>("birthRate", "Birth rate", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends NonNegativeReal>> deathRateInput =
+            new Input<>("deathRate", "Death rate", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends NonNegativeReal>> samplingRateInput =
+            new Input<>("samplingRate", "Sampling rate per individual", Input.Validate.REQUIRED);
 
     public double mu() {
-        return deathRateInput.get().getValue();
+        return deathRateInput.get().get();
     }
     public double lambda() {
-        return birthRateInput.get().getValue();
+        return birthRateInput.get().get();
     }
     public double psi() {
-        return samplingRateInput.get().getValue();
+        return samplingRateInput.get().get();
     }
     public double origin() {
-        return originInput.get().getValue();
+        return originInput.get().get();
     }
 
     @Override

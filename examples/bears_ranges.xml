@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter" version="2.0">
 
 
     <data
@@ -106,10 +106,10 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
         <parameter id="ucldMean.c:bears" name="stateNode">1.0</parameter>
         <parameter id="ucldStdev.c:bears" lower="0.0" name="stateNode">0.1</parameter>
         <stateNode id="rateCategories.c:bears" spec="parameter.IntegerParameter" dimension="66">1</stateNode>
-        <parameter id="originFBD.t:bears" lower="0.0" name="stateNode">100.0</parameter>
-        <parameter id="diversificationRateFBD.t:bears" lower="0.0" name="stateNode">1.0</parameter>
-        <parameter id="turnoverFBD.t:bears" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
-        <parameter id="samplingProportionFBD.t:bears" lower="0.0" name="stateNode" upper="1.0">0.5</parameter>
+        <stateNode id="originFBD.t:bears" spec="RealScalarParam" domain="PositiveReal" value="100.0"/>
+        <stateNode id="diversificationRateFBD.t:bears" spec="RealScalarParam" domain="Real" value="1.0"/>
+        <stateNode id="turnoverFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+        <stateNode id="samplingProportionFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
     </state>
 
     <init id="RandomTree.t:bears" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
@@ -121,21 +121,17 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
         <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
             <distribution id="FBD.t:bears" spec="sa.evolution.speciation.SABirthDeathModel" conditionOnRhoSampling="true" diversificationRate="@diversificationRateFBD.t:bears" origin="@originFBD.t:bears" samplingProportion="@samplingProportionFBD.t:bears" tree="@Tree.t:bears" turnover="@turnoverFBD.t:bears">
-                <parameter id="rFBD.t:bears" lower="0.0" name="removalProbability" upper="1.0">0.0</parameter>
-                <parameter id="rhoFBD.t:bears" estimate="false" lower="0.0" name="rho" upper="1.0">1.0</parameter>
+                <removalProbability id="rFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
+                <rho id="rhoFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
             </distribution>
-            <prior id="diversificationRatePriorFBD.t:bears" name="distribution" x="@diversificationRateFBD.t:bears">
-                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
-            </prior>
-            <prior id="originPriorFBD.t:bears" name="distribution" x="@originFBD.t:bears">
-                <Uniform id="Uniform.01" name="distr" upper="Infinity"/>
-            </prior>
-            <prior id="samplingProportionPriorFBD.t:bears" name="distribution" x="@samplingProportionFBD.t:bears">
-                <Uniform id="Uniform.02" name="distr"/>
-            </prior>
-            <prior id="turnoverPriorFBD.t:bears" name="distribution" x="@turnoverFBD.t:bears">
-                <Uniform id="Uniform.03" name="distr"/>
-            </prior>
+            <distribution id="diversificationRatePriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@diversificationRateFBD.t:bears">
+                <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+            </distribution>
+            <distribution id="originPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@originFBD.t:bears">
+                <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+            </distribution>
+            <distribution id="samplingProportionPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@samplingProportionFBD.t:bears"/>
+            <distribution id="turnoverPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@turnoverFBD.t:bears"/>
             <prior id="MeanRatePrior.c:bears" name="distribution" x="@ucldMean.c:bears">
                 <Uniform id="Uniform.04" name="distr" upper="Infinity"/>
             </prior>
@@ -188,13 +184,13 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
         <down idref="Tree.t:bears"/>
     </operator>
 
-    <operator id="originScalerFBD.t:bears" spec="ScaleOperator" parameter="@originFBD.t:bears" scaleFactor="0.75" weight="3.0"/>
+    <operator id="originScalerFBD.t:bears" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@originFBD.t:bears" scaleFactor="0.75" weight="3.0"/>
 
-    <operator id="divRateScalerFBD.t:bears" spec="ScaleOperator" parameter="@diversificationRateFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
+    <operator id="divRateScalerFBD.t:bears" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@diversificationRateFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
 
-    <operator id="turnoverScalerFBD.t:bears" spec="ScaleOperator" parameter="@turnoverFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
+    <operator id="turnoverScalerFBD.t:bears" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@turnoverFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
 
-    <operator id="samplingPScalerFBD.t:bears" spec="ScaleOperator" parameter="@samplingProportionFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
+    <operator id="samplingPScalerFBD.t:bears" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@samplingProportionFBD.t:bears" scaleFactor="0.75" weight="10.0"/>
 
     <operator id="LeafToSAFBD.t:bears" spec="sa.evolution.operators.LeafToSampledAncestorJump" tree="@Tree.t:bears" weight="10.0"/>
 

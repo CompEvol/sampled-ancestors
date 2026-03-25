@@ -2,7 +2,8 @@ package sa.evolution.operators;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.IntegerParameter;
+import beast.base.spec.domain.Int;
+import beast.base.spec.inference.parameter.IntVectorParam;
 import beast.base.evolution.operator.TreeOperator;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -15,7 +16,7 @@ import beast.base.util.Randomizer;
         "This version of Wilson Balding operator does not change the root.  ")
 public class WilsonBaldingWithRateCategories extends TreeOperator {
 
-    public Input<IntegerParameter> categoriesInput = new Input<IntegerParameter>("rateCategories", "rate category per branch");
+    public Input<IntVectorParam<? extends Int>> categoriesInput = new Input<>("rateCategories", "rate category per branch");
 
     @Override
     public void initAndValidate() {
@@ -111,22 +112,22 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
             oldDimension = nodeCount - tree.getDirectAncestorNodeCount() - 3;
         }
 
-        int iPCategory = categoriesInput.get().getValue(iP.getNr()),
-            jCategory = categoriesInput.get().getValue(j.getNr());
+        int iPCategory = categoriesInput.get().get(iP.getNr()),
+            jCategory = categoriesInput.get().get(j.getNr());
 
         //Hastings numerator calculation + newAge of iP
         if (attachingToLeaf) {
             newRange = 1;
             newAge = j.getHeight();
-            categoriesInput.get().setValue(iP.getNr(), jCategory);
-            categoriesInput.get().setValue(j.getNr(), -1);
+            categoriesInput.get().set(iP.getNr(), jCategory);
+            categoriesInput.get().set(j.getNr(), -1);
         } else {
             newMinAge = Math.max(i.getHeight(), j.getHeight());
             newRange = jP.getHeight() - newMinAge;
             newAge = newMinAge + (Randomizer.nextDouble() * newRange);
             if (CiP.isDirectAncestor()) {
                 int newCategory = Randomizer.nextInt(categoryCount) + categoriesInput.get().getLower();
-                categoriesInput.get().setValue(iP.getNr(), newCategory);
+                categoriesInput.get().set(iP.getNr(), newCategory);
             }
         }
 
@@ -136,7 +137,7 @@ public class WilsonBaldingWithRateCategories extends TreeOperator {
         //Hastings denominator calculation
         if (CiP.isDirectAncestor()) {
             oldRange = (double) 1;
-            categoriesInput.get().setValue(CiP.getNr(), iPCategory);
+            categoriesInput.get().set(CiP.getNr(), iPCategory);
         }
         else {
             oldMinAge = Math.max(i.getHeight(), CiP.getHeight());

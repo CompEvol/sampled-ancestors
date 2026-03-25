@@ -2,7 +2,8 @@ package sa.evolution.operators;
 
 import beast.base.core.Input;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.evolution.tree.Tree;
 import beast.base.util.Randomizer;
 
@@ -11,11 +12,11 @@ import beast.base.util.Randomizer;
  */
 public class JumpToPoint extends Operator {
 
-    public final Input<RealParameter> rInput = new Input<RealParameter>("removalProbability", "parameter r", Input.Validate.REQUIRED);
+    public final Input<RealScalarParam<? extends UnitInterval>> rInput = new Input<>("removalProbability", "parameter r", Input.Validate.REQUIRED);
 
-    public final Input<Tree> treeInput = new Input<Tree>("tree", "tree", Input.Validate.REQUIRED);
+    public final Input<Tree> treeInput = new Input<>("tree", "tree", Input.Validate.REQUIRED);
 
-    public Input<Double> pointInput = new Input<Double>("point", "the point on which the probability mass is put", 1.0);
+    public Input<Double> pointInput = new Input<>("point", "the point on which the probability mass is put", 1.0);
 
     double point;
 
@@ -31,15 +32,15 @@ public class JumpToPoint extends Operator {
     public double proposal() {
 
         Tree tree = treeInput.get();
-        final RealParameter rParameter = rInput.get();
+        final RealScalarParam<? extends UnitInterval> rParameter = rInput.get();
 
-        double r = rParameter.getValue();
+        double r = rParameter.get();
 
         if (r != 1 && tree.getDirectAncestorNodeCount() == 0) {
-            rParameter.setValue(1.);
+            rParameter.set(1.);
             return 0.0;
         } else if (r == 1) {
-            rParameter.setValue(Randomizer.nextDouble());
+            rParameter.set(Randomizer.nextDouble());
             return 0.0;
         } else return Double.NEGATIVE_INFINITY;
 

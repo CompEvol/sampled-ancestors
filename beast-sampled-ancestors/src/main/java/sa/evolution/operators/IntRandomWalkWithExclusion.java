@@ -2,7 +2,8 @@ package sa.evolution.operators;
 
 import beast.base.core.Input;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.IntegerParameter;
+import beast.base.spec.domain.Int;
+import beast.base.spec.inference.parameter.IntVectorParam;
 import beast.base.util.Randomizer;
 
 /**
@@ -11,9 +12,9 @@ import beast.base.util.Randomizer;
 public class IntRandomWalkWithExclusion extends Operator {
 
     public Input<Integer> windowSizeInput =
-            new Input<Integer>("windowSize", "the size of the window both up and down", Input.Validate.REQUIRED);
-    public Input<IntegerParameter> parameterInput =
-            new Input<IntegerParameter>("parameter", "the parameter to operate a random walk on.", Input.Validate.REQUIRED);
+            new Input<>("windowSize", "the size of the window both up and down", Input.Validate.REQUIRED);
+    public Input<IntVectorParam<? extends Int>> parameterInput =
+            new Input<>("parameter", "the parameter to operate a random walk on.", Input.Validate.REQUIRED);
 
     int windowSize = 1;
 
@@ -28,14 +29,14 @@ public class IntRandomWalkWithExclusion extends Operator {
     @Override
     public double proposal() {
 
-        final IntegerParameter param = parameterInput.get();
+        final IntVectorParam<? extends Int> param = parameterInput.get();
         int index;
         do {
-             index = Randomizer.nextInt(param.getDimension());
-        } while (param.getValue(index) < 0);
+             index = Randomizer.nextInt(param.size());
+        } while (param.get(index) < 0);
 
         final int i = index;
-        final int value = param.getValue(i);
+        final int value = param.get(i);
         final int newValue = value + Randomizer.nextInt(2 * windowSize + 1) - windowSize;
 
         if (newValue < param.getLower() || newValue > param.getUpper()) {
@@ -47,7 +48,7 @@ public class IntRandomWalkWithExclusion extends Operator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        param.setValue(i, newValue);
+        param.set(i, newValue);
 
         return 0.0;
     }

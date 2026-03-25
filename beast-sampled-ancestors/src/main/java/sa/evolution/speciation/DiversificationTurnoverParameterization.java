@@ -1,21 +1,24 @@
 package sa.evolution.speciation;
 
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.Real;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.type.RealScalar;
 
 /**
  * Created by alexei on 7/09/15.
  */
 public class DiversificationTurnoverParameterization extends SABDParameterization {
 
-    public Input<RealParameter> originInput =
-            new Input<RealParameter>("origin", "The time when the process started", Input.Validate.REQUIRED);
-    public Input<RealParameter> diversificationRateInput =
-            new Input<RealParameter>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> turnoverInput =
-            new Input<RealParameter>("turnover", "Turnover. Death rate/birth rate", Input.Validate.REQUIRED);
-    public Input<RealParameter> samplingProportionInput =
-            new Input<RealParameter>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends PositiveReal>> originInput =
+            new Input<>("origin", "The time when the process started", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends Real>> diversificationRateInput =
+            new Input<>("diversificationRate", "Net diversification rate. Birth rate - death rate", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends UnitInterval>> turnoverInput =
+            new Input<>("turnover", "Turnover. Death rate/birth rate", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends UnitInterval>> samplingProportionInput =
+            new Input<>("samplingProportion", "The probability of sampling prior to death. Sampling rate/(sampling rate + death rate)", Input.Validate.REQUIRED);
 
     public double mu() {
 
@@ -33,19 +36,19 @@ public class DiversificationTurnoverParameterization extends SABDParameterizatio
     }
 
     public double origin() {
-        return originInput.get().getValue();
+        return originInput.get().get();
     }
 
     public double turnover() {
-        return turnoverInput.get().getValue();
+        return turnoverInput.get().get();
     }
 
     public double d() {
-        return diversificationRateInput.get().getValue();
+        return diversificationRateInput.get().get();
     }
 
     public double s() {
-        return samplingProportionInput.get().getValue();
+        return samplingProportionInput.get().get();
     }
 
     @Override

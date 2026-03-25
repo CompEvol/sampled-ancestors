@@ -1,5 +1,5 @@
 <beast version='2.0'
-       namespace='beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions'>
+       namespace='beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions:beast.base.spec.inference.parameter'>
 
     <!-- tree priors -->
     <mergewith point='treePriorTemplates'>
@@ -15,36 +15,30 @@
             <![CDATA[
     <!-- Sampled Ancestor Birth Death model-->
     <SABirthDeathModel spec="sa.evolution.speciation.SABirthDeathModel" id="FBD.t:$(n)" tree="@Tree.t:$(n)" conditionOnRhoSampling="true">
-		<parameter name="origin" id="originFBD.t:$(n)" value ="100.0" lower="0."/>
-		<parameter name="diversificationRate" id="diversificationRateFBD.t:$(n)" value="1." lower="0."/>
-        <parameter name="turnover" id="turnoverFBD.t:$(n)" value=".5" lower="0." upper="1."/>
-        <parameter name="samplingProportion" id="samplingProportionFBD.t:$(n)" value="0.5" lower="0." upper="1."/>
-        <parameter estimate="false" name="rho" id="rhoFBD.t:$(n)" value="1.0" lower="0." upper = "1."/>
-        <parameter name="removalProbability" id="rFBD.t:$(n)" value="0." lower="0." upper="1."/>
+		<origin id="originFBD.t:$(n)" spec="RealScalarParam" domain="PositiveReal" value="100.0"/>
+		<diversificationRate id="diversificationRateFBD.t:$(n)" spec="RealScalarParam" domain="Real" value="1.0"/>
+        <turnover id="turnoverFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+        <samplingProportion id="samplingProportionFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+        <rho id="rhoFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
+        <removalProbability id="rFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
 	</SABirthDeathModel>
 
 
-	<distribution  id='originPriorFBD.t:$(n)' x="@originFBD.t:$(n)" spec='beast.base.inference.distribution.Prior'>
-		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="Infinity"/>
+	<distribution id='originPriorFBD.t:$(n)' spec='beast.base.spec.inference.distribution.Uniform' param="@originFBD.t:$(n)">
+		<upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
 	</distribution>
-	<distribution id="diversificationRatePriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@diversificationRateFBD.t:$(n)">
-		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="Infinity"/>
+	<distribution id="diversificationRatePriorFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Uniform" param="@diversificationRateFBD.t:$(n)">
+		<upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
 	</distribution>
-	<distribution id="turnoverPriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@turnoverFBD.t:$(n)">
-		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="1."/>
-	</distribution>
-	<distribution id="samplingProportionPriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@samplingProportionFBD.t:$(n)">
-		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="1."/>
-	</distribution>
-	<distribution id="rhoPriorFBD.t:$(n)" spec="beast.base.inference.distribution.Prior" x="@rhoFBD.t:$(n)">
-		<distr spec='beast.base.inference.distribution.Uniform' lower="0." upper="1."/>
-	</distribution>
+	<distribution id="turnoverPriorFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Uniform" param="@turnoverFBD.t:$(n)"/>
+	<distribution id="samplingProportionPriorFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Uniform" param="@samplingProportionFBD.t:$(n)"/>
+	<distribution id="rhoPriorFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Uniform" param="@rhoFBD.t:$(n)"/>
 
-	<operator id='originScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="3" parameter="@originFBD.t:$(n)"/>
-    <operator id='divRateScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@diversificationRateFBD.t:$(n)"/>
-    <operator id='turnoverScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@turnoverFBD.t:$(n)"/>
-	<operator id='samplingPScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingProportionFBD.t:$(n)"/>
-    <operator id='rhoScalerFBD.t:$(n)' spec='ScaleOperator' scaleFactor=".9" weight="1" parameter="@rhoFBD.t:$(n)"/>
+	<operator id='originScalerFBD.t:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor=".75" weight="3" parameter="@originFBD.t:$(n)"/>
+    <operator id='divRateScalerFBD.t:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor=".75" weight="10" parameter="@diversificationRateFBD.t:$(n)"/>
+    <operator id='turnoverScalerFBD.t:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor=".75" weight="10" parameter="@turnoverFBD.t:$(n)"/>
+	<operator id='samplingPScalerFBD.t:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor=".75" weight="10" parameter="@samplingProportionFBD.t:$(n)"/>
+    <operator id='rhoScalerFBD.t:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor=".9" weight="1" parameter="@rhoFBD.t:$(n)"/>
 
     <plugin id='SACountFBD.t:$(n)' spec='sa.evolution.tree.SampledAncestorLogger' tree='@Tree.t:$(n)'/>
 

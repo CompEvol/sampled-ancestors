@@ -2,7 +2,8 @@ package sa.math.distributions;
 
 
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.type.RealScalar;
 import org.apache.commons.statistics.distribution.BetaDistribution;
 import org.apache.commons.statistics.distribution.ContinuousDistribution;
 
@@ -14,10 +15,10 @@ import org.apache.commons.rng.UniformRandomProvider;
  */
 public class DegenerateBeta extends ParametricDistribution {
 
-    public Input<RealParameter> alphaInput = new Input<RealParameter>("alpha", "first shape parameter, defaults to 1", Input.Validate.REQUIRED);
-    public Input<RealParameter> betaInput = new Input<RealParameter>("beta", "the other shape parameter, defaults to 1", Input.Validate.REQUIRED);
-    public Input<Double> massInput = new Input<Double>("mass", "probability mass to put on a point", 0.5);
-    public Input<Double> pointInput = new Input<Double>("point", "the point on which the probability mass is put", 1.0);
+    public Input<RealScalar<? extends PositiveReal>> alphaInput = new Input<>("alpha", "first shape parameter, defaults to 1", Input.Validate.REQUIRED);
+    public Input<RealScalar<? extends PositiveReal>> betaInput = new Input<>("beta", "the other shape parameter, defaults to 1", Input.Validate.REQUIRED);
+    public Input<Double> massInput = new Input<>("mass", "probability mass to put on a point", 0.5);
+    public Input<Double> pointInput = new Input<>("point", "the point on which the probability mass is put", 1.0);
 
     DegenerateBetaImpl distr = new DegenerateBetaImpl();
     BetaDistribution betaDistr = BetaDistribution.of(1, 1);
@@ -26,8 +27,8 @@ public class DegenerateBeta extends ParametricDistribution {
 
     @Override
     public void initAndValidate() {
-        alpha = alphaInput.get().getValue();
-        beta = betaInput.get().getValue();
+        alpha = alphaInput.get().get();
+        beta = betaInput.get().get();
         point = pointInput.get();
         if (point < 0 || 1 < point) {
             throw new IllegalArgumentException("Point should be between 0 and 1 (inclusive)");

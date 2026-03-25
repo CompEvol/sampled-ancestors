@@ -1,7 +1,8 @@
 package sa.evolution.operators;
 
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.type.RealScalar;
 import beast.base.evolution.operator.TreeOperator;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -12,8 +13,8 @@ import beast.base.util.Randomizer;
  */
 public class SAWilsonBalding extends TreeOperator {
 
-    public Input<RealParameter> rInput =
-            new Input<RealParameter>("removalProbability", "The probability of an individual to become noninfectious immediately after the sampling");
+    public Input<RealScalar<? extends UnitInterval>> rInput =
+            new Input<>("removalProbability", "The probability of an individual to become noninfectious immediately after the sampling");
 
     @Override
     public void initAndValidate() {
@@ -170,7 +171,7 @@ public class SAWilsonBalding extends TreeOperator {
         iP.setHeight(newAge);
 
         //make sure that either there are no direct ancestors or r<1
-        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().getValue() == 1))  {
+        if ((rInput.get() != null) && (tree.getDirectAncestorNodeCount() > 0 && rInput.get().get() == 1))  {
             return Double.NEGATIVE_INFINITY;
         }
 

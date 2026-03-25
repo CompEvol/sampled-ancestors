@@ -5,7 +5,10 @@ import sa.util.ZeroBranchSATreeParser;
 
 import org.junit.jupiter.api.Test;
 
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.evolution.tree.Tree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,13 +25,13 @@ public class SABirthDeathModelTest {
 
 		SABirthDeathModel sabdm = new SABirthDeathModel();
 		sabdm.setInputValue("tree", tree);
-		sabdm.setInputValue("origin", new RealParameter("10."));
-		sabdm.setInputValue("removalProbability", "1");
+		sabdm.setInputValue("origin", new RealScalarParam<>(10.0, PositiveReal.INSTANCE));
+		sabdm.setInputValue("removalProbability", new RealScalarParam<>(1.0, UnitInterval.INSTANCE));
 		sabdm.setInputValue("conditionOnSampling", true);
 
-		sabdm.setInputValue("birthRate", new RealParameter("2.25"));
-		sabdm.setInputValue("deathRate", new RealParameter("1.05"));
-		sabdm.setInputValue("samplingRate", new RealParameter("0.45"));
+		sabdm.setInputValue("birthRate", new RealScalarParam<>(2.25, PositiveReal.INSTANCE));
+		sabdm.setInputValue("deathRate", new RealScalarParam<>(1.05, NonNegativeReal.INSTANCE));
+		sabdm.setInputValue("samplingRate", new RealScalarParam<>(0.45, NonNegativeReal.INSTANCE));
 
 		sabdm.initAndValidate();
 
@@ -42,13 +45,13 @@ public class SABirthDeathModelTest {
 
 		sabdm = new SABirthDeathModel();
 		sabdm.setInputValue("treeWOffset", treewoffset);
-		sabdm.setInputValue("origin", new RealParameter("10."));
-		sabdm.setInputValue("removalProbability", "1");
+		sabdm.setInputValue("origin", new RealScalarParam<>(10.0, PositiveReal.INSTANCE));
+		sabdm.setInputValue("removalProbability", new RealScalarParam<>(1.0, UnitInterval.INSTANCE));
 		sabdm.setInputValue("conditionOnSampling", true);
 
-		sabdm.setInputValue("birthRate", new RealParameter("2.25"));
-		sabdm.setInputValue("deathRate", new RealParameter("1.05"));
-		sabdm.setInputValue("samplingRate", new RealParameter("0.45"));
+		sabdm.setInputValue("birthRate", new RealScalarParam<>(2.25, PositiveReal.INSTANCE));
+		sabdm.setInputValue("deathRate", new RealScalarParam<>(1.05, NonNegativeReal.INSTANCE));
+		sabdm.setInputValue("samplingRate", new RealScalarParam<>(0.45, NonNegativeReal.INSTANCE));
 
 		sabdm.initAndValidate();
 
@@ -62,11 +65,11 @@ public class SABirthDeathModelTest {
 
 		SABirthDeathModel sabd = new SABirthDeathModel();
 		sabd.setInputValue("tree", tree);
-		sabd.setInputValue("origin", new RealParameter("10."));
-		sabd.setInputValue("birthRate", new RealParameter("2."));
-		sabd.setInputValue("deathRate", new RealParameter("0.99"));
-		sabd.setInputValue("samplingRate", new RealParameter("0.5"));
-		sabd.setInputValue("removalProbability", new RealParameter("0.9"));
+		sabd.setInputValue("origin", new RealScalarParam<>(10.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("birthRate", new RealScalarParam<>(2.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("deathRate", new RealScalarParam<>(0.99, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("samplingRate", new RealScalarParam<>(0.5, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("removalProbability", new RealScalarParam<>(0.9, UnitInterval.INSTANCE));
 		sabd.initAndValidate();
 
 		// these values are calculated with Mathematica
@@ -83,11 +86,11 @@ public class SABirthDeathModelTest {
 
 		sabd = new SABirthDeathModel();
 		sabd.setInputValue("treeWOffset", treewoffset);
-		sabd.setInputValue("origin", new RealParameter("10."));
-		sabd.setInputValue("birthRate", new RealParameter("2."));
-		sabd.setInputValue("deathRate", new RealParameter("0.99"));
-		sabd.setInputValue("samplingRate", new RealParameter("0.5"));
-		sabd.setInputValue("removalProbability", new RealParameter("0.9"));
+		sabd.setInputValue("origin", new RealScalarParam<>(10.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("birthRate", new RealScalarParam<>(2.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("deathRate", new RealScalarParam<>(0.99, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("samplingRate", new RealScalarParam<>(0.5, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("removalProbability", new RealScalarParam<>(0.9, UnitInterval.INSTANCE));
 		sabd.setInputValue("conditionOnSampling", true);
 		sabd.initAndValidate();
 
@@ -103,11 +106,11 @@ public class SABirthDeathModelTest {
 
 		SABirthDeathModel sabd = new SABirthDeathModel();
 		sabd.setInputValue("tree", tree);
-		sabd.setInputValue("origin", new RealParameter("10."));
-		sabd.setInputValue("birthRate", new RealParameter("2."));
-		sabd.setInputValue("deathRate", new RealParameter("0.99"));
-		sabd.setInputValue("samplingRate", new RealParameter("0.5"));
-		sabd.setInputValue("removalProbability", new RealParameter("0.9"));
+		sabd.setInputValue("origin", new RealScalarParam<>(10.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("birthRate", new RealScalarParam<>(2.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("deathRate", new RealScalarParam<>(0.99, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("samplingRate", new RealScalarParam<>(0.5, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("removalProbability", new RealScalarParam<>(0.9, UnitInterval.INSTANCE));
 		sabd.setInputValue("conditionOnSampling", true);
 		sabd.initAndValidate();
 
@@ -120,11 +123,11 @@ public class SABirthDeathModelTest {
 
 		sabd = new SABirthDeathModel();
 		sabd.setInputValue("treeWOffset", treewoffset);
-		sabd.setInputValue("origin", new RealParameter("10."));
-		sabd.setInputValue("birthRate", new RealParameter("2."));
-		sabd.setInputValue("deathRate", new RealParameter("0.99"));
-		sabd.setInputValue("samplingRate", new RealParameter("0.5"));
-		sabd.setInputValue("removalProbability", new RealParameter("0.9"));
+		sabd.setInputValue("origin", new RealScalarParam<>(10.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("birthRate", new RealScalarParam<>(2.0, PositiveReal.INSTANCE));
+		sabd.setInputValue("deathRate", new RealScalarParam<>(0.99, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("samplingRate", new RealScalarParam<>(0.5, NonNegativeReal.INSTANCE));
+		sabd.setInputValue("removalProbability", new RealScalarParam<>(0.9, UnitInterval.INSTANCE));
 		sabd.setInputValue("conditionOnSampling", true);
 		sabd.initAndValidate();
 
