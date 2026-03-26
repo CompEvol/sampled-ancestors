@@ -44,8 +44,8 @@ echo "--- Building with Maven ---"
 mvn clean package -Dmaven.test.skip=true
 echo ""
 
-# Locate the ZIP produced by maven-assembly-plugin (in the -fx module for multi-module)
-ZIP_PATH="beast-sampled-ancestors-fx/target/${ZIP_NAME}"
+# Locate the ZIP produced by maven-assembly-plugin
+ZIP_PATH="target/${ZIP_NAME}"
 if [[ ! -f "$ZIP_PATH" ]]; then
     echo "ERROR: expected ZIP not found at ${ZIP_PATH}" >&2
     exit 1

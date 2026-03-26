@@ -1,12 +1,16 @@
-open module sa {
+open module sampled.ancestors {
     requires beast.pkgmgmt;
     requires beast.base;
+    requires static beast.fx;
+    requires static javafx.controls;
     requires org.apache.commons.statistics.distribution;
     requires org.apache.commons.rng.api;
     requires java.desktop;
 
     exports sa.app.simulators;
     exports sa.app.tools;
+    exports sa.app.tools.fx;
+    exports sa.beauti;
     exports sa.evolution.operators;
     exports sa.evolution.speciation;
     exports sa.evolution.tree;
@@ -44,5 +48,13 @@ open module sa {
         sa.math.distributions.SpecialMRCAPrior,
         sa.math.distributions.SAMRCAPrior,
         sa.util.ClusterZBSATree,
-        sa.util.ZeroBranchSATreeParser;
+        sa.util.ZeroBranchSATreeParser,
+        sa.app.tools.fx.FullToExtantTreeConverter,
+        sa.app.tools.fx.SampledAncestorTreeAnalyser;
+
+    provides beastfx.app.inputeditor.InputEditor with
+        sa.beauti.SAMRCAPriorInputEditor;
+
+    provides beastfx.app.beauti.PriorProvider with
+        sa.beauti.SAMRCAPriorProvider;
 }

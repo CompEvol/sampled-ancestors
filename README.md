@@ -1,9 +1,11 @@
 # Sampled Ancestors
 
-[![Build Status](https://github.com/CompEvol/sampled-ancestors/workflows/Unit%2Fintegration%20tests/badge.svg)](https://github.com/CompEvol/sampled-ancestors/actions?query=workflow%3A%22Unit%2Fintegration+tests%22)
+[![CI & Publish](https://github.com/CompEvol/sampled-ancestors/actions/workflows/ci-publish.yml/badge.svg)](https://github.com/CompEvol/sampled-ancestors/actions/workflows/ci-publish.yml)
 
 This [BEAST 3](https://github.com/CompEvol/beast3) package provides MCMC proposals and post-processing tools for samples of trees containing sampled ancestors.
 It relies on the support for sampled-ancestor trees built into the `beast.base.evolution.tree.Tree` class.
+
+Single Maven artifact: `io.github.compevol:sampled-ancestors`. JPMS module: `sampled.ancestors`.
 
 The paper describing this package is:
 
@@ -23,15 +25,16 @@ mvn compile
 To run an example:
 
 ```sh
-mvn -pl beast-sampled-ancestors exec:exec -Dbeast.args="examples/bears.xml"
+mvn exec:exec -Dbeast.args="examples/bears.xml"
+```
+
+To launch BEAUti:
+
+```sh
+mvn exec:exec -Dbeast.module=beast.fx -Dbeast.main=beastfx.app.beauti.Beauti
 ```
 
 ## Project structure
-
-This is a multi-module Maven project with two modules:
-
-* **beast-sampled-ancestors** — core module (no JavaFX dependency, runs headless on clusters)
-* **beast-sampled-ancestors-fx** — BEAUti input editors and JavaFX-dependent tools
 
 ### `sa.app.simulators`
 
@@ -39,8 +42,11 @@ Simulators for the fossilized birth-death (FBD) model and FBD-skyline model.
 
 ### `sa.app.tools`
 
-* Conversion tools between zero-branch-length sampled-ancestor trees and native sampled-ancestor trees
-* `SATreeTraceAnalysis` and various other post-processing tools (in `-fx` module)
+Conversion tools between zero-branch-length sampled-ancestor trees and native sampled-ancestor trees.
+
+### `sa.app.tools.fx`
+
+`SATreeTraceAnalysis` and various other post-processing tools.
 
 ### `sa.evolution.operators`
 
@@ -50,17 +56,17 @@ Operators that permit MCMC on sampled-ancestor trees.
 
 `SpeciesTreeDistribution` calculations for the FBD prior:
 
-* `SABirthDeathModel` — FBD prior with multiple hard-coded parameterizations
-* `ParameterizedSABirthDeathModel` — FBD prior with object-oriented parameterizations
+* `SABirthDeathModel` -- FBD prior with multiple hard-coded parameterizations
+* `ParameterizedSABirthDeathModel` -- FBD prior with object-oriented parameterizations
 
-### `sa.beauti` (in `-fx` module)
+### `sa.beauti`
 
 BEAUti input editors for sampled-ancestor priors.
 
-### `fxtemplates` (in `-fx` module resources)
+### `fxtemplates`
 
 Contains `FBD.xml`, a BEAUti template for `SABirthDeathModel` and sampled-ancestor tree operators.
-Located at `beast-sampled-ancestors-fx/src/main/resources/sa.fx/fxtemplates/`.
+Located at `src/main/resources/sampled.ancestors/fxtemplates/`.
 
 ## License
 
