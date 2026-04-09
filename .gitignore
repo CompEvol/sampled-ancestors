@@ -3,23 +3,17 @@
 # Build output
 /out
 /bin
-beast-source/
-build-beast/
-dist/
-build-test/
-test-reports/
 target/
 **/target/
 
-# IntelliJ cruft
+# IntelliJ
 /.idea
 *.iml
 
-# Eclipse files
+# Eclipse
 .classpath
 .project
 /build
-/build-lib
 
 # BEAST run output
 *.log
