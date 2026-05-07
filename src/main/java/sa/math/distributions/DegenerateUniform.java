@@ -1,78 +1,112 @@
 package sa.math.distributions;
 
-
+import beast.base.core.Description;
 import beast.base.core.Input;
+import beast.base.spec.domain.Real;
+import beast.base.spec.inference.distribution.ScalarDistribution;
+import beast.base.spec.type.RealScalar;
+import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.statistics.distribution.ContinuousDistribution;
 
-import beast.base.inference.distribution.ParametricDistribution;
-import org.apache.commons.rng.UniformRandomProvider;
+import java.util.List;
 
 /**
+ * Uniform distribution on [lower, upper] with an additional point mass at
+ * {@code point}. Density is {@code mass} at the point and a flat density
+ * elsewhere, scaled so the total measure integrates to 1.
+ *
  * @author Alexandra Gavryushkina
  */
-public class DegenerateUniform extends ParametricDistribution {
+@Description("Uniform on [lower, upper] with a probability point mass at `point`. "
+        + "Density is mass at the point and (1 - mass) / (upper - lower) elsewhere.")
+public class DegenerateUniform extends ScalarDistribution<RealScalar<Real>, Double> {
 
-    public Input<Double> lowerInput = new Input<Double>("lower", "lower bound on the interval, defaul 0", 0.0);
-    public Input<Double> upperInput = new Input<Double>("upper", "lower bound on the interval, defaul 1", 1.0);
-    public Input<Double> massInput = new Input<Double>("mass", "probability mass to put on a point", 0.5);
-    public Input<Double> pointInput = new Input<Double>("point", "the point on which the probability mass is put", 1.0);
+    public final Input<Double> lowerInput = new Input<>(
+            "lower", "lower bound on the interval, default 0", 0.0);
+    public final Input<Double> upperInput = new Input<>(
+            "upper", "upper bound on the interval, default 1", 1.0);
+    public final Input<Double> massInput  = new Input<>(
+            "mass", "probability mass to put on a point", 0.5);
+    public final Input<Double> pointInput = new Input<>(
+            "point", "the point on which the probability mass is put", 1.0);
 
-    DegenerateUniformImpl distr = new DegenerateUniformImpl();
+    private DegenerateUniformImpl dist = new DegenerateUniformImpl(0.0, 1.0, 1.0, 0.5);
+    private ContinuousDistribution.Sampler sampler;
 
-    double lower, upper, point, mass, density;
+    public DegenerateUniform() {}
 
     @Override
     public void initAndValidate() {
-        lower = lowerInput.get();
-        upper = upperInput.get();
-        point = pointInput.get();
-        if (lower >= upper || point < lower || upper < point) {
-            throw new IllegalArgumentException("Upper value should be higher than lower value and a mass point should be between lower and upper bound (inclusive)");
-        }
-        mass = massInput.get();
-        if (mass <= 0 || mass >= 1) {
-            throw new IllegalArgumentException("Mass value should be between 0 and 1");
-        }
-        distr.setParameters(lower, upper, point, mass);
-        density = (1-mass)/(upper - lower);
+        refresh();
+        super.initAndValidate();
     }
 
-    class DegenerateUniformImpl implements ContinuousDistribution {
-        private double lower;
-        private double upper;
-        private double point;
-        private double mass;
+    @Override
+    public void refresh() {
+        double lower = lowerInput.get();
+        double upper = upperInput.get();
+        double point = pointInput.get();
+        double mass  = massInput.get();
 
-        public void setParameters(double lower, double upper, double point, double mass) {
+        if (lower >= upper || point < lower || point > upper) {
+            throw new IllegalArgumentException(
+                    "Need lower < upper and point in [lower, upper], got "
+                            + "lower=" + lower + ", upper=" + upper + ", point=" + point);
+        }
+        if (mass <= 0.0 || mass >= 1.0) {
+            throw new IllegalArgumentException("mass must be in (0, 1), got " + mass);
+        }
+
+        if (isNotEqual(dist.lower, lower)
+                || isNotEqual(dist.upper, upper)
+                || isNotEqual(dist.point, point)
+                || isNotEqual(dist.mass, mass)) {
+            dist = new DegenerateUniformImpl(lower, upper, point, mass);
+            sampler = null;
+        }
+    }
+
+    @Override
+    public double calculateLogP() {
+        logP = getApacheDistribution().logDensity(param.get());
+        return logP;
+    }
+
+    @Override
+    public List<Double> sample() {
+        if (sampler == null) {
+            sampler = dist.createSampler(rng);
+        }
+        return List.of(sampler.sample());
+    }
+
+    @Override
+    protected DegenerateUniformImpl getApacheDistribution() {
+        refresh();
+        return dist;
+    }
+
+    static final class DegenerateUniformImpl implements ContinuousDistribution {
+
+        final double lower;
+        final double upper;
+        final double point;
+        final double mass;
+        final double flatDensity;
+
+        DegenerateUniformImpl(double lower, double upper, double point, double mass) {
             this.lower = lower;
             this.upper = upper;
             this.point = point;
             this.mass = mass;
-        }
-
-        @Override
-        public double cumulativeProbability(double x) {
-            if (x < point) {
-                x = Math.max(x, lower);
-                return (1- mass) * (x - lower) / (upper - lower);
-            }  else {
-                x = Math.min(x, upper);
-                return mass + (1-mass) * (x - lower)/(upper - lower);
-            }
-        }
-
-        @Override
-        public double inverseCumulativeProbability(double p) {
-            return 0.0;      //TODO derive and implement formula for inverse cumulative probability
+            this.flatDensity = (1.0 - mass) / (upper - lower);
         }
 
         @Override
         public double density(double x) {
-            if (x >= lower && x <= upper && x != point) {
-                return density;
-            } else if (x == point) {
-                    return mass;
-                } else  return 0;
+            if (x == point) return mass;
+            if (x >= lower && x <= upper) return flatDensity;
+            return 0.0;
         }
 
         @Override
@@ -80,22 +114,44 @@ public class DegenerateUniform extends ParametricDistribution {
             return Math.log(density(x));
         }
 
-        @Override public double getMean() { return (lower + upper) / 2.0; }
-        @Override public double getVariance() { double range = upper - lower; return range * range / 12.0; }
+        @Override
+        public double cumulativeProbability(double x) {
+            if (x < point) {
+                double clamped = Math.max(x, lower);
+                return (1.0 - mass) * (clamped - lower) / (upper - lower);
+            }
+            double clamped = Math.min(x, upper);
+            return mass + (1.0 - mass) * (clamped - lower) / (upper - lower);
+        }
+
+        @Override
+        public double inverseCumulativeProbability(double p) {
+            // TODO derive and implement formula for inverse CDF
+            throw new UnsupportedOperationException("inverseCumulativeProbability not implemented for DegenerateUniform");
+        }
+
+        @Override
+        public double getMean() {
+            return mass * point + (1.0 - mass) * 0.5 * (lower + upper);
+        }
+
+        @Override
+        public double getVariance() {
+            double m = getMean();
+            double range = upper - lower;
+            double uniformEx2 = (lower * lower + lower * upper + upper * upper) / 3.0;
+            double ex2 = mass * point * point + (1.0 - mass) * uniformEx2;
+            return ex2 - m * m;
+        }
+
         @Override public double getSupportLowerBound() { return lower; }
         @Override public double getSupportUpperBound() { return upper; }
-        @Override public ContinuousDistribution.Sampler createSampler(UniformRandomProvider rng) {
-            return () -> lower + rng.nextDouble() * (upper - lower);
+
+        @Override
+        public Sampler createSampler(UniformRandomProvider rng) {
+            return () -> rng.nextDouble() < mass
+                    ? point
+                    : lower + rng.nextDouble() * (upper - lower);
         }
-    } // class DegenerateUniformImpl
-
-    @Override
-    public Object getDistribution() {
-        return distr;
-    }
-
-    @Override
-    public double density(double x) {
-        return distr.density(x);
     }
 }
