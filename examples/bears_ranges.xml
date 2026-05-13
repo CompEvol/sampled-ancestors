@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter:beast.base.spec.domain" version="2.8">
 
 
     <data
@@ -48,16 +48,6 @@ name="alignment">
 
 
     
-<map name="Uniform">beast.base.inference.distribution.Uniform</map>
-<map name="Exponential">beast.base.inference.distribution.Exponential</map>
-<map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
-<map name="Normal">beast.base.inference.distribution.Normal</map>
-<map name="Beta">beast.base.inference.distribution.Beta</map>
-<map name="Gamma">beast.base.inference.distribution.Gamma</map>
-<map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
-<map name="prior">beast.base.inference.distribution.Prior</map>
-<map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
-<map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
 
 
 <run id="mcmc" spec="MCMC" chainLength="10000000">
@@ -103,18 +93,18 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
             </trait>
             <taxonset idref="TaxonSet.bears"/>
         </tree>
-        <parameter id="ucldMean.c:bears" name="stateNode">1.0</parameter>
-        <parameter id="ucldStdev.c:bears" lower="0.0" name="stateNode">0.1</parameter>
-        <stateNode id="rateCategories.c:bears" spec="parameter.IntegerParameter" dimension="66">1</stateNode>
+        <stateNode id="ucldMean.c:bears" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
+        <stateNode id="ucldStdev.c:bears" spec="RealScalarParam" domain="PositiveReal" value="0.1"/>
+        <stateNode id="rateCategories.c:bears" spec="IntVectorParam" domain="NonNegativeInt" dimension="66" value="1"/>
         <stateNode id="originFBD.t:bears" spec="RealScalarParam" domain="PositiveReal" value="100.0"/>
         <stateNode id="diversificationRateFBD.t:bears" spec="RealScalarParam" domain="Real" value="1.0"/>
         <stateNode id="turnoverFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
         <stateNode id="samplingProportionFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
     </state>
 
-    <init id="RandomTree.t:bears" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
+    <init id="RandomTree.t:bears" spec="beast.base.spec.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
         <populationModel id="ConstantPopulation0.t:bears" spec="ConstantPopulation">
-            <parameter id="randomPopSize.t:bears" name="popSize">1.0</parameter>
+            <popSize id="randomPopSize.t:bears" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
         </populationModel>
     </init>
 
@@ -132,16 +122,14 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
             </distribution>
             <distribution id="samplingProportionPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@samplingProportionFBD.t:bears"/>
             <distribution id="turnoverPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@turnoverFBD.t:bears"/>
-            <prior id="MeanRatePrior.c:bears" name="distribution" x="@ucldMean.c:bears">
-                <Uniform id="Uniform.04" name="distr" upper="Infinity"/>
-            </prior>
-            <prior id="ucldStdevPrior.c:bears" name="distribution" x="@ucldStdev.c:bears">
-                <Gamma id="Gamma.0" name="distr">
-                    <parameter id="RealParameter.0" estimate="false" name="alpha">0.5396</parameter>
-                    <parameter id="RealParameter.01" estimate="false" name="beta">0.3819</parameter>
-                </Gamma>
-            </prior>
-            <distribution id="Canidae.prior" spec="beast.base.evolution.tree.MRCAPrior" monophyletic="true" tree="@Tree.t:bears">
+            <distribution id="MeanRatePrior.c:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@ucldMean.c:bears">
+                <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+            </distribution>
+            <distribution id="ucldStdevPrior.c:bears" spec="beast.base.spec.inference.distribution.Gamma" param="@ucldStdev.c:bears">
+                <alpha spec="RealScalarParam" domain="PositiveReal" value="0.5396" estimate="false"/>
+                <beta spec="RealScalarParam" domain="PositiveReal" value="0.3819" estimate="false"/>
+            </distribution>
+            <distribution id="Canidae.prior" spec="beast.base.spec.evolution.tree.MRCAPrior" monophyletic="true" tree="@Tree.t:bears">
                 <taxonset id="Canidae" spec="TaxonSet">
                     <taxon id="Canis_lupus_0.0" spec="Taxon"/>
                     <taxon id="Caedocyon_tedfordi_25.88" spec="Taxon"/>
@@ -160,10 +148,10 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
                     <parameter id="proportionInvariant.s:bears" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
                     <substModel id="JC69.s:bears" spec="JukesCantor"/>
                 </siteModel>
-                <branchRateModel id="RelaxedClock.c:bears" spec="beast.base.evolution.branchratemodel.UCRelaxedClockModel" clock.rate="@ucldMean.c:bears" rateCategories="@rateCategories.c:bears" tree="@Tree.t:bears">
-                    <LogNormal id="LogNormalDistributionModel.c:bears" S="@ucldStdev.c:bears" meanInRealSpace="true" name="distr">
-                        <parameter id="RealParameter.02" estimate="false" lower="0.0" name="M" upper="1.0">1.0</parameter>
-                    </LogNormal>
+                <branchRateModel id="RelaxedClock.c:bears" spec="beast.base.spec.evolution.branchratemodel.UCRelaxedClockModel" clock.rate="@ucldMean.c:bears" rateCategories="@rateCategories.c:bears" tree="@Tree.t:bears">
+                    <distribution id="LogNormalDistributionModel.c:bears" spec="beast.base.spec.inference.distribution.LogNormal" S="@ucldStdev.c:bears" meanInRealSpace="true" name="distr">
+                        <M spec="RealScalarParam" domain="Real" value="1.0" estimate="false"/>
+                    </distribution>
                 </branchRateModel>
             </distribution>
         </distribution>
@@ -177,7 +165,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
 
     <operator id="CategoriesSwapOperator.c:bears" spec="SwapOperator" intparameter="@rateCategories.c:bears" weight="10.0"/>
 
-    <operator id="CategoriesUniform.c:bears" spec="UniformOperator" parameter="@rateCategories.c:bears" weight="10.0"/>
+    <operator id="CategoriesUniform.c:bears" spec="beast.base.spec.inference.operator.uniform.IntUniformOperator" parameter="@rateCategories.c:bears" weight="10.0"/>
 
     <operator id="relaxedUpDownOperator.c:bears" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
         <up idref="ucldMean.c:bears"/>
@@ -250,7 +238,7 @@ Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonS
     </logger>
 
     <logger id="treelog.t:bears" fileName="$(tree).trees" logEvery="1000" mode="tree">
-        <log id="TreeWithMetaDataLogger.t:bears" spec="beast.base.evolution.TreeWithMetaDataLogger" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
+        <log id="TreeWithMetaDataLogger.t:bears" spec="beast.base.spec.evolution.TreeWithMetaDataLogger" branchratemodel="@RelaxedClock.c:bears" tree="@Tree.t:bears"/>
     </logger>
 
 </run>

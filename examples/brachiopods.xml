@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast beautitemplate="Standard" beautistatus="" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter" required="SA v3.0.0:MM v1.3.0" version="2.5">
+<beast beautitemplate="Standard" beautistatus="" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter:beast.base.spec.domain" required="SA v3.0.0:MM v1.3.0" version="2.8">
   <data id="rode05_mod" dataType="standard" name="alignment">
     <sequence id="seq_Floweria_anomala" taxon="Floweria_anomala" totalcount="2" value="00{01}020111{01}11101110011100101111101010"/>
     <sequence id="seq_Floweria_arctostriata" taxon="Floweria_arctostriata" totalcount="2" value="1000{12}0{01}110{01}12100000{01}10011100100111{01}{01}"/>
@@ -58,16 +58,6 @@
       <charstatelabels id="UserDataType.35" spec="beast.base.evolution.datatype.UserDataType" characterName="character_36" codeMap="0=0, 1=1, ? =0 1 " states="2" value="state_0, state_1"/>
     </userDataType>
   </data>
-  <map name="Uniform">beast.base.inference.distribution.Uniform</map>
-  <map name="Exponential">beast.base.inference.distribution.Exponential</map>
-  <map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
-  <map name="Normal">beast.base.inference.distribution.Normal</map>
-  <map name="Beta">beast.base.inference.distribution.Beta</map>
-  <map name="Gamma">beast.base.inference.distribution.Gamma</map>
-  <map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
-  <map name="prior">beast.base.inference.distribution.Prior</map>
-  <map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
-  <map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
   <run id="mcmc" spec="MCMC" chainLength="100000000">
     <state id="state" storeEvery="50000">
       <tree id="Tree.t:rode05_mod" name="stateNode">
@@ -102,11 +92,11 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
       <stateNode id="turnoverFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
       <stateNode id="samplingProportionFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
       <stateNode id="originFBD.t:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="500.0"/>
-      <parameter id="clockRate.c:rode05_mod" name="stateNode">1.0</parameter>
+      <stateNode id="clockRate.c:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
     </state>
-    <init id="RandomTree.t:rode05_mod" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:rode05_mod" taxa="@rode05_mod">
+    <init id="RandomTree.t:rode05_mod" spec="beast.base.spec.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:rode05_mod" taxa="@rode05_mod">
       <populationModel id="ConstantPopulation0.t:rode05_mod" spec="ConstantPopulation">
-        <parameter id="randomPopSize.t:rode05_mod" name="popSize">1.0</parameter>
+        <popSize id="randomPopSize.t:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
       </populationModel>
     </init>
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
@@ -116,12 +106,10 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
           <rho id="rhoFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
           <treeWOffset id="treeWoffset" spec="sa.evolution.tree.TreeWOffset" tree="@Tree.t:rode05_mod" offset="367.762481269822"/>
         </distribution>
-        <prior id="ClockPrior.c:rode05_mod" name="distribution" x="@clockRate.c:rode05_mod">
-          <LogNormal id="LogNormalDistributionModel.1" meanInRealSpace="true" name="distr">
-            <parameter id="RealParameter.3" estimate="false" name="M">0.2</parameter>
-            <parameter id="Real.Parameter.4" estimate="false" lower="0.0" name="S" upper="5.0">1.25</parameter>
-          </LogNormal>
-        </prior>
+        <distribution id="ClockPrior.c:rode05_mod" spec="beast.base.spec.inference.distribution.LogNormal" param="@clockRate.c:rode05_mod" meanInRealSpace="true">
+          <M spec="RealScalarParam" domain="Real" value="0.2" estimate="false"/>
+          <S spec="RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+        </distribution>
         <distribution id="diversificationRatePriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@diversificationRateFBD.t:rode05_mod">
           <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
         </distribution>
@@ -138,7 +126,7 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
             <parameter id="gammaShape.s:rode05_mod" estimate="false" name="shape">1.0</parameter>
             <substModel id="LewisMK.s:rode05_mod" spec="morphmodels.evolution.substitutionmodel.LewisMK" datatype="@StandardData"/>
           </siteModel>
-          <branchRateModel id="StrictClock.c:rode05_mod" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:rode05_mod"/>
+          <branchRateModel id="StrictClock.c:rode05_mod" spec="beast.base.spec.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:rode05_mod"/>
         </distribution>
       </distribution>
     </distribution>
@@ -180,7 +168,7 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
       <log idref="prior"/>
     </logger>
     <logger id="treelog.t:rode05_mod" fileName="brachiopods_FBD_interval_ages.trees" logEvery="10000" mode="tree">
-      <log id="TreeWithMetaDataLogger.t:rode05_mod" spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@Tree.t:rode05_mod"/>
+      <log id="TreeWithMetaDataLogger.t:rode05_mod" spec="beast.base.spec.evolution.TreeWithMetaDataLogger" tree="@Tree.t:rode05_mod"/>
     </logger>
     <operator spec="sa.evolution.operators.SampledNodeDateRandomWalker" windowSize="10." tree="@Tree.t:rode05_mod" treeWOffset="@treeWoffset" weight="5.">
       <samplingDates id="samplingDate.Floweria_anomala1" spec="sa.evolution.tree.SamplingDate" taxon="@Floweria_anomala" lower="382.7" upper="387.7"/>
