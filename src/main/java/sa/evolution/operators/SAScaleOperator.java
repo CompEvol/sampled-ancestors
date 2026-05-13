@@ -1,55 +1,41 @@
 package sa.evolution.operators;
 
 import beast.base.core.Description;
-import beast.base.evolution.operator.ScaleOperator;
-import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
+import beast.base.spec.evolution.operator.ScaleTreeOperator;
+
 /**
+ * Tree-scale operator for trees that may contain sampled ancestors.
+ * <p>
+ * The whole-tree path of spec {@link ScaleTreeOperator} relies on
+ * {@code Tree.scale -> Node.intervalScale}, which currently has a defect on
+ * fake-rooted SA trees: it scales the non-direct-ancestor subtree but leaves
+ * the fake root pinned, so {@code scale > 1} can lift a child above its
+ * parent. The {@code rootOnly} path has the inverse problem: scaling the
+ * fake root height up breaks the SA invariant (root height pinned to the
+ * SA leaf's height). See <a href="https://github.com/CompEvol/beast3/issues/78">CompEvol/beast3#78</a>.
+ * <p>
+ * Until that issue is fixed in spec, we override {@code proposal()} to add
+ * the legacy SA guard back: reject any {@code rootOnly} move when the root
+ * is a fake node. Once #78 lands, this override can be deleted and the
+ * class can extend {@link ScaleTreeOperator} with no body (kept only for
+ * the XML element name {@code sa.evolution.operators.SAScaleOperator}).
+ *
  * @author Alexandra Gavryushkina
  */
-@Description("")
-public class SAScaleOperator extends ScaleOperator {
+@Description("Scale operator for trees with sampled ancestors. Defers to spec "
+        + "ScaleTreeOperator and rejects rootOnly moves when the root is a fake "
+        + "(sampled-ancestor) node. See CompEvol/beast3#78.")
+public class SAScaleOperator extends ScaleTreeOperator {
 
-    @Override   //WARNING works with bifurcating (exactly 2 children) trees only
-    // sampled ancestors are assumed to be on zero branches
-
+    @Override
     public double proposal() {
-
-        final double scale = getScaler();
-
-        try {
-
-            if (isTreeScaler()) {
-                Tree tree = treeInput.get();
-                tree.startEditing(this);
-                if (rootOnlyInput.get()) {
-                    Node root = tree.getRoot();
-                    if ((root).isFake()) {
-                        return Double.NEGATIVE_INFINITY;
-                    }
-                    double fNewHeight = root.getHeight() * scale;
-
-                    //make sure the new height doesn't make a parent younger than a child
-                    double oldestChildHeight = Math.max(root.getLeft().getHeight(), root.getRight().getHeight());
-                    if (fNewHeight < oldestChildHeight) {
-                        return Double.NEGATIVE_INFINITY;
-                    }
-
-                    root.setHeight(fNewHeight);
-
-                    return -Math.log(scale);
-                } else {
-                    // scale the beast.tree
-                    final int nScaledDimensions = tree.scale(scale);
-                    //final int nScaledDimensions = tree.scale(scale, scaleSNodes);
-                    return Math.log(scale) * (nScaledDimensions - 2);
-                }
+        if (rootOnlyInput.get()) {
+            final Tree tree = treeInput.get();
+            if (tree.getRoot().isFake()) {
+                return Double.NEGATIVE_INFINITY;
             }
-            return Double.NEGATIVE_INFINITY;
-
-        }  catch (Exception e) {
-            return Double.NEGATIVE_INFINITY;
         }
+        return super.proposal();
     }
-
 }

@@ -6,7 +6,7 @@ import beast.base.core.Input;
 import beast.base.inference.State;
 import beast.base.evolution.alignment.Taxon;
 import beast.base.evolution.alignment.TaxonSet;
-import beast.base.evolution.tree.MRCAPrior;
+import beast.base.spec.evolution.tree.MRCAPrior;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 
