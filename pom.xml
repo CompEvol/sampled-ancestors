@@ -113,6 +113,9 @@
                     </argLine>
                     <systemPropertyVariables>
                         <BEAST_PACKAGE_PATH>${project.build.outputDirectory}</BEAST_PACKAGE_PATH>
+                        <!-- workingDirectory above is target/test-classes, so tests that
+                             read repo files (examples/) need the project root explicitly -->
+                        <sa.basedir>${project.basedir}</sa.basedir>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter:beast.base.spec.domain" version="2.8">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast required="SA v2.3.0" beautitemplate='Standard' beautistatus='' namespace="beast.base.core:beast.base.inference" version="2.8">
 
 
     <data
@@ -50,7 +50,7 @@ name="alignment">
     
 
 
-<run id="mcmc" spec="MCMC" chainLength="10000000">
+<run id="mcmc" spec="beast.base.inference.MCMC" chainLength="10000000">
     <state id="state" storeEvery="5000">
         <tree id="Tree.t:bears" name="stateNode">
             <trait id="dateTrait.t:bears" spec="beast.base.evolution.tree.TraitSet" traitname="date-backward">
@@ -87,87 +87,87 @@ Agriarctos_spp_5.006=5.006,
 Kretzoiarctos_beatrix_11.69=11.69,
 Arctodus_simus_0.487=0.487,
 Ursus_abstrusus_4.27=4.27,
-Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="TaxonSet">
+Ursus_spelaeus_0.054=0.054                <taxa id="TaxonSet.bears" spec="beast.base.evolution.alignment.TaxonSet">
                     <alignment idref="bears"/>
                 </taxa>
             </trait>
             <taxonset idref="TaxonSet.bears"/>
         </tree>
-        <stateNode id="ucldMean.c:bears" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
-        <stateNode id="ucldStdev.c:bears" spec="RealScalarParam" domain="PositiveReal" value="0.1"/>
-        <stateNode id="rateCategories.c:bears" spec="IntVectorParam" domain="NonNegativeInt" dimension="66" value="1"/>
-        <stateNode id="originFBD.t:bears" spec="RealScalarParam" domain="PositiveReal" value="100.0"/>
-        <stateNode id="diversificationRateFBD.t:bears" spec="RealScalarParam" domain="Real" value="1.0"/>
-        <stateNode id="turnoverFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
-        <stateNode id="samplingProportionFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+        <stateNode id="ucldMean.c:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0"/>
+        <stateNode id="ucldStdev.c:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.1"/>
+        <stateNode id="rateCategories.c:bears" spec="beast.base.spec.inference.parameter.IntVectorParam" domain="NonNegativeInt" dimension="66" value="1"/>
+        <stateNode id="originFBD.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="100.0"/>
+        <stateNode id="diversificationRateFBD.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0"/>
+        <stateNode id="turnoverFBD.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.5"/>
+        <stateNode id="samplingProportionFBD.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.5"/>
     </state>
 
     <init id="RandomTree.t:bears" spec="beast.base.spec.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:bears" taxa="@bears">
-        <populationModel id="ConstantPopulation0.t:bears" spec="ConstantPopulation">
-            <popSize id="randomPopSize.t:bears" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
+        <populationModel id="ConstantPopulation0.t:bears" spec="beast.base.spec.evolution.tree.coalescent.ConstantPopulation">
+            <popSize id="randomPopSize.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0"/>
         </populationModel>
     </init>
 
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
         <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
             <distribution id="FBD.t:bears" spec="sa.evolution.speciation.SABirthDeathModel" conditionOnRhoSampling="true" diversificationRate="@diversificationRateFBD.t:bears" origin="@originFBD.t:bears" samplingProportion="@samplingProportionFBD.t:bears" tree="@Tree.t:bears" turnover="@turnoverFBD.t:bears">
-                <removalProbability id="rFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
-                <rho id="rhoFBD.t:bears" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
+                <removalProbability id="rFBD.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.0"/>
+                <rho id="rhoFBD.t:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
             </distribution>
             <distribution id="diversificationRatePriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@diversificationRateFBD.t:bears">
-                <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+                <upper spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
             </distribution>
             <distribution id="originPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@originFBD.t:bears">
-                <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+                <upper spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
             </distribution>
             <distribution id="samplingProportionPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@samplingProportionFBD.t:bears"/>
             <distribution id="turnoverPriorFBD.t:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@turnoverFBD.t:bears"/>
             <distribution id="MeanRatePrior.c:bears" spec="beast.base.spec.inference.distribution.Uniform" param="@ucldMean.c:bears">
-                <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+                <upper spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
             </distribution>
             <distribution id="ucldStdevPrior.c:bears" spec="beast.base.spec.inference.distribution.Gamma" param="@ucldStdev.c:bears">
-                <alpha spec="RealScalarParam" domain="PositiveReal" value="0.5396" estimate="false"/>
-                <beta spec="RealScalarParam" domain="PositiveReal" value="0.3819" estimate="false"/>
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.5396" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.3819" estimate="false"/>
             </distribution>
             <distribution id="Canidae.prior" spec="beast.base.spec.evolution.tree.MRCAPrior" monophyletic="true" tree="@Tree.t:bears">
-                <taxonset id="Canidae" spec="TaxonSet">
-                    <taxon id="Canis_lupus_0.0" spec="Taxon"/>
-                    <taxon id="Caedocyon_tedfordi_25.88" spec="Taxon"/>
-                    <taxon id="Cormocyon_copei_26.14" spec="Taxon"/>
-                    <taxon id="Hesperocyon_gregarius_39.07" spec="Taxon"/>
-                    <taxon id="Osbornodon_sesnoni_30.08" spec="Taxon"/>
-                    <taxon id="Borophagus_diversidens_4.284" spec="Taxon"/>
+                <taxonset id="Canidae" spec="beast.base.evolution.alignment.TaxonSet">
+                    <taxon id="Canis_lupus_0.0" spec="beast.base.evolution.alignment.Taxon"/>
+                    <taxon id="Caedocyon_tedfordi_25.88" spec="beast.base.evolution.alignment.Taxon"/>
+                    <taxon id="Cormocyon_copei_26.14" spec="beast.base.evolution.alignment.Taxon"/>
+                    <taxon id="Hesperocyon_gregarius_39.07" spec="beast.base.evolution.alignment.Taxon"/>
+                    <taxon id="Osbornodon_sesnoni_30.08" spec="beast.base.evolution.alignment.Taxon"/>
+                    <taxon id="Borophagus_diversidens_4.284" spec="beast.base.evolution.alignment.Taxon"/>
                 </taxonset>
             </distribution>
         </distribution>
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
-            <distribution id="treeLikelihood.bears" spec="TreeLikelihood" data="@bears" tree="@Tree.t:bears">
-                <siteModel id="SiteModel.s:bears" spec="SiteModel">
-                    <parameter id="mutationRate.s:bears" estimate="false" name="mutationRate">1.0</parameter>
-                    <parameter id="gammaShape.s:bears" estimate="false" name="shape">1.0</parameter>
-                    <parameter id="proportionInvariant.s:bears" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                    <substModel id="JC69.s:bears" spec="JukesCantor"/>
+            <distribution id="treeLikelihood.bears" spec="beast.base.spec.evolution.likelihood.TreeLikelihood" data="@bears" tree="@Tree.t:bears">
+                <siteModel id="SiteModel.s:bears" spec="beast.base.spec.evolution.sitemodel.SiteModel">
+                    <mutationRate id="mutationRate.s:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+                    <shape id="gammaShape.s:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+                    <proportionInvariant id="proportionInvariant.s:bears" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.0" estimate="false"/>
+                    <substModel id="JC69.s:bears" spec="beast.base.spec.evolution.substitutionmodel.JukesCantor"/>
                 </siteModel>
                 <branchRateModel id="RelaxedClock.c:bears" spec="beast.base.spec.evolution.branchratemodel.UCRelaxedClockModel" clock.rate="@ucldMean.c:bears" rateCategories="@rateCategories.c:bears" tree="@Tree.t:bears">
                     <distribution id="LogNormalDistributionModel.c:bears" spec="beast.base.spec.inference.distribution.LogNormal" S="@ucldStdev.c:bears" meanInRealSpace="true" name="distr">
-                        <M spec="RealScalarParam" domain="Real" value="1.0" estimate="false"/>
+                        <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0" estimate="false"/>
                     </distribution>
                 </branchRateModel>
             </distribution>
         </distribution>
     </distribution>
 
-    <operator id="ucldMeanScaler.c:bears" spec="ScaleOperator" parameter="@ucldMean.c:bears" scaleFactor="0.5" weight="1.0"/>
+    <operator id="ucldMeanScaler.c:bears" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@ucldMean.c:bears" scaleFactor="0.5" weight="1.0"/>
 
-    <operator id="ucldStdevScaler.c:bears" spec="ScaleOperator" parameter="@ucldStdev.c:bears" scaleFactor="0.5" weight="3.0"/>
+    <operator id="ucldStdevScaler.c:bears" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@ucldStdev.c:bears" scaleFactor="0.5" weight="3.0"/>
 
-    <operator id="CategoriesRandomWalk.c:bears" spec="IntRandomWalkOperator" parameter="@rateCategories.c:bears" weight="10.0" windowSize="1"/>
+    <operator id="CategoriesRandomWalk.c:bears" spec="beast.base.spec.inference.operator.IntRandomWalkOperator" parameter="@rateCategories.c:bears" weight="10.0" windowSize="1"/>
 
-    <operator id="CategoriesSwapOperator.c:bears" spec="SwapOperator" intparameter="@rateCategories.c:bears" weight="10.0"/>
+    <operator id="CategoriesSwapOperator.c:bears" spec="beast.base.spec.inference.operator.SwapOperator" intparameter="@rateCategories.c:bears" weight="10.0"/>
 
     <operator id="CategoriesUniform.c:bears" spec="beast.base.spec.inference.operator.uniform.IntUniformOperator" parameter="@rateCategories.c:bears" weight="10.0"/>
 
-    <operator id="relaxedUpDownOperator.c:bears" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
+    <operator id="relaxedUpDownOperator.c:bears" spec="beast.base.spec.evolution.operator.UpDownOperator" scaleFactor="0.75" weight="3.0">
         <up idref="ucldMean.c:bears"/>
         <down idref="Tree.t:bears"/>
     </operator>
