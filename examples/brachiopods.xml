@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast beautitemplate="Standard" beautistatus="" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.spec.inference.parameter:beast.base.spec.domain" required="SA v3.0.0:MM v1.3.0" version="2.8">
+<beast beautitemplate="Standard" beautistatus="" namespace="beast.base.core:beast.base.inference" required="SA v2.3.0:MM v1.3.0" version="2.8">
   <data id="rode05_mod" dataType="standard" name="alignment">
     <sequence id="seq_Floweria_anomala" taxon="Floweria_anomala" totalcount="2" value="00{01}020111{01}11101110011100101111101010"/>
     <sequence id="seq_Floweria_arctostriata" taxon="Floweria_arctostriata" totalcount="2" value="1000{12}0{01}110{01}12100000{01}10011100100111{01}{01}"/>
@@ -58,7 +58,7 @@
       <charstatelabels id="UserDataType.35" spec="beast.base.evolution.datatype.UserDataType" characterName="character_36" codeMap="0=0, 1=1, ? =0 1 " states="2" value="state_0, state_1"/>
     </userDataType>
   </data>
-  <run id="mcmc" spec="MCMC" chainLength="100000000">
+  <run id="mcmc" spec="beast.base.inference.MCMC" chainLength="100000000">
     <state id="state" storeEvery="50000">
       <tree id="Tree.t:rode05_mod" name="stateNode">
         <trait id="dateTrait.t:rode05_mod" spec="beast.base.evolution.tree.TraitSet" traitname="date-backward">
@@ -85,45 +85,45 @@ Xystostrophia_woolworthana=43.2312531741103,
 Xystostrophia_umbraculum=23.362639985024,
 Xystostrophia_umbraculum=15.6586777545745,
 Xystostrophia_umbraculum=5.6815330258105,
-Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignment idref="rode05_mod"/></taxa>
+Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="beast.base.evolution.alignment.TaxonSet"><alignment idref="rode05_mod"/></taxa>
             </trait>
       </tree>
-      <stateNode id="diversificationRateFBD.t:rode05_mod" spec="RealScalarParam" domain="Real" value="0.1"/>
-      <stateNode id="turnoverFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
-      <stateNode id="samplingProportionFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
-      <stateNode id="originFBD.t:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="500.0"/>
-      <stateNode id="clockRate.c:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
+      <stateNode id="diversificationRateFBD.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.1"/>
+      <stateNode id="turnoverFBD.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.5"/>
+      <stateNode id="samplingProportionFBD.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.5"/>
+      <stateNode id="originFBD.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="500.0"/>
+      <stateNode id="clockRate.c:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0"/>
     </state>
     <init id="RandomTree.t:rode05_mod" spec="beast.base.spec.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:rode05_mod" taxa="@rode05_mod">
-      <populationModel id="ConstantPopulation0.t:rode05_mod" spec="ConstantPopulation">
-        <popSize id="randomPopSize.t:rode05_mod" spec="RealScalarParam" domain="PositiveReal" value="1.0"/>
+      <populationModel id="ConstantPopulation0.t:rode05_mod" spec="beast.base.spec.evolution.tree.coalescent.ConstantPopulation">
+        <popSize id="randomPopSize.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0"/>
       </populationModel>
     </init>
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
       <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
         <distribution id="FBD.t:rode05_mod" spec="sa.evolution.speciation.SABirthDeathModel" conditionOnSampling="true" diversificationRate="@diversificationRateFBD.t:rode05_mod" origin="@originFBD.t:rode05_mod" samplingProportion="@samplingProportionFBD.t:rode05_mod" tree="@Tree.t:rode05_mod" turnover="@turnoverFBD.t:rode05_mod">
-          <removalProbability id="rFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
-          <rho id="rhoFBD.t:rode05_mod" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
+          <removalProbability id="rFBD.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.0"/>
+          <rho id="rhoFBD.t:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
           <treeWOffset id="treeWoffset" spec="sa.evolution.tree.TreeWOffset" tree="@Tree.t:rode05_mod" offset="367.762481269822"/>
         </distribution>
         <distribution id="ClockPrior.c:rode05_mod" spec="beast.base.spec.inference.distribution.LogNormal" param="@clockRate.c:rode05_mod" meanInRealSpace="true">
-          <M spec="RealScalarParam" domain="Real" value="0.2" estimate="false"/>
-          <S spec="RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+          <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.2" estimate="false"/>
+          <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
         </distribution>
         <distribution id="diversificationRatePriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@diversificationRateFBD.t:rode05_mod">
-          <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+          <upper spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
         </distribution>
         <distribution id="originPriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@originFBD.t:rode05_mod">
-          <upper spec="RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
+          <upper spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="10000.0" estimate="false"/>
         </distribution>
         <distribution id="samplingProportionPriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@samplingProportionFBD.t:rode05_mod"/>
         <distribution id="turnoverPriorFBD.t:rode05_mod" spec="beast.base.spec.inference.distribution.Uniform" param="@turnoverFBD.t:rode05_mod"/>
       </distribution>
       <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution" useThreads="true">
-        <distribution id="treeLikelihood.rode05_mod" spec="ThreadedTreeLikelihood" data="@rode05_mod" tree="@Tree.t:rode05_mod">
-          <siteModel id="SiteModel.s:rode05_mod" spec="SiteModel">
-            <parameter id="mutationRate.s:rode05_mod" estimate="false" name="mutationRate">1.0</parameter>
-            <parameter id="gammaShape.s:rode05_mod" estimate="false" name="shape">1.0</parameter>
+        <distribution id="treeLikelihood.rode05_mod" spec="beast.base.spec.evolution.likelihood.ThreadedTreeLikelihood" data="@rode05_mod" tree="@Tree.t:rode05_mod">
+          <siteModel id="SiteModel.s:rode05_mod" spec="beast.base.spec.evolution.sitemodel.SiteModel">
+            <mutationRate id="mutationRate.s:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+            <shape id="gammaShape.s:rode05_mod" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
             <substModel id="LewisMK.s:rode05_mod" spec="morphmodels.evolution.substitutionmodel.LewisMK" datatype="@StandardData"/>
           </siteModel>
           <branchRateModel id="StrictClock.c:rode05_mod" spec="beast.base.spec.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:rode05_mod"/>
@@ -141,8 +141,8 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
     <operator id="SAUniformOperatorFBD.t:rode05_mod" spec="sa.evolution.operators.SAUniform" tree="@Tree.t:rode05_mod" weight="20.0"/>
     <operator id="SATreeRootScalerFBD.t:rode05_mod" spec="sa.evolution.operators.SAScaleOperator" rootOnly="true" scaleFactor="0.95" tree="@Tree.t:rode05_mod" weight="1.0"/>
     <operator id="SATreeScalerFBD.t:rode05_mod" spec="sa.evolution.operators.SAScaleOperator" scaleFactor="0.95" tree="@Tree.t:rode05_mod" weight="3.0"/>
-    <operator id="ucldMeanScaler.c:rode05_mod" spec="ScaleOperator" parameter="@clockRate.c:rode05_mod" scaleFactor="0.75" weight="3.0"/>
-    <operator id="relaxedUpDownOperator.c:rode05_mod" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
+    <operator id="ucldMeanScaler.c:rode05_mod" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@clockRate.c:rode05_mod" scaleFactor="0.75" weight="3.0"/>
+    <operator id="relaxedUpDownOperator.c:rode05_mod" spec="beast.base.spec.evolution.operator.UpDownOperator" scaleFactor="0.75" weight="3.0">
       <up idref="clockRate.c:rode05_mod"/>
       <down idref="Tree.t:rode05_mod"/>
     </operator>
@@ -195,25 +195,25 @@ Xystostrophia_umbraculum=0<taxa id="TaxonSet.rode05_mod" spec="TaxonSet"><alignm
       <samplingDates id="samplingDate.Xystostrophia_umbraculum2" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="382.7" upper="387.7"/>
       <samplingDates id="samplingDate.Xystostrophia_umbraculum3" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="372.2" upper="382.7"/>
       <samplingDates id="samplingDate.Xystostrophia_umbraculum4" spec="sa.evolution.tree.SamplingDate" taxon="@Xystostrophia_umbraculum" lower="358.9" upper="372.2"/>
-      <taxonset id="fossilTaxa" spec="TaxonSet">
-        <taxon id="Floweria_anomala" spec="Taxon"/>
-        <taxon id="Floweria_arctostriata" spec="Taxon"/>
-        <taxon id="Floweria_becraftensis" spec="Taxon"/>
-        <taxon id="Floweria_chemungensis" spec="Taxon"/>
-        <taxon id="Floweria_cornucopia" spec="Taxon"/>
-        <taxon id="Floweria_crassa" spec="Taxon"/>
-        <taxon id="Floweria_deformis" spec="Taxon"/>
-        <taxon id="Floweria_iowensis" spec="Taxon"/>
-        <taxon id="Floweria_lirella" spec="Taxon"/>
-        <taxon id="Floweria_magnacicatrix" spec="Taxon"/>
-        <taxon id="Floweria_pandora" spec="Taxon"/>
-        <taxon id="Floweria_perversa" spec="Taxon"/>
-        <taxon id="Floweria_prava" spec="Taxon"/>
-        <taxon id="Floweria_transversalis" spec="Taxon"/>
-        <taxon id="Schuchertella_lens" spec="Taxon"/>
-        <taxon id="Schuchertella_percha" spec="Taxon"/>
-        <taxon id="Xystostrophia_woolworthana" spec="Taxon"/>
-        <taxon id="Xystostrophia_umbraculum" spec="Taxon"/>
+      <taxonset id="fossilTaxa" spec="beast.base.evolution.alignment.TaxonSet">
+        <taxon id="Floweria_anomala" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_arctostriata" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_becraftensis" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_chemungensis" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_cornucopia" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_crassa" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_deformis" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_iowensis" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_lirella" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_magnacicatrix" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_pandora" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_perversa" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_prava" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Floweria_transversalis" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Schuchertella_lens" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Schuchertella_percha" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Xystostrophia_woolworthana" spec="beast.base.evolution.alignment.Taxon"/>
+        <taxon id="Xystostrophia_umbraculum" spec="beast.base.evolution.alignment.Taxon"/>
       </taxonset>
     </operator>
   </run>
