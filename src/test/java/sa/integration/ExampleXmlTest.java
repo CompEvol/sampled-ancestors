@@ -70,9 +70,10 @@ public class ExampleXmlTest {
             } catch (Exception e) {
                 String message = String.valueOf(e.getMessage());
                 if (message.contains(MISSING_PACKAGE)) {
-                    // e.g. brachiopods.xml needs MM (morphmodels), which has no
-                    // BEAST 3 release yet. Report it rather than failing, so this
-                    // example starts being covered as soon as the package exists.
+                    // No example needs this today: brachiopods.xml wanted MM, and
+                    // the pom now puts morph-models on the test classpath. Kept so a
+                    // future example depending on an unreleased package is reported
+                    // rather than failing the build, and picked up once it exists.
                     Log.warning.println("SKIPPED " + fileName + ": " + message);
                     skipped.add(fileName);
                 } else {
