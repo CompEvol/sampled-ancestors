@@ -68,6 +68,47 @@ BEAUti input editors for sampled-ancestor priors.
 Contains `FBD.xml`, a BEAUti template for `SABirthDeathModel` and sampled-ancestor tree operators.
 Located at `src/main/resources/sampled.ancestors/fxtemplates/`.
 
+## Release
+
+### 1. Maven Central release (JARs)
+
+Push a `v*` tag to trigger `.github/workflows/ci-publish.yml`, which sets the Maven
+version from the tag, builds, tests, GPG-signs, and publishes to Maven Central:
+
+```bash
+git tag v2.3.0
+git push origin v2.3.0
+```
+
+Monitor the run at:
+https://github.com/CompEvol/sampled-ancestors/actions/workflows/ci-publish.yml
+
+### 2. GitHub release (BEAST package ZIP)
+
+First remove `-SNAPSHOT` from `<version>` in `pom.xml` so it matches the release
+(e.g. `2.3.0-SNAPSHOT` -> `2.3.0`), and snyc the `version.xml`, then build the installable BEAST package ZIP locally:
+
+```bash
+mvn clean package -DskipTests
+```
+
+**Note:** if you skip the manual edit above, the build still succeeds, but the module
+jar bundled inside the ZIP (`lib/model-selection-<version>.jar`) will carry the
+`-SNAPSHOT` suffix — that's meant for dev/testing builds, not an official release.
+Alternatively, instead of hand-editing `pom.xml`, run:
+
+```bash
+mvn versions:set -DnewVersion=<version> -DgenerateBackupPoms=false
+```
+
+The ZIP is written to `target/MODEL_SELECTION.v<version>.zip`. Then manually:
+
+1. Go to https://github.com/CompEvol/sampled-ancestors/releases
+2. Choose the matching tag (e.g. `v2.3.0`), fill in the release title/notes
+3. Upload `target/MODEL_SELECTION.v<version>.zip` as a release asset
+4. Publish
+
+
 ## License
 
 This software is free (as in freedom). With your modified versions provided you extend the same courtesy to
